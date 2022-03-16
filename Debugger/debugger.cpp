@@ -299,7 +299,16 @@ void c_debugger::run_debugger()
 				}
 
 				if (*buffer && nDebugStringLength != 0)
+				{
+					//onecore\com\combase\objact\objact.cxx(826)\combase.dll!7622DC19: (caller: 7622C61B) ReturnHr(1) tid(4154) 800401F0 CoInitialize has not been called.
+					if (wcsstr(buffer, L"combase.dll") != 0)
+					{
+						m_continue_status = DBG_CONTINUE;
+						break;
+					}
+
 					wprintf_s(L"[debug] %s\n", buffer);
+				}
 
 				delete[] buffer;
 			}
@@ -320,7 +329,16 @@ void c_debugger::run_debugger()
 				}
 
 				if (*buffer && nDebugStringLength != 0)
+				{
+					//onecore\com\combase\objact\objact.cxx(826)\combase.dll!7622DC19: (caller: 7622C61B) ReturnHr(1) tid(4154) 800401F0 CoInitialize has not been called.
+					if (strstr(buffer, "combase.dll") != 0)
+					{
+						m_continue_status = DBG_CONTINUE;
+						break;
+					}
+
 					printf_s("[debug] %s\n", buffer);
+				}
 
 				delete[] buffer;
 			}
