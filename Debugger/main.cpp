@@ -18,7 +18,7 @@ int wmain(int argc, wchar_t* argv[])
 	c_debugger* debugger = new c_debugger(process);
 
 	if (argc < 3)
-		debugger->add_breakpoint(0x0075227E - (1 << 22), L"command_line_get_credentials", on_command_line_get_credentials_breakpoint);
+		debugger->add_breakpoint(0x0075227E - PE32BASE, L"command_line_get_credentials", on_command_line_get_credentials_breakpoint);
 
 	//debugger->add_module_info_callback(add_break_on_winmain);
 	//debugger->add_module_info_callback(add_breaks_following_winmain);
@@ -32,12 +32,12 @@ int wmain(int argc, wchar_t* argv[])
 void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_registers* registers)
 {
 	LPVOID new_debuggee_string = debugger_write_debuggee_string(debugger, "--account 123 --sign-in-code 123 --environment 123");
-	LPVOID debuggee_command_line = registers->get_runtime_addr_as<LPVOID>(0x052BE944 - (1 << 22));
+	LPVOID debuggee_command_line = registers->get_runtime_addr_as<LPVOID>(0x052BE944 - PE32BASE);
 	debugger->write_debuggee_pointer(debugger, debuggee_command_line, new_debuggee_string, NULL);
 
 	size_t data_size = 0x375F0;
 	char* data = new char[data_size] {};
-	LPVOID data_addr = registers->get_runtime_addr_as<LPVOID>(0x043E1408 - (1 << 22));
+	LPVOID data_addr = registers->get_runtime_addr_as<LPVOID>(0x043E1408 - PE32BASE);
 	debugger->read_debuggee_memory(data_addr, data, data_size, NULL);
 
 	printf("");
@@ -45,7 +45,7 @@ void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_register
 	if (disable_saber_code_applied_in_scenario_load)
 	{
 		unsigned char patch_data_bytes[] = { 0x00 };
-		LPVOID data_addr1 = registers->get_runtime_addr_as<LPVOID>(0x01346881 - (1 << 22));
+		LPVOID data_addr1 = registers->get_runtime_addr_as<LPVOID>(0x01346881 - PE32BASE);
 		debugger->write_debuggee_memory(data_addr1, patch_data_bytes, sizeof(patch_data_bytes), NULL);
 	}
 
@@ -55,7 +55,7 @@ void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_register
 void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 {
 
-	//debugger->add_breakpoint(0x00496EEE - (1 << 22), L"main_status->memset", [](c_debugger* debugger, c_registers* registers) -> void {
+	//debugger->add_breakpoint(0x00496EEE - PE32BASE, L"main_status->memset", [](c_debugger* debugger, c_registers* registers) -> void {
 	//	DWORD data_size = registers->cast_esi_as<DWORD>();
 	//	char* data = new char[data_size + 1]{};
 	//
@@ -69,30 +69,30 @@ void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 void add_breaks_following_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 {
 	// EntryPoint->WinMain
-	debugger->add_breakpoint(0x004013C3 - (1 << 22), L"static_string<64>::print");
-	debugger->add_breakpoint(0x00401501 - (1 << 22), L"shell_initialize");
-	debugger->add_breakpoint(0x0040151C - (1 << 22), L"main_loop");
-	debugger->add_breakpoint(0x0040152F - (1 << 22), L"shell_dispose");
+	debugger->add_breakpoint(0x004013C3 - PE32BASE, L"static_string<64>::print");
+	debugger->add_breakpoint(0x00401501 - PE32BASE, L"shell_initialize");
+	debugger->add_breakpoint(0x0040151C - PE32BASE, L"main_loop");
+	debugger->add_breakpoint(0x0040152F - PE32BASE, L"shell_dispose");
 
 	// shell_initialize->cache_files_initialize
-	debugger->add_breakpoint(0x004ED644 - (1 << 22), L"cached_map_files_open_all", on_cached_map_files_open_all_breakpoint);
+	debugger->add_breakpoint(0x004ED644 - PE32BASE, L"cached_map_files_open_all", on_cached_map_files_open_all_breakpoint);
 
 	// WinMain->main_loop
-	debugger->add_breakpoint(0x004A9640 - (1 << 22), L"main_game_load_map", on_main_game_load_map_breakpoint);
-	debugger->add_breakpoint(0x004A9670 - (1 << 22), L"main_game_start");
+	debugger->add_breakpoint(0x004A9640 - PE32BASE, L"main_game_load_map", on_main_game_load_map_breakpoint);
+	debugger->add_breakpoint(0x004A9670 - PE32BASE, L"main_game_start");
 
 	// main_loop->main_game_load_map
-	debugger->add_breakpoint(0x004A9B96 - (1 << 22), L"scenario_load");
-	debugger->add_breakpoint(0x004A9BA4 - (1 << 22), L"main_game_internal_map_load_complete");
+	debugger->add_breakpoint(0x004A9B96 - PE32BASE, L"scenario_load");
+	debugger->add_breakpoint(0x004A9BA4 - PE32BASE, L"main_game_internal_map_load_complete");
 
 	// main_game_load_map->scenario_load
-	debugger->add_breakpoint(0x0047E8EC - (1 << 22), L"scenario_tags_load");
-	debugger->add_breakpoint(0x0047E973 - (1 << 22), L"scenario_tags_fixup");
+	debugger->add_breakpoint(0x0047E8EC - PE32BASE, L"scenario_tags_load");
+	debugger->add_breakpoint(0x0047E973 - PE32BASE, L"scenario_tags_fixup");
 
 	// scenario_load->scenario_tags_load
-	debugger->add_breakpoint(0x00483843 - (1 << 22), L"cache_file_open");
-	debugger->add_breakpoint(0x00483856 - (1 << 22), L"cache_file_header_verify");
-	debugger->add_breakpoint(0x0048389C - (1 << 22), L"tags_file_open");
+	debugger->add_breakpoint(0x00483843 - PE32BASE, L"cache_file_open");
+	debugger->add_breakpoint(0x00483856 - PE32BASE, L"cache_file_header_verify");
+	debugger->add_breakpoint(0x0048389C - PE32BASE, L"tags_file_open");
 }
 
 void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
@@ -109,7 +109,10 @@ void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 	LPVOID image_base = module_info->lpBaseOfDll;
 	DWORD image_size = module_info->SizeOfImage;
 
-	debugger->add_breakpoint((DWORD)entry_point - (DWORD)image_base, L"EntryPoint");
+	DWORD entry_point_addr = reinterpret_cast<DWORD>(module_info->EntryPoint);
+	DWORD image_base_addr = reinterpret_cast<DWORD>(module_info->lpBaseOfDll);
+
+	debugger->add_breakpoint(entry_point_addr - image_base_addr, L"EntryPoint");
 
 	if (wcscmp(process->get_name(), L"halo_online.exe"))
 		return;
@@ -123,7 +126,7 @@ void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 	};
 
 	// replace `hInstance` with `image_base`
-	*(LPVOID*)(winmain_call_pattern + 5) = image_base;
+	*reinterpret_cast<DWORD*>(winmain_call_pattern + 5) = image_base_addr;
 
 	unsigned char entry_point_instructions[READ_PAGE_SIZE] = { 0 };
 	DWORD bytes_read = 0;
@@ -133,17 +136,17 @@ void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 	{
 		if (memcmp(entry_point_instructions + entry_point_offset, winmain_call_pattern, sizeof(winmain_call_pattern)) == 0)
 		{
-			DWORD offset = (DWORD)entry_point + entry_point_offset + sizeof(winmain_call_pattern);
+			DWORD offset = entry_point_addr + entry_point_offset + sizeof(winmain_call_pattern);
 
 			DWORD call_location = 0;
 			DWORD call_location_bytes_read = 0;
-			debugger->read_debuggee_memory((LPVOID)(offset + 1), &call_location, 4, &call_location_bytes_read);
+			debugger->read_debuggee_memory(reinterpret_cast<LPVOID>(offset + 1), &call_location, 4, &call_location_bytes_read);
 
 			call_location += offset + 5;
-			if (call_location < (DWORD)image_base || call_location >(DWORD)image_base + image_size)
+			if (call_location < image_base_addr || call_location >image_base_addr + image_size)
 				continue;
 
-			DWORD call_location_module_offset = offset - (DWORD)image_base;
+			DWORD call_location_module_offset = offset - image_base_addr;
 			debugger->add_breakpoint(call_location_module_offset, L"WinMain");
 			break;
 		}
@@ -152,7 +155,7 @@ void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 
 void on_cached_map_files_open_all_breakpoint(c_debugger* debugger, c_registers* registers)
 {
-	DWORD resource_paths_offset = 0x012ECEA4 - (1 << 22);
+	DWORD resource_paths_offset = 0x012ECEA4 - PE32BASE;
 	char resource_paths[7][32] = {
 		"test\\resources.dat",
 		"test\\textures.dat",
@@ -210,8 +213,13 @@ void on_main_game_load_map_breakpoint(c_debugger* debugger, c_registers* registe
 	{
 		debugger->read_debuggee_memory(registers->cast_ecx_as<LPCVOID>(), game_options, sizeof(game_options), NULL);
 
+		// game mode: multiplater
 		*reinterpret_cast<ULONG*>(game_options) = 2;
+
+		// game type: slayer
 		*reinterpret_cast<ULONG*>(game_options + 0x32C) = 2;
+
+		// scenario path: map_name
 		csstrncpy(game_options + 0x24, MAX_PATH, map_name, MAX_PATH);
 
 		debugger->write_debuggee_memory(registers->cast_ecx_as<LPVOID>(), game_options, sizeof(game_options), NULL);

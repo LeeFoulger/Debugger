@@ -8,6 +8,7 @@
 #include <Psapi.h>
 #include <tlhelp32.h>
 
+#include "macros.h"
 #include "process.h"
 #include "debugger.h"
 

@@ -95,7 +95,7 @@ public:
 	c_registers(LPMODULEINFO module_info, LPCONTEXT context) :
 		module_info(*module_info),
 		context(*context),
-		static_base_addr(1 << 22),
+		static_base_addr(PE32BASE),
 		runtime_base_addr(reinterpret_cast<DWORD>(module_info->lpBaseOfDll))
 	{
 	}

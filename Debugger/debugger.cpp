@@ -208,7 +208,7 @@ void c_debugger::run_debugger()
 						write_debuggee_memory((LPVOID)last_call_location, &instructions::break_op, sizeof(instructions::break_op), &bytes_written);
 						FlushInstructionCache(m_process->get_process_handle(), (LPVOID)last_call_location, 1);
 
-						//DWORD module_offset = /*0x00400000*/(1 << 22) - (DWORD)module_info.lpBaseOfDll;
+						//DWORD module_offset = /*0x00400000*/PE32BASE - (DWORD)module_info.lpBaseOfDll;
 
 						decltype(s_breakpoint::callback) callback = nullptr;
 
