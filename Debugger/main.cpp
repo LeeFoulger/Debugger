@@ -1,7 +1,5 @@
 #include "main.h"
 
-const bool disable_saber_code_applied_in_scenario_load = false;
-
 int wmain(int argc, wchar_t* argv[])
 {
 	//  " --account 123 --sign-in-code 123 --environment 123"
@@ -28,6 +26,8 @@ int wmain(int argc, wchar_t* argv[])
 
 	return 0;
 }
+
+const bool disable_saber_code_applied_in_scenario_load = false;
 
 void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_registers* registers)
 {
@@ -178,6 +178,35 @@ void on_cached_map_files_open_all_breakpoint(c_debugger* debugger, c_registers* 
 	printf("");
 }
 
+enum e_game_mode : ULONG
+{
+	_game_mode_none = 0,
+	_game_mode_campaign,
+	_game_mode_multiplayer,
+	_game_mode_mapeditor,
+	_game_mode_savefilm,
+	_game_mode_survival,
+
+	k_game_mode_count,
+};
+
+enum e_game_engine_variant : ULONG
+{
+	_game_engine_base_variant = 0,
+	_game_engine_ctf_variant,
+	_game_engine_slayer_variant,
+	_game_engine_oddball_variant,
+	_game_engine_king_variant,
+	_game_engine_sandbox_variant,
+	_game_engine_vip_variant,
+	_game_engine_juggernaut_variant,
+	_game_engine_territories_variant,
+	_game_engine_assault_variant,
+	_game_engine_infection_variant,
+
+	k_game_engine_variant_count,
+};
+
 void on_main_game_load_map_breakpoint(c_debugger* debugger, c_registers* registers)
 {
 	static char game_options[0xE620]{};
@@ -198,8 +227,8 @@ void on_main_game_load_map_breakpoint(c_debugger* debugger, c_registers* registe
 
 		if (*scenario_path == 0 || *scenario_path == '\r' || *scenario_path == '\n')
 		{
-			//fputs("enter scenario path: ", stdout);
-			//fgets(scenario_path, MAX_PATH, stdin);
+			fputs("enter scenario path: ", stdout);
+			fgets(scenario_path, MAX_PATH, stdin);
 		}
 
 		if (*scenario_path)
@@ -209,18 +238,18 @@ void on_main_game_load_map_breakpoint(c_debugger* debugger, c_registers* registe
 		}
 	}
 
-	if (*scenario_path)
+	if (*scenario_path && strcmp(scenario_path, "default") != 0)
 	{
 		debugger->read_debuggee_memory(registers->cast_ecx_as<LPCVOID>(), game_options, sizeof(game_options), NULL);
 
 		// game mode: multiplayer
-		*reinterpret_cast<ULONG*>(game_options) = 2;
+		*reinterpret_cast<ULONG*>(game_options) = _game_mode_multiplayer;
 
 		// scenario path: scenario_path
 		csstrncpy(game_options + 0x24, MAX_PATH, scenario_path, MAX_PATH);
 
 		// game engine: slayer
-		*reinterpret_cast<ULONG*>(game_options + 0x32C) = 2;
+		*reinterpret_cast<ULONG*>(game_options + 0x32C) = _game_engine_slayer_variant;
 
 		debugger->write_debuggee_memory(registers->cast_ecx_as<LPVOID>(), game_options, sizeof(game_options), NULL);
 	}
