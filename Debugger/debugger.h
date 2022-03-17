@@ -35,7 +35,7 @@ class c_debugger
 public:
 	c_debugger(c_process* process);
 
-	void run_debugger();
+	void run_debugger(bool print_debug_strings = true);
 
 	void add_breakpoint(BYTE, DWORD, const wchar_t*, bool, void(*callback)(c_debugger*, class c_registers*) = nullptr);
 
@@ -85,6 +85,7 @@ protected:
 	DWORD m_continue_status;
 
 	HANDLE m_thread_handle;
+	bool m_print_debug_strings;
 };
 
 template<typename t_string_type, size_t k_string_size>

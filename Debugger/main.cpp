@@ -16,13 +16,13 @@ int wmain(int argc, wchar_t* argv[])
 	c_debugger* debugger = new c_debugger(process);
 
 	if (argc < 3)
-		debugger->add_breakpoint(_instruction_call, 0x0075227E - PE32BASE, L"command_line_get_credentials", on_command_line_get_credentials_breakpoint);
+		debugger->add_breakpoint(_instruction_call, 0x0075227E - PE32BASE, L"command_line_get_credentials", false, on_command_line_get_credentials_breakpoint);
 
-	debugger->add_module_info_callback(add_break_on_winmain);
-	debugger->add_module_info_callback(add_breaks_following_winmain);
+	//debugger->add_module_info_callback(add_break_on_winmain);
+	//debugger->add_module_info_callback(add_breaks_following_winmain);
 	debugger->add_module_info_callback(add_test_breaks);
 
-	debugger->run_debugger();
+	debugger->run_debugger(false);
 
 	return 0;
 }

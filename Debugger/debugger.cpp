@@ -38,6 +38,7 @@ c_debugger::c_debugger(c_process* process)
 	m_debug_event = { 0 };
 	m_continue_status = DBG_CONTINUE;
 	m_thread_handle = NULL;
+	m_print_debug_strings = true;
 
 	ZeroMemory(&m_breakpoints, sizeof(m_breakpoints));
 }
@@ -79,8 +80,10 @@ c_process* c_debugger::get_process()
 	return m_process;
 }
 
-void c_debugger::run_debugger()
+void c_debugger::run_debugger(bool print_debug_strings)
 {
+	m_print_debug_strings = print_debug_strings;
+
 	CONTEXT context = { 0 };
 
 	bool first_break_has_occurred = false;
@@ -307,6 +310,11 @@ void c_debugger::run_debugger()
 		case OUTPUT_DEBUG_STRING_EVENT:
 		{
 			OUTPUT_DEBUG_STRING_INFO& DebugString = m_debug_event.u.DebugString;
+			if (!m_print_debug_strings)
+			{
+				m_continue_status = DBG_CONTINUE;
+				break;
+			}
 
 			if (DebugString.fUnicode)
 			{
