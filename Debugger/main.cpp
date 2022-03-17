@@ -18,9 +18,9 @@ int wmain(int argc, wchar_t* argv[])
 	if (argc < 3)
 		debugger->add_breakpoint(_instruction_call, 0x0075227E - PE32BASE, L"command_line_get_credentials", on_command_line_get_credentials_breakpoint);
 
-	//debugger->add_module_info_callback(add_break_on_winmain);
-	//debugger->add_module_info_callback(add_breaks_following_winmain);
-	//debugger->add_module_info_callback(add_test_breaks);
+	debugger->add_module_info_callback(add_break_on_winmain);
+	debugger->add_module_info_callback(add_breaks_following_winmain);
+	debugger->add_module_info_callback(add_test_breaks);
 
 	debugger->run_debugger();
 
@@ -213,6 +213,7 @@ void on_main_game_load_map_breakpoint(c_debugger* debugger, c_registers* registe
 	memset(game_options, 0, sizeof(game_options));
 
 	char scenario_path[MAX_PATH]{};
+	csstrncpy(scenario_path, MAX_PATH, "default", MAX_PATH);
 
 	{
 		wchar_t current_directory[MAX_PATH]{};
