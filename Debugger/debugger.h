@@ -2,6 +2,12 @@
 
 #define READ_PAGE_SIZE 4096
 
+enum e_instruction : BYTE
+{
+	_instruction_call = 0xE8,
+	_instruction_break = 0xCC
+};
+
 template<typename t_type, DWORD k_max_count>
 struct s_static_array
 {
@@ -17,6 +23,7 @@ class c_debugger;
 class c_registers;
 struct s_breakpoint
 {
+	BYTE break_on;
 	DWORD module_offset;
 	WCHAR name[64];
 	void(*callback)(class c_debugger*, class c_registers*);
@@ -29,7 +36,7 @@ public:
 
 	void run_debugger();
 
-	void add_breakpoint(DWORD, const wchar_t*, void(*callback)(c_debugger*, class c_registers*) = nullptr);
+	void add_breakpoint(e_instruction, DWORD, const wchar_t*, void(*callback)(c_debugger*, class c_registers*) = nullptr);
 
 	void add_module_info_callback(void(*callback)(c_debugger*, LPMODULEINFO));
 
@@ -70,7 +77,7 @@ public:
 protected:
 	c_process* m_process;
 
-	s_static_array<s_breakpoint, 256> m_call_breakpoints;
+	s_static_array<s_breakpoint, 256> m_breakpoints;
 	s_static_array<void(*)(c_debugger*, LPMODULEINFO), 32> m_module_info_callbacks;
 
 	DEBUG_EVENT m_debug_event;

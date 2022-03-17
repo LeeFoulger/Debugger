@@ -18,7 +18,7 @@ int wmain(int argc, wchar_t* argv[])
 	c_debugger* debugger = new c_debugger(process);
 
 	if (argc < 3)
-		debugger->add_breakpoint(0x0075227E - PE32BASE, L"command_line_get_credentials", on_command_line_get_credentials_breakpoint);
+		debugger->add_breakpoint(_instruction_call, 0x0075227E - PE32BASE, L"command_line_get_credentials", on_command_line_get_credentials_breakpoint);
 
 	//debugger->add_module_info_callback(add_break_on_winmain);
 	//debugger->add_module_info_callback(add_breaks_following_winmain);
@@ -69,30 +69,30 @@ void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 void add_breaks_following_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 {
 	// EntryPoint->WinMain
-	debugger->add_breakpoint(0x004013C3 - PE32BASE, L"static_string<64>::print");
-	debugger->add_breakpoint(0x00401501 - PE32BASE, L"shell_initialize");
-	debugger->add_breakpoint(0x0040151C - PE32BASE, L"main_loop");
-	debugger->add_breakpoint(0x0040152F - PE32BASE, L"shell_dispose");
+	debugger->add_breakpoint(_instruction_call, 0x004013C3 - PE32BASE, L"static_string<64>::print");
+	debugger->add_breakpoint(_instruction_call, 0x00401501 - PE32BASE, L"shell_initialize");
+	debugger->add_breakpoint(_instruction_call, 0x0040151C - PE32BASE, L"main_loop");
+	debugger->add_breakpoint(_instruction_call, 0x0040152F - PE32BASE, L"shell_dispose");
 
 	// shell_initialize->cache_files_initialize
-	debugger->add_breakpoint(0x004ED644 - PE32BASE, L"cached_map_files_open_all", on_cached_map_files_open_all_breakpoint);
+	debugger->add_breakpoint(_instruction_call, 0x004ED644 - PE32BASE, L"cached_map_files_open_all", on_cached_map_files_open_all_breakpoint);
 
 	// WinMain->main_loop
-	debugger->add_breakpoint(0x004A9640 - PE32BASE, L"main_game_load_map", on_main_game_load_map_breakpoint);
-	debugger->add_breakpoint(0x004A9670 - PE32BASE, L"main_game_start");
+	debugger->add_breakpoint(_instruction_call, 0x004A9640 - PE32BASE, L"main_game_load_map", on_main_game_load_map_breakpoint);
+	debugger->add_breakpoint(_instruction_call, 0x004A9670 - PE32BASE, L"main_game_start");
 
 	// main_loop->main_game_load_map
-	debugger->add_breakpoint(0x004A9B96 - PE32BASE, L"scenario_load");
-	debugger->add_breakpoint(0x004A9BA4 - PE32BASE, L"main_game_internal_map_load_complete");
+	debugger->add_breakpoint(_instruction_call, 0x004A9B96 - PE32BASE, L"scenario_load");
+	debugger->add_breakpoint(_instruction_call, 0x004A9BA4 - PE32BASE, L"main_game_internal_map_load_complete");
 
 	// main_game_load_map->scenario_load
-	debugger->add_breakpoint(0x0047E8EC - PE32BASE, L"scenario_tags_load");
-	debugger->add_breakpoint(0x0047E973 - PE32BASE, L"scenario_tags_fixup");
+	debugger->add_breakpoint(_instruction_call, 0x0047E8EC - PE32BASE, L"scenario_tags_load");
+	debugger->add_breakpoint(_instruction_call, 0x0047E973 - PE32BASE, L"scenario_tags_fixup");
 
 	// scenario_load->scenario_tags_load
-	debugger->add_breakpoint(0x00483843 - PE32BASE, L"cache_file_open");
-	debugger->add_breakpoint(0x00483856 - PE32BASE, L"cache_file_header_verify");
-	debugger->add_breakpoint(0x0048389C - PE32BASE, L"tags_file_open");
+	debugger->add_breakpoint(_instruction_call, 0x00483843 - PE32BASE, L"cache_file_open");
+	debugger->add_breakpoint(_instruction_call, 0x00483856 - PE32BASE, L"cache_file_header_verify");
+	debugger->add_breakpoint(_instruction_call, 0x0048389C - PE32BASE, L"tags_file_open");
 }
 
 void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
@@ -112,7 +112,7 @@ void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 	DWORD entry_point_addr = reinterpret_cast<DWORD>(module_info->EntryPoint);
 	DWORD image_base_addr = reinterpret_cast<DWORD>(module_info->lpBaseOfDll);
 
-	debugger->add_breakpoint(entry_point_addr - image_base_addr, L"EntryPoint");
+	debugger->add_breakpoint(_instruction_call, entry_point_addr - image_base_addr, L"EntryPoint");
 
 	if (wcscmp(process->get_name(), L"halo_online.exe"))
 		return;
@@ -147,7 +147,7 @@ void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 				continue;
 
 			DWORD call_location_module_offset = offset - image_base_addr;
-			debugger->add_breakpoint(call_location_module_offset, L"WinMain");
+			debugger->add_breakpoint(_instruction_call, call_location_module_offset, L"WinMain");
 			break;
 		}
 	}
@@ -183,44 +183,44 @@ void on_main_game_load_map_breakpoint(c_debugger* debugger, c_registers* registe
 	static char game_options[0xE620]{};
 	memset(game_options, 0, sizeof(game_options));
 
-	char map_name[MAX_PATH]{};
+	char scenario_path[MAX_PATH]{};
 
 	{
 		wchar_t current_directory[MAX_PATH]{};
-		swprintf_s(current_directory, MAX_PATH, L"%s\\test\\scenario_name.txt", debugger->get_process()->get_current_directory());
+		swprintf_s(current_directory, MAX_PATH, L"%s\\test\\scenario_path.txt", debugger->get_process()->get_current_directory());
 
 		FILE* file = NULL;
 		if (_wfopen_s(&file, current_directory, L"r"), file != NULL)
 		{
-			fgets(map_name, MAX_PATH, file);
+			fgets(scenario_path, MAX_PATH, file);
 			fclose(file);
 		}
 
-		if (*map_name == 0)
+		if (*scenario_path == 0 || *scenario_path == '\r' || *scenario_path == '\n')
 		{
-			//fputs("enter map name: ", stdout);
-			//fgets(map_name, MAX_PATH, stdin);
+			//fputs("enter scenario path: ", stdout);
+			//fgets(scenario_path, MAX_PATH, stdin);
 		}
 
-		if (*map_name)
+		if (*scenario_path)
 		{
-			while (map_name[strlen(map_name) - 1] == '\r' || map_name[strlen(map_name) - 1] == '\n')
-				map_name[strlen(map_name) - 1] = 0;
+			while (scenario_path[strlen(scenario_path) - 1] == '\r' || scenario_path[strlen(scenario_path) - 1] == '\n')
+				scenario_path[strlen(scenario_path) - 1] = 0;
 		}
 	}
 
-	if (*map_name)
+	if (*scenario_path)
 	{
 		debugger->read_debuggee_memory(registers->cast_ecx_as<LPCVOID>(), game_options, sizeof(game_options), NULL);
 
-		// game mode: multiplater
+		// game mode: multiplayer
 		*reinterpret_cast<ULONG*>(game_options) = 2;
 
-		// game type: slayer
-		*reinterpret_cast<ULONG*>(game_options + 0x32C) = 2;
+		// scenario path: scenario_path
+		csstrncpy(game_options + 0x24, MAX_PATH, scenario_path, MAX_PATH);
 
-		// scenario path: map_name
-		csstrncpy(game_options + 0x24, MAX_PATH, map_name, MAX_PATH);
+		// game engine: slayer
+		*reinterpret_cast<ULONG*>(game_options + 0x32C) = 2;
 
 		debugger->write_debuggee_memory(registers->cast_ecx_as<LPVOID>(), game_options, sizeof(game_options), NULL);
 	}
