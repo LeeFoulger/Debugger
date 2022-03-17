@@ -54,6 +54,38 @@ void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_register
 
 void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 {
+	debugger->add_breakpoint(0xFF, 0x0056918C - PE32BASE, L"restricted_region_add_member::internal", false, [](c_debugger* debugger, c_registers* registers) -> void {
+		DWORD name_ptr_ptr = registers->cast_ebp_as<DWORD>() + 8;
+		DWORD name2_ptr_ptr = registers->cast_ebp_as<DWORD>() + 12;
+		DWORD size_ptr = registers->cast_ebp_as<DWORD>() + 16;
+
+		DWORD size = 0;
+		{
+			debugger->read_debuggee_memory((LPCVOID)size_ptr, &size, 4, NULL);
+			printf("size: 0x%08X", size);
+		}
+		{
+			char* name = new char[33]{};
+			DWORD name_ptr = 0;
+			debugger->read_debuggee_memory((LPCVOID)name_ptr_ptr, &name_ptr, 4, NULL);
+			debugger->read_debuggee_memory((LPCVOID)name_ptr, name, 32, NULL);
+
+			if (*name)
+				printf(", name: %s", name);
+			delete[] name;
+		}
+		{
+			char* name = new char[33]{};
+			DWORD name_ptr = 0;
+			debugger->read_debuggee_memory((LPCVOID)name2_ptr_ptr, &name_ptr, 4, NULL);
+			debugger->read_debuggee_memory((LPCVOID)name_ptr, name, 32, NULL);
+
+			if (*name)
+				printf(" | name: %s", name);
+			delete[] name;
+		}
+		printf("\n");
+	});
 
 	//debugger->add_breakpoint(_instruction_call, 0x00496EEE - PE32BASE, L"main_status->memset", true, [](c_debugger* debugger, c_registers* registers) -> void {
 	//	DWORD data_size = registers->cast_esi_as<DWORD>();
