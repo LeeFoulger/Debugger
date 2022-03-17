@@ -42,7 +42,7 @@ c_debugger::c_debugger(c_process* process)
 	ZeroMemory(&m_breakpoints, sizeof(m_breakpoints));
 }
 
-void c_debugger::add_breakpoint(e_instruction break_on, DWORD call_offset, const wchar_t* name, void(*callback)(c_debugger*, c_registers*))
+void c_debugger::add_breakpoint(BYTE break_on, DWORD call_offset, const wchar_t* name, bool print_registers, void(*callback)(c_debugger*, c_registers*))
 {
 	if (m_breakpoints.count < m_breakpoints.get_max_count())
 	{
@@ -50,6 +50,7 @@ void c_debugger::add_breakpoint(e_instruction break_on, DWORD call_offset, const
 
 		printf("Adding breakpoint at 0x%08X for %ls\n", call_offset, name);
 		breakpoint.break_on = break_on;
+		breakpoint.print_registers = print_registers;
 		breakpoint.module_offset = call_offset;
 		wcsncpy_s(breakpoint.name, name, 64);
 		breakpoint.callback = callback;
@@ -96,7 +97,7 @@ void c_debugger::run_debugger()
 	DWORD call_location_bytes_read = 0;
 	DWORD last_call_location = 0;
 
-	unsigned char instructions[READ_PAGE_SIZE] = { 0 };
+	BYTE instructions[READ_PAGE_SIZE] = { 0 };
 
 	DWORD breakpoints_set = 0;
 
@@ -144,25 +145,29 @@ void c_debugger::run_debugger()
 						read_debuggee_memory(call_breakpoint_address, &instructions, READ_PAGE_SIZE, &bytes_read);
 						for (DWORD c = 0; c < bytes_read; c++)
 						{
-							if (breakpoint.break_on == instructions[c])
+							if (breakpoint.break_on != instructions[c])
+								continue;
+
+							if (breakpoint.break_on == call_op)
 							{
-								if (breakpoint.break_on == call_op)
-								{
-									offset = (DWORD)call_breakpoint_address + c;
-									read_debuggee_memory((LPVOID)(offset + 1), &call_location, 4, &call_location_bytes_read);
-									call_location += offset + 5;
-									if (call_location < (DWORD)module_info.lpBaseOfDll || call_location >(DWORD)module_info.lpBaseOfDll + module_info.SizeOfImage)
-										continue;
-								}
+								offset = (DWORD)call_breakpoint_address + c;
+								read_debuggee_memory((LPVOID)(offset + 1), &call_location, 4, &call_location_bytes_read);
+								call_location += offset + 5;
+								if (call_location < (DWORD)module_info.lpBaseOfDll || call_location >(DWORD)module_info.lpBaseOfDll + module_info.SizeOfImage)
+									continue;
+							}
+							else
+							{
+								offset = (DWORD)call_breakpoint_address + c;
+							}
 
-								if (breakpoints_set < m_breakpoints.get_max_count())
-								{
-									write_debuggee_memory((LPVOID)offset, &break_op, sizeof(break_op), &bytes_written);
-									FlushInstructionCache(m_process->get_process_handle(), (LPVOID)offset, 1);
+							if (breakpoints_set < m_breakpoints.get_max_count())
+							{
+								write_debuggee_memory((LPVOID)offset, &break_op, sizeof(break_op), &bytes_written);
+								FlushInstructionCache(m_process->get_process_handle(), (LPVOID)offset, 1);
 
-									breakpoints_set++;
-									break;
-								}
+								breakpoints_set++;
+								break;
 							}
 						}
 					}
@@ -227,8 +232,8 @@ void c_debugger::run_debugger()
 						//DWORD module_offset = /*0x00400000*/PE32BASE - (DWORD)module_info.lpBaseOfDll;
 
 						decltype(s_breakpoint::callback) callback = nullptr;
-
 						LPWSTR name = NULL;
+						bool print_registers = true;
 						for (DWORD i = 0; i < m_breakpoints.count; i++)
 						{
 							s_breakpoint& breakpoint = m_breakpoints[i];
@@ -239,35 +244,39 @@ void c_debugger::run_debugger()
 							{
 								callback = breakpoint.callback;
 								name = breakpoint.name;
+								print_registers = breakpoint.print_registers;
 								break;
 							}
 						}
 
-						printf("\n%ls\n  ", (name && *name) ? name : L"no name");
-						printf("thread id: %08d, %ls+0x%08X: call %ls+0x%08X\n", m_debug_event.dwThreadId,
-							m_process->get_name(), last_call_location - (DWORD)module_info.lpBaseOfDll,
-							m_process->get_name(), context.Eip - (DWORD)module_info.lpBaseOfDll);
+						if (print_registers)
+						{
+							printf("\n%ls\n  ", (name && *name) ? name : L"no name");
+							printf("thread id: %08d, %ls+0x%08X: call %ls+0x%08X\n", m_debug_event.dwThreadId,
+								m_process->get_name(), last_call_location - (DWORD)module_info.lpBaseOfDll,
+								m_process->get_name(), context.Eip - (DWORD)module_info.lpBaseOfDll);
 
-						DWORD stack_data_size = context.Ebp - context.Esp;
-						unsigned char* stack_data = new unsigned char[stack_data_size] {};
-						read_debuggee_memory((LPVOID)context.Esp, stack_data, stack_data_size, &bytes_read);
+							DWORD stack_data_size = context.Ebp - context.Esp;
+							unsigned char* stack_data = new unsigned char[stack_data_size] {};
+							read_debuggee_memory((LPVOID)context.Esp, stack_data, stack_data_size, &bytes_read);
 
-						printf("  registers:\n");
-						printf("    destination         (edi): 0x%08X\n", context.Edi);
-						printf("    source              (esi): 0x%08X\n", context.Esi);
-						printf("    base                (ebx): 0x%08X\n", context.Ebx);
-						printf("    data                (edx): 0x%08X\n", context.Edx);
-						printf("    counter             (ecx): 0x%08X\n", context.Ecx);
-						printf("    accumulator         (eax): 0x%08X\n", context.Eax);
-						printf("    stack base pointer  (ebp): 0x%08X\n", context.Ebp);
-						printf("    instruction pointer (eip): 0x%08X\n", context.Eip);
-						printf("    stack pointer       (esp): 0x%08X\n", context.Esp);
+							printf("  registers:\n");
+							printf("    destination         (edi): 0x%08X\n", context.Edi);
+							printf("    source              (esi): 0x%08X\n", context.Esi);
+							printf("    base                (ebx): 0x%08X\n", context.Ebx);
+							printf("    data                (edx): 0x%08X\n", context.Edx);
+							printf("    counter             (ecx): 0x%08X\n", context.Ecx);
+							printf("    accumulator         (eax): 0x%08X\n", context.Eax);
+							printf("    stack base pointer  (ebp): 0x%08X\n", context.Ebp);
+							printf("    instruction pointer (eip): 0x%08X\n", context.Eip);
+							printf("    stack pointer       (esp): 0x%08X\n", context.Esp);
 
-						printf("  stack:\n");
-						dump_to_console("    ", stack_data, stack_data_size, 64, 16);
+							printf("  stack:\n");
+							dump_to_console("    ", stack_data, stack_data_size, 64, 16);
 
-						delete[] stack_data;
-						stack_data = nullptr;
+							delete[] stack_data;
+							stack_data = nullptr;
+						}
 
 						last_call_location = 0;
 

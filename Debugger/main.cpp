@@ -55,7 +55,7 @@ void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_register
 void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 {
 
-	//debugger->add_breakpoint(0x00496EEE - PE32BASE, L"main_status->memset", [](c_debugger* debugger, c_registers* registers) -> void {
+	//debugger->add_breakpoint(_instruction_call, 0x00496EEE - PE32BASE, L"main_status->memset", true, [](c_debugger* debugger, c_registers* registers) -> void {
 	//	DWORD data_size = registers->cast_esi_as<DWORD>();
 	//	char* data = new char[data_size + 1]{};
 	//
@@ -69,30 +69,30 @@ void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 void add_breaks_following_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 {
 	// EntryPoint->WinMain
-	debugger->add_breakpoint(_instruction_call, 0x004013C3 - PE32BASE, L"static_string<64>::print");
-	debugger->add_breakpoint(_instruction_call, 0x00401501 - PE32BASE, L"shell_initialize");
-	debugger->add_breakpoint(_instruction_call, 0x0040151C - PE32BASE, L"main_loop");
-	debugger->add_breakpoint(_instruction_call, 0x0040152F - PE32BASE, L"shell_dispose");
+	debugger->add_breakpoint(_instruction_call, 0x004013C3 - PE32BASE, L"static_string<64>::print", true);
+	debugger->add_breakpoint(_instruction_call, 0x00401501 - PE32BASE, L"shell_initialize", true);
+	debugger->add_breakpoint(_instruction_call, 0x0040151C - PE32BASE, L"main_loop", true);
+	debugger->add_breakpoint(_instruction_call, 0x0040152F - PE32BASE, L"shell_dispose", true);
 
 	// shell_initialize->cache_files_initialize
-	debugger->add_breakpoint(_instruction_call, 0x004ED644 - PE32BASE, L"cached_map_files_open_all", on_cached_map_files_open_all_breakpoint);
+	debugger->add_breakpoint(_instruction_call, 0x004ED644 - PE32BASE, L"cached_map_files_open_all", true, on_cached_map_files_open_all_breakpoint);
 
 	// WinMain->main_loop
-	debugger->add_breakpoint(_instruction_call, 0x004A9640 - PE32BASE, L"main_game_load_map", on_main_game_load_map_breakpoint);
-	debugger->add_breakpoint(_instruction_call, 0x004A9670 - PE32BASE, L"main_game_start");
+	debugger->add_breakpoint(_instruction_call, 0x004A9640 - PE32BASE, L"main_game_load_map", true, on_main_game_load_map_breakpoint);
+	debugger->add_breakpoint(_instruction_call, 0x004A9670 - PE32BASE, L"main_game_start", true);
 
 	// main_loop->main_game_load_map
-	debugger->add_breakpoint(_instruction_call, 0x004A9B96 - PE32BASE, L"scenario_load");
-	debugger->add_breakpoint(_instruction_call, 0x004A9BA4 - PE32BASE, L"main_game_internal_map_load_complete");
+	debugger->add_breakpoint(_instruction_call, 0x004A9B96 - PE32BASE, L"scenario_load", true);
+	debugger->add_breakpoint(_instruction_call, 0x004A9BA4 - PE32BASE, L"main_game_internal_map_load_complete", true);
 
 	// main_game_load_map->scenario_load
-	debugger->add_breakpoint(_instruction_call, 0x0047E8EC - PE32BASE, L"scenario_tags_load");
-	debugger->add_breakpoint(_instruction_call, 0x0047E973 - PE32BASE, L"scenario_tags_fixup");
+	debugger->add_breakpoint(_instruction_call, 0x0047E8EC - PE32BASE, L"scenario_tags_load", true);
+	debugger->add_breakpoint(_instruction_call, 0x0047E973 - PE32BASE, L"scenario_tags_fixup", true);
 
 	// scenario_load->scenario_tags_load
-	debugger->add_breakpoint(_instruction_call, 0x00483843 - PE32BASE, L"cache_file_open");
-	debugger->add_breakpoint(_instruction_call, 0x00483856 - PE32BASE, L"cache_file_header_verify");
-	debugger->add_breakpoint(_instruction_call, 0x0048389C - PE32BASE, L"tags_file_open");
+	debugger->add_breakpoint(_instruction_call, 0x00483843 - PE32BASE, L"cache_file_open", true);
+	debugger->add_breakpoint(_instruction_call, 0x00483856 - PE32BASE, L"cache_file_header_verify", true);
+	debugger->add_breakpoint(_instruction_call, 0x0048389C - PE32BASE, L"tags_file_open", true);
 }
 
 void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
@@ -112,7 +112,7 @@ void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 	DWORD entry_point_addr = reinterpret_cast<DWORD>(module_info->EntryPoint);
 	DWORD image_base_addr = reinterpret_cast<DWORD>(module_info->lpBaseOfDll);
 
-	debugger->add_breakpoint(_instruction_call, entry_point_addr - image_base_addr, L"EntryPoint");
+	debugger->add_breakpoint(_instruction_call, entry_point_addr - image_base_addr, L"EntryPoint", true);
 
 	if (wcscmp(process->get_name(), L"halo_online.exe"))
 		return;
@@ -147,7 +147,7 @@ void add_break_on_winmain(c_debugger* debugger, LPMODULEINFO module_info)
 				continue;
 
 			DWORD call_location_module_offset = offset - image_base_addr;
-			debugger->add_breakpoint(_instruction_call, call_location_module_offset, L"WinMain");
+			debugger->add_breakpoint(_instruction_call, call_location_module_offset, L"WinMain", true);
 			break;
 		}
 	}

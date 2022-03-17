@@ -24,6 +24,7 @@ class c_registers;
 struct s_breakpoint
 {
 	BYTE break_on;
+	bool print_registers;
 	DWORD module_offset;
 	WCHAR name[64];
 	void(*callback)(class c_debugger*, class c_registers*);
@@ -36,7 +37,7 @@ public:
 
 	void run_debugger();
 
-	void add_breakpoint(e_instruction, DWORD, const wchar_t*, void(*callback)(c_debugger*, class c_registers*) = nullptr);
+	void add_breakpoint(BYTE, DWORD, const wchar_t*, bool, void(*callback)(c_debugger*, class c_registers*) = nullptr);
 
 	void add_module_info_callback(void(*callback)(c_debugger*, LPMODULEINFO));
 
