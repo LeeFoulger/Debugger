@@ -310,11 +310,6 @@ void c_debugger::run_debugger(bool print_debug_strings)
 		case OUTPUT_DEBUG_STRING_EVENT:
 		{
 			OUTPUT_DEBUG_STRING_INFO& DebugString = m_debug_event.u.DebugString;
-			if (!m_print_debug_strings)
-			{
-				m_continue_status = DBG_CONTINUE;
-				break;
-			}
 
 			if (DebugString.fUnicode)
 			{
@@ -340,7 +335,8 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						break;
 					}
 
-					wprintf_s(L"[debug] %s\n", buffer);
+					if (m_print_debug_strings)
+						wprintf_s(L"[debug] %s\n", buffer);
 				}
 
 				delete[] buffer;
@@ -370,7 +366,8 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						break;
 					}
 
-					printf_s("[debug] %s\n", buffer);
+					if (m_print_debug_strings)
+						printf_s("[debug] %s\n", buffer);
 				}
 
 				delete[] buffer;

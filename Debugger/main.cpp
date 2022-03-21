@@ -22,7 +22,7 @@ int wmain(int argc, wchar_t* argv[])
 	//debugger->add_module_info_callback(add_breaks_following_winmain);
 	debugger->add_module_info_callback(add_test_breaks);
 
-	debugger->run_debugger(false);
+	debugger->run_debugger();
 
 	return 0;
 }
@@ -54,38 +54,17 @@ void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_register
 
 void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 {
-	debugger->add_breakpoint(0xFF, 0x0056918C - PE32BASE, L"restricted_region_add_member::internal", false, [](c_debugger* debugger, c_registers* registers) -> void {
-		DWORD name_ptr_ptr = registers->cast_ebp_as<DWORD>() + 8;
-		DWORD name2_ptr_ptr = registers->cast_ebp_as<DWORD>() + 12;
-		DWORD size_ptr = registers->cast_ebp_as<DWORD>() + 16;
+	{
+		wchar_t* filename = new wchar_t[MAX_PATH] {};
+		swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger->get_process()->get_current_directory());
 
-		DWORD size = 0;
-		{
-			debugger->read_debuggee_memory((LPCVOID)size_ptr, &size, 4, NULL);
-			printf("size: 0x%08X", size);
-		}
-		{
-			char* name = new char[33]{};
-			DWORD name_ptr = 0;
-			debugger->read_debuggee_memory((LPCVOID)name_ptr_ptr, &name_ptr, 4, NULL);
-			debugger->read_debuggee_memory((LPCVOID)name_ptr, name, 32, NULL);
+		FILE* file = NULL;
+		if (_wfopen_s(&file, filename, L"w"), file != NULL)
+			fclose(file);
+		delete[] filename;
+	}
 
-			if (*name)
-				printf(", name: %s", name);
-			delete[] name;
-		}
-		{
-			char* name = new char[33]{};
-			DWORD name_ptr = 0;
-			debugger->read_debuggee_memory((LPCVOID)name2_ptr_ptr, &name_ptr, 4, NULL);
-			debugger->read_debuggee_memory((LPCVOID)name_ptr, name, 32, NULL);
-
-			if (*name)
-				printf(" | name: %s", name);
-			delete[] name;
-		}
-		printf("\n");
-	});
+	debugger->add_breakpoint(0xFF, 0x0056918C - PE32BASE, L"restricted_region_add_member::internal", false, on_restricted_region_add_member_internal_breakpoint);
 
 	//debugger->add_breakpoint(_instruction_call, 0x00496EEE - PE32BASE, L"main_status->memset", true, [](c_debugger* debugger, c_registers* registers) -> void {
 	//	DWORD data_size = registers->cast_esi_as<DWORD>();
@@ -96,6 +75,51 @@ void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 	//	printf("[main_status] %s\n", data);
 	//	delete[] data;
 	//});
+}
+
+void on_restricted_region_add_member_internal_breakpoint(c_debugger* debugger, c_registers* registers)
+{
+	wchar_t *filename = new wchar_t[MAX_PATH]{};
+	swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger->get_process()->get_current_directory());
+
+	FILE* file = NULL;
+	if (_wfopen_s(&file, filename, L"a+"), file != NULL)
+	{
+		DWORD name_ptr_ptr = registers->cast_ebp_as<DWORD>() + 8;
+		DWORD name2_ptr_ptr = registers->cast_ebp_as<DWORD>() + 12;
+		DWORD size_ptr = registers->cast_ebp_as<DWORD>() + 16;
+
+		DWORD size = 0;
+		{
+			debugger->read_debuggee_memory((LPCVOID)size_ptr, &size, 4, NULL);
+			fprintf(file, "size: 0x%08X", size);
+		}
+		{
+			char* name = new char[64 + 1]{};
+			DWORD name_ptr = 0;
+			debugger->read_debuggee_memory((LPCVOID)name_ptr_ptr, &name_ptr, 4, NULL);
+			debugger->read_debuggee_memory((LPCVOID)name_ptr, name, 64, NULL);
+
+			if (*name)
+				fprintf(file, ", name: %s", name);
+			delete[] name;
+		}
+		{
+			char* name = new char[64 + 1]{};
+			DWORD name_ptr = 0;
+			debugger->read_debuggee_memory((LPCVOID)name2_ptr_ptr, &name_ptr, 4, NULL);
+			debugger->read_debuggee_memory((LPCVOID)name_ptr, name, 64, NULL);
+
+			if (*name)
+				fprintf(file, " | name: %s", name);
+			delete[] name;
+		}
+		fprintf(file, "\n");
+
+		fclose(file);
+	}
+
+	delete[] filename;
 }
 
 void add_breaks_following_winmain(c_debugger* debugger, LPMODULEINFO module_info)
@@ -248,15 +272,17 @@ void on_main_game_load_map_breakpoint(c_debugger* debugger, c_registers* registe
 	csstrncpy(scenario_path, MAX_PATH, "default", MAX_PATH);
 
 	{
-		wchar_t current_directory[MAX_PATH]{};
-		swprintf_s(current_directory, MAX_PATH, L"%s\\test\\scenario_path.txt", debugger->get_process()->get_current_directory());
+		wchar_t* filename = new wchar_t[MAX_PATH] {};
+		swprintf_s(filename, MAX_PATH, L"%s\\test\\scenario_path.txt", debugger->get_process()->get_current_directory());
 
 		FILE* file = NULL;
-		if (_wfopen_s(&file, current_directory, L"r"), file != NULL)
+		if (_wfopen_s(&file, filename, L"r"), file != NULL)
 		{
 			fgets(scenario_path, MAX_PATH, file);
 			fclose(file);
 		}
+
+		delete[] filename;
 
 		if (*scenario_path == 0 || *scenario_path == '\r' || *scenario_path == '\n')
 		{
@@ -292,4 +318,10 @@ void csstrncpy(char* dest, rsize_t size_in_bytes, const char* src, rsize_t max_c
 {
 	strncpy_s(dest, size_in_bytes, src, max_count);
 	memset(dest + strlen(src), 0, max_count - strlen(src));
+}
+
+void cswcsncpy(wchar_t* dest, rsize_t size_in_bytes, const wchar_t* src, rsize_t max_count)
+{
+	wcsncpy_s(dest, size_in_bytes, src, max_count);
+	memset(dest + wcslen(src), 0, max_count - wcslen(src));
 }
