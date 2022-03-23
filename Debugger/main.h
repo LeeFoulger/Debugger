@@ -9,6 +9,7 @@
 #include <tlhelp32.h>
 
 #include "macros.h"
+#include "logger.h"
 #include "process.h"
 #include "debugger.h"
 
