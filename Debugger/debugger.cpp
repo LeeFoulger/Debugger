@@ -410,6 +410,18 @@ BOOL c_debugger::read_debuggee_memory(
 	return ReadProcessMemory(m_process->get_process_handle(), lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead);
 }
 
+BOOL c_debugger::read_debuggee_pointer(
+	_In_ LPCVOID lpBaseAddress,
+	_Out_writes_bytes_to_(nSize, *lpNumberOfBytesRead) LPVOID lpBuffer,
+	_In_ SIZE_T nSize,
+	_Out_opt_ SIZE_T* lpNumberOfBytesRead
+)
+{
+	DWORD data_ptr = 0;
+	read_debuggee_memory(lpBaseAddress, &data_ptr, sizeof(void*), lpNumberOfBytesRead);
+	return read_debuggee_memory((LPCVOID)data_ptr, lpBuffer, nSize, lpNumberOfBytesRead);
+}
+
 BOOL c_debugger::write_debuggee_memory(
 	_In_ LPVOID lpBaseAddress,
 	_In_reads_bytes_(nSize) LPCVOID lpBuffer,
@@ -421,13 +433,12 @@ BOOL c_debugger::write_debuggee_memory(
 }
 
 BOOL c_debugger::write_debuggee_pointer(
-	c_debugger* debugger,
 	_In_ LPVOID lpBaseAddress,
 	_In_ LPCVOID lpAddress,
 	_Out_opt_ SIZE_T* lpNumberOfBytesWritten
 )
 {
-	return debugger->write_debuggee_memory(lpBaseAddress, &lpAddress, sizeof(void*), lpNumberOfBytesWritten);
+	return write_debuggee_memory(lpBaseAddress, &lpAddress, sizeof(void*), lpNumberOfBytesWritten);
 }
 
 LPVOID c_debugger::allocate_and_write_debuggee_memory(

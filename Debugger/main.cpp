@@ -31,9 +31,8 @@ const bool disable_saber_code_applied_in_scenario_load = false;
 
 void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_registers* registers)
 {
-	LPVOID new_debuggee_string = debugger_write_debuggee_string(debugger, "--account 123 --sign-in-code 123 --environment 123");
-	LPVOID debuggee_command_line = registers->get_runtime_addr_as<LPVOID>(0x052BE944 - PE32BASE);
-	debugger->write_debuggee_pointer(debugger, debuggee_command_line, new_debuggee_string, NULL);
+	LPVOID debuggee_command_line = debugger_allocate_and_write_debuggee_string(debugger, "--account 123 --sign-in-code 123 --environment 123");
+	debugger->write_debuggee_pointer(registers->get_runtime_addr_as<LPVOID>(0x052BE944 - PE32BASE), debuggee_command_line, NULL);
 
 	size_t data_size = 0x375F0;
 	char* data = new char[data_size] {};
@@ -45,8 +44,7 @@ void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_register
 	if (disable_saber_code_applied_in_scenario_load)
 	{
 		unsigned char patch_data_bytes[] = { 0x00 };
-		LPVOID data_addr1 = registers->get_runtime_addr_as<LPVOID>(0x01346881 - PE32BASE);
-		debugger->write_debuggee_memory(data_addr1, patch_data_bytes, sizeof(patch_data_bytes), NULL);
+		debugger->write_debuggee_memory(registers->get_runtime_addr_as<LPVOID>(0x01346881 - PE32BASE), patch_data_bytes, sizeof(patch_data_bytes), NULL);
 	}
 
 	printf("");
@@ -79,41 +77,28 @@ void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 
 void on_restricted_region_add_member_internal_breakpoint(c_debugger* debugger, c_registers* registers)
 {
-	wchar_t *filename = new wchar_t[MAX_PATH]{};
+	static DWORD size = 0;
+	debugger->read_debuggee_memory((LPCVOID)(registers->cast_ebp_as<DWORD>(0x10)), &size, 4, NULL);
+
+	static char name0[64 + 1] {};
+	debugger->read_debuggee_pointer((LPCVOID)(registers->cast_ebp_as<DWORD>(0x8)), name0, 64, NULL);
+
+	static char name1[64 + 1] {};
+	debugger->read_debuggee_pointer((LPCVOID)(registers->cast_ebp_as<DWORD>(0xC)), name1, 64, NULL);
+
+	static wchar_t filename[MAX_PATH] {};
 	swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger->get_process()->get_current_directory());
 
-	FILE* file = NULL;
+	static FILE* file = NULL;
 	if (_wfopen_s(&file, filename, L"a+"), file != NULL)
 	{
-		DWORD name_ptr_ptr = registers->cast_ebp_as<DWORD>() + 8;
-		DWORD name2_ptr_ptr = registers->cast_ebp_as<DWORD>() + 12;
-		DWORD size_ptr = registers->cast_ebp_as<DWORD>() + 16;
+		fprintf(file, "size: 0x%08X", size);
+		if (*name0)
+			fprintf(file, ", %s", name0);
 
-		DWORD size = 0;
-		{
-			debugger->read_debuggee_memory((LPCVOID)size_ptr, &size, 4, NULL);
-			fprintf(file, "size: 0x%08X", size);
-		}
-		{
-			char* name = new char[64 + 1]{};
-			DWORD name_ptr = 0;
-			debugger->read_debuggee_memory((LPCVOID)name_ptr_ptr, &name_ptr, 4, NULL);
-			debugger->read_debuggee_memory((LPCVOID)name_ptr, name, 64, NULL);
+		if (*name1)
+			fprintf(file, " | %s", name1);
 
-			if (*name)
-				fprintf(file, ", name: %s", name);
-			delete[] name;
-		}
-		{
-			char* name = new char[64 + 1]{};
-			DWORD name_ptr = 0;
-			debugger->read_debuggee_memory((LPCVOID)name2_ptr_ptr, &name_ptr, 4, NULL);
-			debugger->read_debuggee_memory((LPCVOID)name_ptr, name, 64, NULL);
-
-			if (*name)
-				fprintf(file, " | name: %s", name);
-			delete[] name;
-		}
 		fprintf(file, "\n");
 
 		fclose(file);
@@ -228,7 +213,7 @@ void on_cached_map_files_open_all_breakpoint(c_debugger* debugger, c_registers* 
 	{
 		LPVOID lpBaseAddress = registers->get_runtime_addr_as<LPVOID>(resource_paths_offset + i * 4);
 		LPVOID lpAddress = reinterpret_cast<LPVOID>(reinterpret_cast<DWORD>(remote_page) + i * 32);
-		debugger->write_debuggee_pointer(debugger, lpBaseAddress, lpAddress, NULL);
+		debugger->write_debuggee_pointer(lpBaseAddress, lpAddress, NULL);
 	}
 
 	printf("");

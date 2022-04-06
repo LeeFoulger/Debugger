@@ -55,6 +55,12 @@ public:
 		_In_ SIZE_T nSize,
 		_Out_opt_ SIZE_T* lpNumberOfBytesRead
 	);
+	BOOL read_debuggee_pointer(
+		_In_ LPCVOID lpBaseAddress,
+		_Out_writes_bytes_to_(nSize, *lpNumberOfBytesRead) LPVOID lpBuffer,
+		_In_ SIZE_T nSize,
+		_Out_opt_ SIZE_T* lpNumberOfBytesRead
+	);
 	BOOL write_debuggee_memory(
 		_In_ LPVOID lpBaseAddress,
 		_In_reads_bytes_(nSize) LPCVOID lpBuffer,
@@ -62,7 +68,6 @@ public:
 		_Out_opt_ SIZE_T* lpNumberOfBytesWritten
 	);
 	BOOL write_debuggee_pointer(
-		c_debugger* debugger,
 		_In_ LPVOID lpBaseAddress,
 		_In_ LPCVOID lpAddress,
 		_Out_opt_ SIZE_T* lpNumberOfBytesWritten
@@ -89,13 +94,24 @@ protected:
 };
 
 template<typename t_string_type, size_t k_string_size>
-LPVOID debugger_write_debuggee_string(
+LPVOID debugger_allocate_and_write_debuggee_string(
 	c_debugger* debugger,
 	t_string_type(&string)[k_string_size]
 )
 {
 	long string_size_in_bytes = k_string_size * sizeof(t_string_type);
 	return debugger->allocate_and_write_debuggee_memory(string, string_size_in_bytes, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE, NULL);
+}
+
+template<typename t_string_type, size_t k_string_size>
+BOOL debugger_write_debuggee_string(
+	c_debugger* debugger,
+	LPVOID lpAddress,
+	t_string_type(&string)[k_string_size]
+)
+{
+	long string_size_in_bytes = k_string_size * sizeof(t_string_type);
+	return debugger->write_debuggee_memory(lpAddress, string, string_size_in_bytes, NULL);
 }
 
 class c_registers
@@ -153,9 +169,9 @@ public:
 
 	// stack base pointer
 	template<typename t_type>
-	t_type cast_ebp_as(bool static_addr = false)
+	t_type cast_ebp_as(DWORD offset = 0, bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Ebp);
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Ebp) + offset;
 	}
 
 	// instruction pointer
@@ -167,9 +183,14 @@ public:
 
 	// stack pointer
 	template<typename t_type>
-	t_type cast_esp_as(bool static_addr = false)
+	t_type cast_esp_as(DWORD offset = 0, bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Esp);
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Esp) + offset;
+	}
+
+	DWORD get_stack_size()
+	{
+		return context.Ebp - context.Esp;
 	}
 
 	template<typename t_type>
