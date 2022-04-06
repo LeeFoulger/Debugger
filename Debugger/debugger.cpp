@@ -313,7 +313,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 
 			if (DebugString.fUnicode)
 			{
-				WCHAR* buffer = new WCHAR[DebugString.nDebugStringLength * sizeof(WCHAR)]{};
+				WCHAR* buffer = new WCHAR[DebugString.nDebugStringLength * sizeof(WCHAR)] {};
 				read_debuggee_memory(DebugString.lpDebugStringData, buffer, DebugString.nDebugStringLength * sizeof(WCHAR), NULL);
 
 				WORD nDebugStringLength = DebugString.nDebugStringLength;
@@ -343,7 +343,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 			}
 			else
 			{
-				CHAR* buffer = new CHAR[DebugString.nDebugStringLength * sizeof(CHAR)]{};
+				CHAR* buffer = new CHAR[DebugString.nDebugStringLength * sizeof(CHAR)] {};
 
 				read_debuggee_memory(DebugString.lpDebugStringData, buffer, DebugString.nDebugStringLength * sizeof(CHAR), NULL);
 

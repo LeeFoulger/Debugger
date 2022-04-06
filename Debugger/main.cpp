@@ -24,6 +24,8 @@ int wmain(int argc, wchar_t* argv[])
 
 	debugger->run_debugger();
 
+	delete process;
+
 	return 0;
 }
 
@@ -34,10 +36,11 @@ void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_register
 	LPVOID debuggee_command_line = debugger_allocate_and_write_debuggee_string(debugger, "--account 123 --sign-in-code 123 --environment 123");
 	debugger->write_debuggee_pointer(registers->get_runtime_addr_as<LPVOID>(0x052BE944 - PE32BASE), debuggee_command_line, NULL);
 
-	size_t data_size = 0x375F0;
-	char* data = new char[data_size] {};
-	LPVOID data_addr = registers->get_runtime_addr_as<LPVOID>(0x043E1408 - PE32BASE);
-	debugger->read_debuggee_memory(data_addr, data, data_size, NULL);
+	static char* data[0x375F0] {};
+	if (*data == 0)
+	{
+		debugger->read_debuggee_memory(registers->get_runtime_addr_as<LPVOID>(0x043E1408 - PE32BASE), data, 0x375F0, NULL);
+	}
 
 	printf("");
 
@@ -53,20 +56,20 @@ void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_register
 void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 {
 	{
-		wchar_t* filename = new wchar_t[MAX_PATH] {};
+		wchar_t filename[MAX_PATH] {};
 		swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger->get_process()->get_current_directory());
 
 		FILE* file = NULL;
 		if (_wfopen_s(&file, filename, L"w"), file != NULL)
 			fclose(file);
-		delete[] filename;
 	}
 
 	debugger->add_breakpoint(0xFF, 0x0056918C - PE32BASE, L"restricted_region_add_member::internal", false, on_restricted_region_add_member_internal_breakpoint);
+	debugger->add_breakpoint(_instruction_call, 0x005B103C - PE32BASE, L"rasterizer_draw_watermark", false, on_rasterizer_draw_watermark_breakpoint);
 
 	//debugger->add_breakpoint(_instruction_call, 0x00496EEE - PE32BASE, L"main_status->memset", true, [](c_debugger* debugger, c_registers* registers) -> void {
 	//	DWORD data_size = registers->cast_esi_as<DWORD>();
-	//	char* data = new char[data_size + 1]{};
+	//	char* data = new char[data_size + 1] {};
 	//
 	//	debugger->read_debuggee_memory(registers->cast_edi_as<LPCVOID>(), data, data_size, NULL);
 	//
@@ -103,8 +106,8 @@ void on_restricted_region_add_member_internal_breakpoint(c_debugger* debugger, c
 
 		fclose(file);
 	}
+}
 
-	delete[] filename;
 }
 
 void add_breaks_following_winmain(c_debugger* debugger, LPMODULEINFO module_info)
@@ -250,14 +253,14 @@ enum e_game_engine_variant : ULONG
 
 void on_main_game_load_map_breakpoint(c_debugger* debugger, c_registers* registers)
 {
-	static char game_options[0xE620]{};
+	static char game_options[0xE620] {};
 	memset(game_options, 0, sizeof(game_options));
 
-	char scenario_path[MAX_PATH]{};
+	char scenario_path[MAX_PATH] {};
 	csstrncpy(scenario_path, MAX_PATH, "default", MAX_PATH);
 
 	{
-		wchar_t* filename = new wchar_t[MAX_PATH] {};
+		wchar_t filename[MAX_PATH] {};
 		swprintf_s(filename, MAX_PATH, L"%s\\test\\scenario_path.txt", debugger->get_process()->get_current_directory());
 
 		FILE* file = NULL;
@@ -266,8 +269,6 @@ void on_main_game_load_map_breakpoint(c_debugger* debugger, c_registers* registe
 			fgets(scenario_path, MAX_PATH, file);
 			fclose(file);
 		}
-
-		delete[] filename;
 
 		if (*scenario_path == 0 || *scenario_path == '\r' || *scenario_path == '\n')
 		{
