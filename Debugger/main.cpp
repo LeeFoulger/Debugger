@@ -24,6 +24,7 @@ int wmain(int argc, wchar_t* argv[])
 
 	debugger->run_debugger();
 
+	delete debugger;
 	delete process;
 
 	return 0;
@@ -108,6 +109,25 @@ void on_restricted_region_add_member_internal_breakpoint(c_debugger* debugger, c
 	}
 }
 
+void on_rasterizer_draw_watermark_breakpoint(c_debugger* debugger, c_registers* registers)
+{
+	static c_string<wchar_t, 1024> watermark_old{};
+	if (*watermark_old == 0)
+	{
+		DWORD old_watermark_ptr = 0;
+		debugger->read_debuggee_pointer((LPCVOID)(registers->cast_esp_as<DWORD>(0x8)), watermark_old, 1024 * sizeof(wchar_t), NULL);
+	}
+
+	static c_string<wchar_t, 1024> watermark{};
+	static LPVOID watermark_addr = debugger_allocate_and_write_debuggee_string(debugger, watermark);
+
+	if (*watermark == 0)
+	{
+		swprintf_s(watermark, L"DEBUGGER ATTACHED");
+		debugger_write_debuggee_string(debugger, watermark_addr, watermark);
+	}
+
+	debugger->write_debuggee_pointer((LPVOID)(registers->cast_esp_as<DWORD>(0x8)), watermark_addr, NULL);
 }
 
 void add_breaks_following_winmain(c_debugger* debugger, LPMODULEINFO module_info)
