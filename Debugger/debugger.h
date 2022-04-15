@@ -215,6 +215,56 @@ public:
 		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Xsp) + offset;
 	}
 
+#ifdef _WIN64
+	template<typename t_type>
+	t_type* cast_r8_as(bool static_addr = false)
+	{
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.R8);
+	}
+
+	template<typename t_type>
+	t_type* cast_r9_as(bool static_addr = false)
+	{
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.R9);
+	}
+
+	template<typename t_type>
+	t_type* cast_r10_as(bool static_addr = false)
+	{
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.R10);
+	}
+
+	template<typename t_type>
+	t_type* cast_r11_as(bool static_addr = false)
+	{
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.R11);
+	}
+
+	template<typename t_type>
+	t_type* cast_r12_as(bool static_addr = false)
+	{
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.R12);
+	}
+
+	template<typename t_type>
+	t_type* cast_r13_as(bool static_addr = false)
+	{
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.R13);
+	}
+
+	template<typename t_type>
+	t_type* cast_r14_as(bool static_addr = false)
+	{
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.R14);
+	}
+
+	template<typename t_type>
+	t_type* cast_r15_as(bool static_addr = false)
+	{
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.R15);
+	}
+#endif // _WIN64
+
 	SIZE_T get_stack_size()
 	{
 		return context.Xbp - context.Xsp;
@@ -224,6 +274,11 @@ public:
 	t_type* get_runtime_addr_as(SIZE_T offset = 0)
 	{
 		return reinterpret_cast<t_type*>(runtime_base_addr + offset);
+	}
+
+	CONTEXT get_raw_context()
+	{
+		return context;
 	}
 
 protected:

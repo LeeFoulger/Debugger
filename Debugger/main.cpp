@@ -56,23 +56,27 @@ void on_command_line_get_credentials_breakpoint(c_debugger* debugger, c_register
 
 void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 {
+	{
+		wchar_t filename[MAX_PATH]{};
+		swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger->get_process()->get_current_directory());
+
+		FILE* file = NULL;
+		if (_wfopen_s(&file, filename, L"w"), file != NULL)
+		{
+			fprintf(file, "size, name, type");
+			fclose(file);
+		}
+	}
+
 	if (wcscmp(debugger->get_process()->get_name(), L"atlas_tag_test.exe") == 0)
 	{
 		debugger->add_breakpoint(0x40, 0x00000001403916E0 - PE64BASE, L"is_debugger_present", false, on_is_debugger_present_breakpoint);
 		debugger->add_breakpoint(0xC2, 0x00000001401A9A60 - PE64BASE, L"shell_screen_pause", false, on_shell_screen_pause_breakpoint);
-		debugger->add_breakpoint(0x33, 0x00000001401A9540 - PE64BASE, L"shell_get_external_host", false, on_shell_get_external_host_breakpoint);
+		//debugger->add_breakpoint(0x33, 0x00000001401A9540 - PE64BASE, L"shell_get_external_host", false, on_shell_get_external_host_breakpoint);
+		debugger->add_breakpoint(0x48, 0x00000001404A18D0 - PE64BASE, L"restricted_region_add_member", false, on_restricted_region_add_member_breakpoint);
 	}
 	else if (wcscmp(debugger->get_process()->get_name(), L"halo_online.exe") == 0)
 	{
-		{
-			wchar_t filename[MAX_PATH]{};
-			swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger->get_process()->get_current_directory());
-
-			FILE* file = NULL;
-			if (_wfopen_s(&file, filename, L"w"), file != NULL)
-				fclose(file);
-		}
-
 		debugger->add_breakpoint(0xFF, 0x0056918C - PE32BASE, L"restricted_region_add_member::internal", false, on_restricted_region_add_member_internal_breakpoint);
 		debugger->add_breakpoint(_instruction_call, 0x005B103C - PE32BASE, L"rasterizer_draw_watermark", false, on_rasterizer_draw_watermark_breakpoint);
 
@@ -93,11 +97,11 @@ void on_restricted_region_add_member_internal_breakpoint(c_debugger* debugger, c
 	static SIZE_T size = 0;
 	debugger->read_debuggee_memory((LPCVOID)(registers->cast_bp_as<SIZE_T>(0x10)), &size, 4, NULL);
 
-	static char name0[64 + 1] {};
-	debugger->read_debuggee_pointer((LPCVOID)(registers->cast_bp_as<SIZE_T>(0x8)), name0, 64, NULL);
+	static char name[64 + 1] {};
+	debugger->read_debuggee_pointer((LPCVOID)(registers->cast_bp_as<SIZE_T>(0x8)), name, 64, NULL);
 
-	static char name1[64 + 1] {};
-	debugger->read_debuggee_pointer((LPCVOID)(registers->cast_bp_as<SIZE_T>(0xC)), name1, 64, NULL);
+	static char type[64 + 1] {};
+	debugger->read_debuggee_pointer((LPCVOID)(registers->cast_bp_as<SIZE_T>(0xC)), type, 64, NULL);
 
 	static wchar_t filename[MAX_PATH] {};
 	swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger->get_process()->get_current_directory());
@@ -105,15 +109,10 @@ void on_restricted_region_add_member_internal_breakpoint(c_debugger* debugger, c
 	static FILE* file = NULL;
 	if (_wfopen_s(&file, filename, L"a+"), file != NULL)
 	{
-		fprintf(file, "size: 0x%08zX", size);
-		if (*name0)
-			fprintf(file, ", %s", name0);
-
-		if (*name1)
-			fprintf(file, " | %s", name1);
-
+		fprintf(file, "0x%08zX", size);
+		fprintf(file, ", %s", name ? name : "(null)");
+		fprintf(file, ", %s", type ? type : "(null)");
 		fprintf(file, "\n");
-
 		fclose(file);
 	}
 }
@@ -344,6 +343,8 @@ void cswcsncpy(wchar_t* dest, rsize_t size_in_bytes, const wchar_t* src, rsize_t
 	memset(dest + wcslen(src), 0, max_count - wcslen(src));
 }
 
+// mcc/tools
+
 void on_is_debugger_present_breakpoint(c_debugger* debugger, c_registers* registers)
 {
 	// forces is_debugger_present() to return true
@@ -381,11 +382,38 @@ void on_shell_screen_pause_breakpoint(c_debugger* debugger, c_registers* registe
 
 void on_shell_get_external_host_breakpoint(c_debugger* debugger, c_registers* registers)
 {
-	SIZE_T return_address = 0;
-	SIZE_T call_address = -5;
-	debugger->read_debuggee_memory((LPCVOID)registers->cast_sp_as<SIZE_T>(), &return_address, sizeof(return_address), NULL);
-	call_address += return_address;
+	//SIZE_T return_address = 0;
+	//SIZE_T call_address = -5;
+	//debugger->read_debuggee_memory((LPCVOID)registers->cast_sp_as<SIZE_T>(), &return_address, sizeof(return_address), NULL);
+	//call_address += return_address;
 
 	//printf("%016zX\tcall shell_get_external_host\n", call_address);
+	printf("");
+}
+
+void on_restricted_region_add_member_breakpoint(c_debugger* debugger, c_registers* registers)
+{
+	static SIZE_T size = 0;
+	size = registers->get_raw_context().R9;
+
+	static char name[64 + 1]{};
+	debugger->read_debuggee_memory((LPCVOID)(registers->get_raw_context().Rdx), name, 64, NULL);
+
+	static char type[64 + 1]{};
+	debugger->read_debuggee_memory((LPCVOID)(registers->get_raw_context().R8), type, 64, NULL);
+
+	static wchar_t filename[MAX_PATH]{};
+	swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger->get_process()->get_current_directory());
+
+	static FILE* file = NULL;
+	if (_wfopen_s(&file, filename, L"a+"), file != NULL)
+	{
+		fprintf(file, "0x%08zX", size);
+		fprintf(file, ", %s", name ? name : "(null)");
+		fprintf(file, ", %s", type ? type : "(null)");
+		fprintf(file, "\n");
+		fclose(file);
+	}
+
 	printf("");
 }
