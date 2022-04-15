@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <stdio.h>
+//#include <stdlib.h>
 
 #include <Psapi.h>
 #include <tlhelp32.h>
@@ -33,3 +34,7 @@ void cswcsncpy(wchar_t* dest, rsize_t size_in_bytes, const wchar_t* src, rsize_t
 
 template<typename t_string_type, size_t k_string_size>
 using c_string = t_string_type[k_string_size];
+
+
+void on_is_debugger_present_breakpoint(c_debugger* debugger, c_registers* registers);
+void on_shell_screen_pause_breakpoint(c_debugger* debugger, c_registers* registers);
