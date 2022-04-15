@@ -58,8 +58,9 @@ void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 {
 	if (wcscmp(debugger->get_process()->get_name(), L"atlas_tag_test.exe") == 0)
 	{
-		debugger->add_breakpoint(0x40, 0x1403916E0 - PE64BASE, L"is_debugger_present", false, on_is_debugger_present_breakpoint);
-		debugger->add_breakpoint(0xC2, 0x1401A9A60 - PE64BASE, L"shell_screen_pause", false, on_shell_screen_pause_breakpoint);
+		debugger->add_breakpoint(0x40, 0x00000001403916E0 - PE64BASE, L"is_debugger_present", false, on_is_debugger_present_breakpoint);
+		debugger->add_breakpoint(0xC2, 0x00000001401A9A60 - PE64BASE, L"shell_screen_pause", false, on_shell_screen_pause_breakpoint);
+		debugger->add_breakpoint(0x33, 0x00000001401A9540 - PE64BASE, L"shell_get_external_host", false, on_shell_get_external_host_breakpoint);
 	}
 	else if (wcscmp(debugger->get_process()->get_name(), L"halo_online.exe") == 0)
 	{
@@ -89,14 +90,14 @@ void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 
 void on_restricted_region_add_member_internal_breakpoint(c_debugger* debugger, c_registers* registers)
 {
-	static DWORD size = 0;
-	debugger->read_debuggee_memory((LPCVOID)(registers->cast_bp_as<DWORD>(0x10)), &size, 4, NULL);
+	static SIZE_T size = 0;
+	debugger->read_debuggee_memory((LPCVOID)(registers->cast_bp_as<SIZE_T>(0x10)), &size, 4, NULL);
 
 	static char name0[64 + 1] {};
-	debugger->read_debuggee_pointer((LPCVOID)(registers->cast_bp_as<DWORD>(0x8)), name0, 64, NULL);
+	debugger->read_debuggee_pointer((LPCVOID)(registers->cast_bp_as<SIZE_T>(0x8)), name0, 64, NULL);
 
 	static char name1[64 + 1] {};
-	debugger->read_debuggee_pointer((LPCVOID)(registers->cast_bp_as<DWORD>(0xC)), name1, 64, NULL);
+	debugger->read_debuggee_pointer((LPCVOID)(registers->cast_bp_as<SIZE_T>(0xC)), name1, 64, NULL);
 
 	static wchar_t filename[MAX_PATH] {};
 	swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger->get_process()->get_current_directory());
@@ -104,7 +105,7 @@ void on_restricted_region_add_member_internal_breakpoint(c_debugger* debugger, c
 	static FILE* file = NULL;
 	if (_wfopen_s(&file, filename, L"a+"), file != NULL)
 	{
-		fprintf(file, "size: 0x%08X", size);
+		fprintf(file, "size: 0x%08zX", size);
 		if (*name0)
 			fprintf(file, ", %s", name0);
 
@@ -122,8 +123,8 @@ void on_rasterizer_draw_watermark_breakpoint(c_debugger* debugger, c_registers* 
 	static c_string<wchar_t, 1024> watermark_old{};
 	if (*watermark_old == 0)
 	{
-		DWORD old_watermark_ptr = 0;
-		debugger->read_debuggee_pointer((LPCVOID)(registers->cast_sp_as<DWORD>(0x8)), watermark_old, 1024 * sizeof(wchar_t), NULL);
+		SIZE_T old_watermark_ptr = 0;
+		debugger->read_debuggee_pointer((LPCVOID)(registers->cast_sp_as<SIZE_T>(0x8)), watermark_old, 1024 * sizeof(wchar_t), NULL);
 	}
 
 	static c_string<wchar_t, 1024> watermark{};
@@ -135,7 +136,7 @@ void on_rasterizer_draw_watermark_breakpoint(c_debugger* debugger, c_registers* 
 		debugger_write_debuggee_string(debugger, watermark_addr, watermark);
 	}
 
-	debugger->write_debuggee_pointer((LPVOID)(registers->cast_sp_as<DWORD>(0x8)), watermark_addr, NULL);
+	debugger->write_debuggee_pointer((LPVOID)(registers->cast_sp_as<SIZE_T>(0x8)), watermark_addr, NULL);
 }
 
 void add_breaks_following_winmain(c_debugger* debugger, LPMODULEINFO module_info)
@@ -345,7 +346,10 @@ void cswcsncpy(wchar_t* dest, rsize_t size_in_bytes, const wchar_t* src, rsize_t
 
 void on_is_debugger_present_breakpoint(c_debugger* debugger, c_registers* registers)
 {
+	// forces is_debugger_present() to return true
 	static bool g_set_always_a_debugger_present = false;
+
+	// forces is_debugger_present() to return false
 	static bool g_set_never_a_debugger_present = false;
 
 	bool set_always_a_debugger_present;
@@ -369,7 +373,19 @@ void on_is_debugger_present_breakpoint(c_debugger* debugger, c_registers* regist
 
 void on_shell_screen_pause_breakpoint(c_debugger* debugger, c_registers* registers)
 {
-	bool bool_142C204B9 = false;
-	debugger->write_debuggee_memory(registers->get_runtime_addr_as<LPVOID>(0x2C204B9), &bool_142C204B9, sizeof(bool_142C204B9), NULL);
+	bool g_shell_application_paused = false;
+	debugger->write_debuggee_memory(registers->get_runtime_addr_as<LPVOID>(0x2C204B9), &g_shell_application_paused, sizeof(g_shell_application_paused), NULL);
+	printf("");
+}
+
+
+void on_shell_get_external_host_breakpoint(c_debugger* debugger, c_registers* registers)
+{
+	SIZE_T return_address = 0;
+	SIZE_T call_address = -5;
+	debugger->read_debuggee_memory((LPCVOID)registers->cast_sp_as<SIZE_T>(), &return_address, sizeof(return_address), NULL);
+	call_address += return_address;
+
+	//printf("%016zX\tcall shell_get_external_host\n", call_address);
 	printf("");
 }

@@ -139,7 +139,7 @@ BOOL debugger_write_debuggee_string(
 class c_registers
 {
 public:
-	c_registers(LPMODULEINFO module_info, LPCONTEXT context) :
+	c_registers(LPMODULEINFO module_info, CONTEXT& context) :
 		module_info(*module_info),
 		context(context),
 
@@ -156,68 +156,68 @@ public:
 	template<typename t_type>
 	t_type cast_di_as(bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context->Xdi);
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Xdi);
 	}
 
 	// source
 	template<typename t_type>
 	t_type cast_si_as(bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context->Xsi);
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Xsi);
 	}
 
 	// base
 	template<typename t_type>
 	t_type cast_bx_as(bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context->Xbx);
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Xbx);
 	}
 
 	// data
 	template<typename t_type>
 	t_type cast_dx_as(bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context->Xdx);
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Xdx);
 	}
 
 	// counter
 	template<typename t_type>
 	t_type cast_cx_as(bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context->Xcx);
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Xcx);
 	}
 
 	// accumulator
 	template<typename t_type>
 	t_type cast_ax_as(bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context->Xax);
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Xax);
 	}
 
 	// stack base pointer
 	template<typename t_type>
 	t_type cast_bp_as(SIZE_T offset = 0, bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context->Xbp) + offset;
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Xbp) + offset;
 	}
 
 	// instruction pointer
 	template<typename t_type>
 	t_type cast_ip_as(bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context->Xip);
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Xip);
 	}
 
 	// stack pointer
 	template<typename t_type>
 	t_type cast_sp_as(SIZE_T offset = 0, bool static_addr = false)
 	{
-		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context->Xsp) + offset;
+		return *reinterpret_cast<t_type*>((static_addr ? static_base_addr - runtime_base_addr : 0) + &context.Xsp) + offset;
 	}
 
 	SIZE_T get_stack_size()
 	{
-		return context->Xbp - context->Xsp;
+		return context.Xbp - context.Xsp;
 	}
 
 	template<typename t_type>
@@ -229,7 +229,7 @@ public:
 protected:
 
 	MODULEINFO& module_info;
-	LPCONTEXT& context;
+	CONTEXT& context;
 	SIZE_T static_base_addr;
 	SIZE_T runtime_base_addr;
 };

@@ -6,13 +6,11 @@
 
 #include <cassert>
 #include <stdio.h>
-//#include <stdlib.h>
 
 #include <Psapi.h>
 #include <tlhelp32.h>
 
 #include "macros.h"
-#include "logger.h"
 #include "process.h"
 #include "debugger.h"
 
@@ -38,3 +36,4 @@ using c_string = t_string_type[k_string_size];
 
 void on_is_debugger_present_breakpoint(c_debugger* debugger, c_registers* registers);
 void on_shell_screen_pause_breakpoint(c_debugger* debugger, c_registers* registers);
+void on_shell_get_external_host_breakpoint(c_debugger* debugger, c_registers* registers);

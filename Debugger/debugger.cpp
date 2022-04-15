@@ -49,11 +49,7 @@ void c_debugger::add_breakpoint(BYTE break_on, SIZE_T call_offset, const wchar_t
 	{
 		s_breakpoint& breakpoint = m_breakpoints[m_breakpoints.count++];
 
-#ifdef _WIN64
-		printf("Adding breakpoint at 0x%016llX for %ls\n", call_offset, name);
-#else
-		printf("Adding breakpoint at 0x%08X for %ls\n", call_offset, name);
-#endif
+		printf("Adding breakpoint at 0x%016zX for %ls\n", call_offset, name);
 
 		breakpoint.break_on = break_on;
 		breakpoint.print_registers = print_registers;
@@ -64,11 +60,7 @@ void c_debugger::add_breakpoint(BYTE break_on, SIZE_T call_offset, const wchar_t
 	else
 	{
 
-#ifdef _WIN64
-		printf("Unable to add breakpoint at 0x%016llX for %ls\n", call_offset, name);
-#else
-		printf("Unable to add breakpoint at 0x%08X for %ls\n", call_offset, name);
-#endif
+		printf("Unable to add breakpoint at 0x%016zX for %ls\n", call_offset, name);
 	}
 }
 
@@ -140,7 +132,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 				{
 					m_thread_handle = OpenThread(THREAD_ALL_ACCESS, true, m_debug_event.dwThreadId);
 
-					K32EnumProcessModules(m_process->get_process_handle(), modules, sizeof(modules), (LPDWORD)&bytes_read);
+					EnumProcessModules(m_process->get_process_handle(), modules, sizeof(modules), (LPDWORD)&bytes_read);
 					if (*modules)
 						GetModuleInformation(m_process->get_process_handle(), *modules, &module_info, sizeof(module_info));
 
@@ -235,7 +227,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 					GetThreadContext(m_thread_handle, &context);
 					SuspendThread(m_thread_handle);
 
-					c_registers* registers = new c_registers(&module_info, &context);
+					c_registers* registers = new c_registers(&module_info, context);
 
 					if (last_call_location)
 					{
@@ -264,47 +256,31 @@ void c_debugger::run_debugger(bool print_debug_strings)
 
 						if (print_registers)
 						{
-#ifdef _WIN64
+							SIZE_T return_address = 0;
+							SIZE_T call_address = -5;
+							read_debuggee_memory((LPCVOID)context.Xsp, &return_address, sizeof(return_address), NULL);
+							call_address += return_address;
+
 							printf("\n%ls\n  ", (name&&* name) ? name : L"no name");
-							printf("thread id: %08d, %ls+0x%016llX: call %ls+0x%08llX\n", m_debug_event.dwThreadId,
-								m_process->get_name(), last_call_location - (SIZE_T)module_info.lpBaseOfDll,
-								m_process->get_name(), context.Xip - (SIZE_T)module_info.lpBaseOfDll);
+							if (call_address > (SIZE_T)module_info.lpBaseOfDll)
+							{
+								printf("thread id: %08d, call %ls+0x%08zX\n", m_debug_event.dwThreadId, m_process->get_name(), call_address - (SIZE_T)module_info.lpBaseOfDll);
+							}
 
-							SIZE_T stack_data_size = context.Xbp - context.Xsp;
+							SIZE_T stack_data_size = 64; // context.Xbp - context.Xsp;
 							unsigned char* stack_data = new unsigned char[stack_data_size] {};
 							read_debuggee_memory((LPVOID)context.Xsp, stack_data, stack_data_size, &bytes_read);
 
 							printf("  registers:\n");
-							printf("    destination         (di): 0x%016llX\n", context.Xdi);
-							printf("    source              (si): 0x%016llX\n", context.Xsi);
-							printf("    base                (bx): 0x%016llX\n", context.Xbx);
-							printf("    data                (dx): 0x%016llX\n", context.Xdx);
-							printf("    counter             (cx): 0x%016llX\n", context.Xcx);
-							printf("    accumulator         (ax): 0x%016llX\n", context.Xax);
-							printf("    stack base pointer  (bp): 0x%016llX\n", context.Xbp);
-							printf("    instruction pointer (ip): 0x%016llX\n", context.Xip);
-							printf("    stack pointer       (sp): 0x%016llX\n", context.Xsp);
-#else
-							printf("\n%ls\n  ", (name && *name) ? name : L"no name");
-							printf("thread id: %08d, %ls+0x%016X: call %ls+0x%08X\n", m_debug_event.dwThreadId,
-								m_process->get_name(), last_call_location - (SIZE_T)module_info.lpBaseOfDll,
-								m_process->get_name(), context.Xip - (SIZE_T)module_info.lpBaseOfDll);
-
-							SIZE_T stack_data_size = context.Xbp - context.Xsp;
-							unsigned char* stack_data = new unsigned char[stack_data_size] {};
-							read_debuggee_memory((LPVOID)context.Xsp, stack_data, stack_data_size, &bytes_read);
-
-							printf("  registers:\n");
-							printf("    destination         (di): 0x%016X\n", context.Xdi);
-							printf("    source              (si): 0x%016X\n", context.Xsi);
-							printf("    base                (bx): 0x%016X\n", context.Xbx);
-							printf("    data                (dx): 0x%016X\n", context.Xdx);
-							printf("    counter             (cx): 0x%016X\n", context.Xcx);
-							printf("    accumulator         (ax): 0x%016X\n", context.Xax);
-							printf("    stack base pointer  (bp): 0x%016X\n", context.Xbp);
-							printf("    instruction pointer (ip): 0x%016X\n", context.Xip);
-							printf("    stack pointer       (sp): 0x%016X\n", context.Xsp);
-#endif // WIN64
+							printf("    destination         (di): 0x%016zX\n", context.Xdi);
+							printf("    source              (si): 0x%016zX\n", context.Xsi);
+							printf("    base                (bx): 0x%016zX\n", context.Xbx);
+							printf("    data                (dx): 0x%016zX\n", context.Xdx);
+							printf("    counter             (cx): 0x%016zX\n", context.Xcx);
+							printf("    accumulator         (ax): 0x%016zX\n", context.Xax);
+							printf("    stack base pointer  (bp): 0x%016zX\n", context.Xbp);
+							printf("    instruction pointer (ip): 0x%016zX\n", context.Xip);
+							printf("    stack pointer       (sp): 0x%016zX\n", context.Xsp);
 
 							printf("  stack:\n");
 							dump_to_console("    ", stack_data, stack_data_size, 64, 16);
@@ -318,6 +294,9 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						if (callback)
 							callback(this, registers);
 					}
+
+					delete registers;
+					registers = nullptr;
 
 					ResumeThread(m_thread_handle);
 					CloseHandle(m_thread_handle);

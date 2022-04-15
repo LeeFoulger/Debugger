@@ -152,13 +152,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="debugger.cpp" />
-    <ClCompile Include="logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="process.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debugger.h" />
-    <ClInclude Include="logger.h" />
     <ClInclude Include="macros.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="process.h" />

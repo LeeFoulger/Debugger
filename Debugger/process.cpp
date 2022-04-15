@@ -29,6 +29,7 @@ bool c_process::create(DWORD creation_flags, const wchar_t* format, ...)
 	va_end(va_args);
 
 	result = CreateProcessW(NULL, m_command_line, NULL, NULL, FALSE, m_creation_flags, NULL, NULL, &m_startup_info, &m_process_info) == TRUE;
+	Sleep(250);
 
 	set_current_directory(NULL);
 	set_name(NULL);
@@ -41,6 +42,7 @@ bool c_process::open(const wchar_t* process_name)
 	bool result = false;
 
 	set_name(process_name);
+	set_current_directory(nullptr);
 
 	PROCESSENTRY32 process_entry32 = { 0 };
 	process_entry32.dwSize = sizeof(PROCESSENTRY32);
