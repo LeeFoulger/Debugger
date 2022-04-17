@@ -298,6 +298,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 					delete registers;
 					registers = nullptr;
 
+					SetThreadContext(m_thread_handle, &context);
 					ResumeThread(m_thread_handle);
 					CloseHandle(m_thread_handle);
 				}

@@ -276,7 +276,7 @@ public:
 		return reinterpret_cast<t_type*>(runtime_base_addr + offset);
 	}
 
-	CONTEXT get_raw_context()
+	CONTEXT& get_raw_context()
 	{
 		return context;
 	}
