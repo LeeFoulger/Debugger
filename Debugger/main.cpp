@@ -67,14 +67,19 @@ void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 		}
 	}
 
+
+#ifdef _WIN64
+
 	if (wcscmp(debugger->get_process()->get_name(), L"atlas_tag_test.exe") == 0)
 	{
 		debugger->add_breakpoint(0x40, 0x00000001403916E0 - PE64BASE, L"is_debugger_present", false, on_is_debugger_present_breakpoint);
 		debugger->add_breakpoint(0xC2, 0x00000001401A9A60 - PE64BASE, L"shell_screen_pause", false, on_shell_screen_pause_breakpoint);
 		//debugger->add_breakpoint(0x33, 0x00000001401A9540 - PE64BASE, L"shell_get_external_host", false, on_shell_get_external_host_breakpoint);
 		debugger->add_breakpoint(0x48, 0x00000001404A18D0 - PE64BASE, L"restricted_region_add_member", false, on_restricted_region_add_member_breakpoint);
+		debugger->add_breakpoint(0x48, 0x000000014036A700 - PE64BASE, L"shell_get_system_identifier", false, on_shell_get_system_identifier_breakpoint);
 	}
-	else if (wcscmp(debugger->get_process()->get_name(), L"halo_online.exe") == 0)
+#else
+	if (wcscmp(debugger->get_process()->get_name(), L"halo_online.exe") == 0)
 	{
 		debugger->add_breakpoint(0xFF, 0x0056918C - PE32BASE, L"restricted_region_add_member::internal", false, on_restricted_region_add_member_internal_breakpoint);
 		debugger->add_breakpoint(_instruction_call, 0x005B103C - PE32BASE, L"rasterizer_draw_watermark", false, on_rasterizer_draw_watermark_breakpoint);
@@ -89,6 +94,8 @@ void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 		//	delete[] data;
 		//});
 	}
+#endif // _WIN64
+
 }
 
 void on_restricted_region_add_member_internal_breakpoint(c_debugger* debugger, c_registers* registers)
@@ -342,6 +349,8 @@ void cswcsncpy(wchar_t* dest, rsize_t size_in_bytes, const wchar_t* src, rsize_t
 	memset(dest + wcslen(src), 0, max_count - wcslen(src));
 }
 
+#ifdef _WIN64
+
 // mcc/tools
 
 void on_is_debugger_present_breakpoint(c_debugger* debugger, c_registers* registers)
@@ -416,3 +425,22 @@ void on_restricted_region_add_member_breakpoint(c_debugger* debugger, c_register
 
 	printf("");
 }
+
+void on_shell_get_system_identifier_breakpoint(c_debugger* debugger, c_registers* registers)
+{
+	//	bool shell_get_system_identifier(
+	//	    char *out_system_identifier,	// rcx
+	//	    long system_identifier_length	// rdx
+	//	);
+
+	//	if (system_identifier_length <= 0)
+	//		return 0;
+
+	//	if (!shell_get_system_identifier(system_identifier_string, 160))
+	//		csstrnzcpy(system_identifier_string, "unknown_system", 160);
+
+	registers->get_raw_context().Xdx = 0;
+	printf("");
+}
+
+#endif // _WIN64
