@@ -5,13 +5,13 @@ class c_process
 public:
 	c_process();
 
-	bool create(DWORD creation_flags, const wchar_t* format, ...);
+	bool create(const wchar_t* format, ...);
 	bool open(const wchar_t* process_name);
 	void close();
 
 	void suspend_thread();
 	void resume_thread();
-	bool is_thread_suspended();
+	bool thread_is_suspended();
 
 	HANDLE get_process_handle();
 	void set_process_handle(HANDLE process_handle);
@@ -32,8 +32,6 @@ public:
 	void set_name(const wchar_t* process_name);
 
 protected:
-	DWORD m_creation_flags;
-
 	wchar_t m_current_directory[MAX_PATH];
 	wchar_t m_process_name[MAX_PATH];
 	wchar_t m_command_line[1024];

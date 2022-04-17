@@ -2,8 +2,6 @@
 
 c_process::c_process()
 {
-	m_creation_flags = CREATE_DEFAULT_ERROR_MODE;
-
 	ZeroMemory(&m_process_name, sizeof(m_process_name));
 	ZeroMemory(&m_command_line, sizeof(m_command_line));
 
@@ -14,24 +12,18 @@ c_process::c_process()
 	m_suspended = false;
 }
 
-bool c_process::create(DWORD creation_flags, const wchar_t* format, ...)
+bool c_process::create(const wchar_t* format, ...)
 {
-	m_suspended = creation_flags & CREATE_SUSPENDED ? true : false;
-
 	bool result = false;
-
-	if (creation_flags)
-		m_creation_flags = creation_flags;
 
 	va_list va_args;
 	va_start(va_args, format);
 	vswprintf_s(m_command_line, 1024, format, va_args);
 	va_end(va_args);
 
-	result = CreateProcessW(NULL, m_command_line, NULL, NULL, FALSE, m_creation_flags, NULL, NULL, &m_startup_info, &m_process_info) == TRUE;
-	Sleep(250);
+	result = CreateProcessW(NULL, m_command_line, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, get_current_directory(), &m_startup_info, &m_process_info) == TRUE;
+	Sleep(25);
 
-	set_current_directory(NULL);
 	set_name(NULL);
 
 	return result;
@@ -87,7 +79,7 @@ void c_process::resume_thread()
 		m_suspended = !SUCCEEDED(ResumeThread(m_process_info.hThread));
 }
 
-bool c_process::is_thread_suspended()
+bool c_process::thread_is_suspended()
 {
 	return m_suspended;
 }

@@ -8,10 +8,9 @@ int wmain(int argc, wchar_t* argv[])
 	c_process* process = new c_process();
 
 	if (!process->open(argv[1]))
-		process->create(CREATE_SUSPENDED, L"%s", argv[1]);
+		process->create(L"%s", argv[1]);
 
-	if (!process->is_thread_suspended())
-		process->suspend_thread();
+	process->suspend_thread();
 
 	c_debugger* debugger = new c_debugger(process);
 
