@@ -3,6 +3,7 @@
 int wmain(int argc, wchar_t* argv[])
 {
 	//  " --account 123 --sign-in-code 123 --environment 123"
+	SetWindowLong(GetConsoleWindow(), GWL_STYLE, WS_POPUP);
 	ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
 
 	c_process* process = new c_process();
