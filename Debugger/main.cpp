@@ -8,8 +8,15 @@ int wmain(int argc, wchar_t* argv[])
 
 	c_process* process = new c_process();
 
+	wchar_t command_line[4096]{};
+	for (int i = 1; i < argc; i++)
+	{
+		wcscat_s(command_line, 4096, argv[i]);
+		wcscat_s(command_line, 4096, L" ");
+	}
+
 	if (!process->open(argv[1]))
-		process->create(L"%s", argv[1]);
+		process->create(L"%s", command_line);
 
 	process->suspend_thread();
 
