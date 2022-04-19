@@ -32,18 +32,18 @@ const e_instruction break_op = _instruction_break;
 
 void add_break_on_winmain(c_debugger*, LPMODULEINFO);
 
-c_debugger::c_debugger(c_process* process)
+c_debugger::c_debugger(c_process& process) :
+	m_process(process),
+	m_debug_event({ 0 }),
+	m_continue_status(DBG_CONTINUE),
+	m_thread_handle(NULL),
+	m_print_debug_strings(true)
 {
-	m_process = process;
-	m_debug_event = { 0 };
-	m_continue_status = DBG_CONTINUE;
-	m_thread_handle = NULL;
-	m_print_debug_strings = true;
-
 	ZeroMemory(&m_breakpoints, sizeof(m_breakpoints));
+	ZeroMemory(&m_module_info_callbacks, sizeof(m_module_info_callbacks));
 }
 
-void c_debugger::add_breakpoint(BYTE break_on, SIZE_T call_offset, const wchar_t* name, bool print_registers, void(*callback)(c_debugger*, c_registers*))
+void c_debugger::add_breakpoint(BYTE break_on, SIZE_T call_offset, const wchar_t* name, bool print_registers, void(*callback)(c_debugger&, c_registers&))
 {
 	if (m_breakpoints.count < m_breakpoints.get_max_count())
 	{
@@ -64,7 +64,7 @@ void c_debugger::add_breakpoint(BYTE break_on, SIZE_T call_offset, const wchar_t
 	}
 }
 
-void c_debugger::add_module_info_callback(void(*callback)(c_debugger*, LPMODULEINFO))
+void c_debugger::add_module_info_callback(void(*callback)(c_debugger&, LPMODULEINFO))
 {
 	if (m_module_info_callbacks.count < m_module_info_callbacks.get_max_count())
 	{
@@ -77,7 +77,7 @@ void c_debugger::add_module_info_callback(void(*callback)(c_debugger*, LPMODULEI
 	}
 }
 
-c_process* c_debugger::get_process()
+c_process& c_debugger::get_process()
 {
 	return m_process;
 }
@@ -108,7 +108,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 
 	WCHAR module_name[MAX_PATH] = { 0 };
 
-	DebugActiveProcess(m_process->get_process_id());
+	DebugActiveProcess(m_process.get_process_id());
 
 	bool process_running = true;
 	while (process_running)
@@ -132,14 +132,14 @@ void c_debugger::run_debugger(bool print_debug_strings)
 				{
 					m_thread_handle = OpenThread(THREAD_ALL_ACCESS, true, m_debug_event.dwThreadId);
 
-					EnumProcessModules(m_process->get_process_handle(), modules, sizeof(modules), (LPDWORD)&bytes_read);
+					EnumProcessModules(m_process.get_process_handle(), modules, sizeof(modules), (LPDWORD)&bytes_read);
 					if (*modules)
-						GetModuleInformation(m_process->get_process_handle(), *modules, &module_info, sizeof(module_info));
+						GetModuleInformation(m_process.get_process_handle(), *modules, &module_info, sizeof(module_info));
 
 					for (SIZE_T i = 0; i < m_module_info_callbacks.count; i++)
 					{
 						decltype(*m_module_info_callbacks.data) callback = m_module_info_callbacks[i];
-						callback(this, &module_info);
+						callback(*this, &module_info);
 					}
 
 					for (SIZE_T i = 0; i < m_breakpoints.count; i++)
@@ -169,7 +169,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 							if (breakpoints_set < m_breakpoints.get_max_count())
 							{
 								write_debuggee_memory((LPVOID)offset, &break_op, sizeof(break_op), &bytes_written);
-								FlushInstructionCache(m_process->get_process_handle(), (LPVOID)offset, 1);
+								FlushInstructionCache(m_process.get_process_handle(), (LPVOID)offset, 1);
 
 								breakpoints_set++;
 								break;
@@ -177,7 +177,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						}
 					}
 
-					m_process->resume_thread();
+					m_process.resume_thread();
 				}
 				else
 				{
@@ -207,7 +207,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						if (instruction)
 						{
 							write_debuggee_memory((LPVOID)context.Xip, &instruction, sizeof(instruction), &bytes_written);
-							FlushInstructionCache(m_process->get_process_handle(), (LPVOID)context.Xip, 1);
+							FlushInstructionCache(m_process.get_process_handle(), (LPVOID)context.Xip, 1);
 						}
 
 						last_call_location = context.Xip;
@@ -227,12 +227,12 @@ void c_debugger::run_debugger(bool print_debug_strings)
 					GetThreadContext(m_thread_handle, &context);
 					SuspendThread(m_thread_handle);
 
-					c_registers* registers = new c_registers(&module_info, context);
+					c_registers registers(&module_info, context);
 
 					if (last_call_location)
 					{
 						write_debuggee_memory((LPVOID)last_call_location, &break_op, sizeof(break_op), &bytes_written);
-						FlushInstructionCache(m_process->get_process_handle(), (LPVOID)last_call_location, 1);
+						FlushInstructionCache(m_process.get_process_handle(), (LPVOID)last_call_location, 1);
 
 						//DWORD module_offset = /*0x00400000*/PE32BASE - (DWORD)module_info.lpBaseOfDll;
 
@@ -264,7 +264,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 							printf("\n%ls\n  ", (name&&* name) ? name : L"no name");
 							if (call_address > (SIZE_T)module_info.lpBaseOfDll)
 							{
-								printf("thread id: %08d, call %ls+0x%08zX\n", m_debug_event.dwThreadId, m_process->get_name(), call_address - (SIZE_T)module_info.lpBaseOfDll);
+								printf("thread id: %08d, call %ls+0x%08zX\n", m_debug_event.dwThreadId, m_process.get_name(), call_address - (SIZE_T)module_info.lpBaseOfDll);
 							}
 
 							SIZE_T stack_data_size = 64; // context.Xbp - context.Xsp;
@@ -292,11 +292,8 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						last_call_location = 0;
 
 						if (callback)
-							callback(this, registers);
+							callback(*this, registers);
 					}
-
-					delete registers;
-					registers = nullptr;
 
 					SetThreadContext(m_thread_handle, &context);
 					ResumeThread(m_thread_handle);
@@ -398,7 +395,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 		ContinueDebugEvent(m_debug_event.dwProcessId, m_debug_event.dwThreadId, m_continue_status);
 	}
 
-	m_process->close();
+	m_process.close();
 }
 
 
@@ -409,7 +406,7 @@ LPVOID c_debugger::allocate_debuggee_memory(
 	_In_ DWORD flProtect
 )
 {
-	return VirtualAllocEx(m_process->get_process_handle(), lpAddress, dwSize, flAllocationType, flProtect);
+	return VirtualAllocEx(m_process.get_process_handle(), lpAddress, dwSize, flAllocationType, flProtect);
 }
 
 BOOL c_debugger::read_debuggee_memory(
@@ -419,7 +416,7 @@ BOOL c_debugger::read_debuggee_memory(
 	_Out_opt_ SIZE_T* lpNumberOfBytesRead
 )
 {
-	return ReadProcessMemory(m_process->get_process_handle(), lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead);
+	return ReadProcessMemory(m_process.get_process_handle(), lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead);
 }
 
 BOOL c_debugger::read_debuggee_pointer(
@@ -441,7 +438,7 @@ BOOL c_debugger::write_debuggee_memory(
 	_Out_opt_ SIZE_T* lpNumberOfBytesWritten
 )
 {
-	return WriteProcessMemory(m_process->get_process_handle(), lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten);
+	return WriteProcessMemory(m_process.get_process_handle(), lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten);
 }
 
 BOOL c_debugger::write_debuggee_pointer(

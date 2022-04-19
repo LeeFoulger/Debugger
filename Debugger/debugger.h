@@ -49,21 +49,21 @@ struct s_breakpoint
 	bool print_registers;
 	SIZE_T module_offset;
 	WCHAR name[64];
-	void(*callback)(class c_debugger*, class c_registers*);
+	void(*callback)(class c_debugger&, class c_registers&);
 };
 
 class c_debugger
 {
 public:
-	c_debugger(c_process* process);
+	c_debugger(c_process& process);
 
 	void run_debugger(bool print_debug_strings = true);
 
-	void add_breakpoint(BYTE, SIZE_T, const wchar_t*, bool, void(*callback)(c_debugger*, class c_registers*) = nullptr);
+	void add_breakpoint(BYTE, SIZE_T, const wchar_t*, bool, void(*callback)(c_debugger&, class c_registers&) = nullptr);
 
-	void add_module_info_callback(void(*callback)(c_debugger*, LPMODULEINFO));
+	void add_module_info_callback(void(*callback)(c_debugger&, LPMODULEINFO));
 
-	c_process* get_process();
+	c_process& get_process();
 
 	LPVOID allocate_debuggee_memory(
 		_In_opt_ LPVOID lpAddress,
@@ -103,37 +103,36 @@ public:
 	);
 
 protected:
-	c_process* m_process;
-
-	s_static_array<s_breakpoint, 256> m_breakpoints;
-	s_static_array<void(*)(c_debugger*, LPMODULEINFO), 32> m_module_info_callbacks;
+	c_process& m_process;
 
 	DEBUG_EVENT m_debug_event;
 	DWORD m_continue_status;
-
 	HANDLE m_thread_handle;
 	bool m_print_debug_strings;
+
+	s_static_array<s_breakpoint, 256> m_breakpoints;
+	s_static_array<void(*)(c_debugger&, LPMODULEINFO), 32> m_module_info_callbacks;
 };
 
 template<typename t_string_type, size_t k_string_size>
 LPVOID debugger_allocate_and_write_debuggee_string(
-	c_debugger* debugger,
+	c_debugger& debugger,
 	t_string_type(&string)[k_string_size]
 )
 {
 	long string_size_in_bytes = k_string_size * sizeof(t_string_type);
-	return debugger->allocate_and_write_debuggee_memory(string, string_size_in_bytes, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE, NULL);
+	return debugger.allocate_and_write_debuggee_memory(string, string_size_in_bytes, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE, NULL);
 }
 
 template<typename t_string_type, size_t k_string_size>
 BOOL debugger_write_debuggee_string(
-	c_debugger* debugger,
+	c_debugger& debugger,
 	LPVOID lpAddress,
 	t_string_type(&string)[k_string_size]
 )
 {
 	long string_size_in_bytes = k_string_size * sizeof(t_string_type);
-	return debugger->write_debuggee_memory(lpAddress, string, string_size_in_bytes, NULL);
+	return debugger.write_debuggee_memory(lpAddress, string, string_size_in_bytes, NULL);
 }
 
 class c_registers

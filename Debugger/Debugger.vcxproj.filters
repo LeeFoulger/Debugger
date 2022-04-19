@@ -24,6 +24,9 @@
     <ClCompile Include="debugger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="breakpoints\breakpoints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="process.h">
@@ -38,5 +41,16 @@
     <ClInclude Include="macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="breakpoints\breakpoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="breakpoints\breakpoints.hf2p.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="breakpoints\breakpoints.tools.odst.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
