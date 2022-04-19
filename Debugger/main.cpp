@@ -85,6 +85,7 @@ void add_test_breaks(c_debugger* debugger, LPMODULEINFO module_info)
 		//debugger->add_breakpoint(0x33, 0x00000001401A9540 - PE64BASE, L"shell_get_external_host", false, on_shell_get_external_host_breakpoint);
 		debugger->add_breakpoint(0x48, 0x00000001404A18D0 - PE64BASE, L"restricted_region_add_member", false, on_restricted_region_add_member_breakpoint);
 		debugger->add_breakpoint(0x48, 0x000000014036A700 - PE64BASE, L"shell_get_system_identifier", false, on_shell_get_system_identifier_breakpoint);
+		debugger->add_breakpoint(0xC3, 0x0000000140235724 - PE64BASE, L"shell_get_gamertag on return", false, on_shell_get_gamertag_return_breakpoint); // name isn't correct but that's fine
 	}
 #else
 	if (wcscmp(debugger->get_process()->get_name(), L"halo_online.exe") == 0)
@@ -255,13 +256,13 @@ void on_cached_map_files_open_all_breakpoint(c_debugger* debugger, c_registers* 
 		"test\\lightmaps.dat"
 	};
 
-	LPVOID remote_page = debugger->allocate_and_write_debuggee_memory(resource_paths, sizeof(resource_paths), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE, NULL);
+	LPVOID allocated_resource_paths = debugger->allocate_and_write_debuggee_memory(resource_paths, sizeof(resource_paths), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE, NULL);
 
 	for (size_t i = 0; i < sizeof(resource_paths) / 32; i++)
 	{
-		LPVOID lpBaseAddress = registers->get_runtime_addr_as<LPVOID>(resource_paths_offset + i * 4);
-		LPVOID lpAddress = reinterpret_cast<LPVOID>(reinterpret_cast<SIZE_T>(remote_page) + i * 32);
-		debugger->write_debuggee_pointer(lpBaseAddress, lpAddress, NULL);
+		LPVOID resource_path_offset_address = registers->get_runtime_addr_as<LPVOID>(resource_paths_offset + i * 4);
+		LPVOID allocated_resource_path_address = reinterpret_cast<LPVOID>(reinterpret_cast<SIZE_T>(allocated_resource_paths) + i * 32);
+		debugger->write_debuggee_pointer(resource_path_offset_address, allocated_resource_path_address, NULL);
 	}
 
 	printf("");
@@ -450,5 +451,20 @@ void on_shell_get_system_identifier_breakpoint(c_debugger* debugger, c_registers
 	registers->get_raw_context().Xdx = 0;
 	printf("");
 }
+
+static wchar_t g_gamertag[16];
+
+void on_shell_get_gamertag_return_breakpoint(c_debugger* debugger, c_registers* registers)
+{
+	static LPVOID allocated_gamertag = debugger->allocate_and_write_debuggee_memory(g_gamertag, sizeof(g_gamertag), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE, NULL);
+
+	// return value
+	registers->get_raw_context().Xax = reinterpret_cast<decltype(registers->get_raw_context().Xax)>(allocated_gamertag);
+
+	printf("");
+}
+
+// set gamertag here
+//extern wchar_t g_gamertag[16] = L"gamertag";
 
 #endif // _WIN64

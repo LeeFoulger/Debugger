@@ -39,3 +39,4 @@ void on_shell_screen_pause_breakpoint(c_debugger* debugger, c_registers* registe
 void on_shell_get_external_host_breakpoint(c_debugger* debugger, c_registers* registers);
 void on_restricted_region_add_member_breakpoint(c_debugger* debugger, c_registers* registers);
 void on_shell_get_system_identifier_breakpoint(c_debugger* debugger, c_registers* registers);
+void on_shell_get_gamertag_return_breakpoint(c_debugger* debugger, c_registers* registers);
