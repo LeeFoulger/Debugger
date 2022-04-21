@@ -32,8 +32,8 @@ const e_instruction break_op = _instruction_break;
 
 void add_break_on_winmain(c_debugger*, LPMODULEINFO);
 
-c_debugger::c_debugger(c_process& process) :
-	m_process(process),
+c_debugger::c_debugger(c_process* process) :
+	m_process(*process),
 	m_debug_event({ 0 }),
 	m_continue_status(DBG_CONTINUE),
 	m_thread_handle(NULL),
@@ -41,6 +41,11 @@ c_debugger::c_debugger(c_process& process) :
 {
 	ZeroMemory(&m_breakpoints, sizeof(m_breakpoints));
 	ZeroMemory(&m_module_info_callbacks, sizeof(m_module_info_callbacks));
+}
+
+c_debugger::~c_debugger()
+{
+	delete &m_process;
 }
 
 void c_debugger::add_breakpoint(BYTE break_on, SIZE_T call_offset, const wchar_t* name, bool print_registers, void(*callback)(c_debugger&, c_registers&))

@@ -55,7 +55,8 @@ struct s_breakpoint
 class c_debugger
 {
 public:
-	c_debugger(c_process& process);
+	c_debugger(c_process* process);
+	~c_debugger();
 
 	void run_debugger(bool print_debug_strings = true);
 

@@ -1,25 +1,43 @@
 #include "main.h"
 
-c_process::c_process()
+c_process::c_process():
+	m_command_line(new wchar_t[4096]),
+	m_process_name(new wchar_t[MAX_PATH]),
+	m_current_directory(new wchar_t[MAX_PATH])
 {
-	ZeroMemory(&m_process_name, sizeof(m_process_name));
-	ZeroMemory(&m_command_line, sizeof(m_command_line));
+	ZeroMemory(m_command_line, sizeof(m_command_line));
+	ZeroMemory(m_process_name, sizeof(m_process_name));
+	ZeroMemory(m_current_directory, sizeof(m_current_directory));
 
 	ZeroMemory(&m_startup_info, sizeof(m_startup_info));
 	ZeroMemory(&m_process_info, sizeof(m_process_info));
 	m_startup_info.cb = sizeof(m_startup_info);
 
 	m_suspended = false;
+
+	int argc = 0;
+	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+
+	wcscat_s(m_process_name, MAX_PATH, argv[1]);
+	wcscat_s(m_command_line, MAX_PATH, m_process_name);
+
+	for (int i = 2; i < argc; i++)
+	{
+		wcscat_s(m_command_line, 4096, L" ");
+		wcscat_s(m_command_line, 4096, argv[i]);
+	}
 }
 
-bool c_process::create(const wchar_t* format, ...)
+c_process::~c_process()
+{
+	delete[] m_command_line;
+	delete[] m_process_name;
+	delete[] m_current_directory;
+}
+
+bool c_process::create()
 {
 	bool result = false;
-
-	va_list va_args;
-	va_start(va_args, format);
-	vswprintf_s(m_command_line, 1024, format, va_args);
-	va_end(va_args);
 
 	result = CreateProcessW(NULL, m_command_line, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, get_current_directory(), &m_startup_info, &m_process_info) == TRUE;
 	Sleep(25);
@@ -29,11 +47,10 @@ bool c_process::create(const wchar_t* format, ...)
 	return result;
 }
 
-bool c_process::open(const wchar_t* process_name)
+bool c_process::open()
 {
 	bool result = false;
 
-	set_name(process_name);
 	set_current_directory(nullptr);
 
 	PROCESSENTRY32 process_entry32 = { 0 };
@@ -45,7 +62,7 @@ bool c_process::open(const wchar_t* process_name)
 
 	do
 	{
-		if (wcscmp(process_entry32.szExeFile, process_name) == 0)
+		if (wcscmp(process_entry32.szExeFile, m_process_name) == 0)
 		{
 			m_process_info.dwProcessId = process_entry32.th32ProcessID;
 
@@ -132,7 +149,7 @@ void c_process::set_current_directory(const wchar_t* current_directory)
 {
 	if (current_directory)
 	{
-		wcsncpy_s(m_current_directory, current_directory, MAX_PATH);
+		wcsncpy_s(m_current_directory, MAX_PATH, current_directory, MAX_PATH);
 		return;
 	}
 
@@ -151,7 +168,7 @@ void c_process::set_name(const wchar_t* process_name)
 {
 	if (process_name)
 	{
-		wcsncpy_s(m_process_name, process_name, MAX_PATH);
+		wcsncpy_s(m_process_name, MAX_PATH, process_name, MAX_PATH);
 		return;
 	}
 

@@ -5,9 +5,9 @@
 #include <windows.h>
 
 #include <cassert>
-#include <stdio.h>
-
 #include <Psapi.h>
+#include <shellapi.h>
+#include <stdio.h>
 #include <tlhelp32.h>
 
 #include "macros.h"

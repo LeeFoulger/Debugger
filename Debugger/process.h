@@ -4,9 +4,10 @@ class c_process
 {
 public:
 	c_process();
+	~c_process();
 
-	bool create(const wchar_t* format, ...);
-	bool open(const wchar_t* process_name);
+	bool create();
+	bool open();
 	void close();
 
 	void suspend_thread();
@@ -32,9 +33,9 @@ public:
 	void set_name(const wchar_t* process_name);
 
 protected:
-	wchar_t m_current_directory[MAX_PATH];
-	wchar_t m_process_name[MAX_PATH];
-	wchar_t m_command_line[1024];
+	wchar_t* m_command_line;
+	wchar_t* m_process_name;
+	wchar_t* m_current_directory;
 
 	STARTUPINFO m_startup_info;
 	PROCESS_INFORMATION m_process_info;

@@ -1,9 +1,27 @@
 #include "main.h"
 
+void create_debugger_additions(c_debugger& debugger)
+{
+	int argc = 0;
+	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+
+	if (argc < 3 && wcscmp(argv[1], L"halo_online.exe") == 0)
+		debugger.add_breakpoint(_instruction_call, 0x0075227E - PE32BASE, L"command_line_get_credentials", false, on_command_line_get_credentials_breakpoint);
+
+	debugger.add_module_info_callback(add_break_on_winmain);
+	debugger.add_module_info_callback(add_breaks_following_winmain);
+	debugger.add_module_info_callback(add_test_breaks);
+}
+
 #include "breakpoints.hf2p.inl"
 
 #ifdef _WIN64
+//#include "breakpoints.tools.halo1.inl"
+//#include "breakpoints.tools.halo2.inl"
+//#include "breakpoints.tools.halo3.inl"
 #include "breakpoints.tools.odst.inl"
+//#include "breakpoints.tools.reach.inl"
+//#include "breakpoints.tools.halo4.inl"
 #endif // _WIN64
 
 void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
@@ -35,19 +53,8 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 	{
 		debugger.add_breakpoint(0xFF, 0x0056918C - PE32BASE, L"restricted_region_add_member::internal", false, on_restricted_region_add_member_internal_breakpoint);
 		debugger.add_breakpoint(_instruction_call, 0x005B103C - PE32BASE, L"rasterizer_draw_watermark", false, on_rasterizer_draw_watermark_breakpoint);
-
-		//debugger.add_breakpoint(_instruction_call, 0x00496EEE - PE32BASE, L"main_status->memset", true, [](c_debugger& debugger, c_registers& registers) -> void {
-		//	DWORD data_size = registers.cast_esi_as<DWORD>();
-		//	char* data = new char[data_size + 1] {};
-		//
-		//	debugger.read_debuggee_memory(registers.cast_edi_as<LPCVOID>(), data, data_size, NULL);
-		//
-		//	printf("[main_status] %s\n", data);
-		//	delete[] data;
-		//});
 	}
 #endif // _WIN64
-
 }
 
 void add_breaks_following_winmain(c_debugger& debugger, LPMODULEINFO module_info)
