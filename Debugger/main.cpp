@@ -24,11 +24,11 @@ int wmain(int argc, wchar_t* argv[])
 void csstrncpy(char* dest, rsize_t size_in_bytes, const char* src, rsize_t max_count)
 {
 	strncpy_s(dest, size_in_bytes, src, max_count);
-	memset(dest + strlen(src), 0, max_count - strlen(src));
+	memset(dest + strlen(src), 0, (max_count - strlen(src)) * sizeof(char));
 }
 
-void cswcsncpy(wchar_t* dest, rsize_t size_in_bytes, const wchar_t* src, rsize_t max_count)
+void cswcsncpy(wchar_t* dest, rsize_t size_in_words, const wchar_t* src, rsize_t max_count)
 {
-	wcsncpy_s(dest, size_in_bytes, src, max_count);
-	memset(dest + wcslen(src), 0, max_count - wcslen(src));
+	wcsncpy_s(dest, size_in_words, src, max_count);
+	memset(dest + wcslen(src), 0, (max_count - wcslen(src)) * sizeof(wchar_t));
 }
