@@ -1,9 +1,9 @@
-#include "main.h"
+#include <main.h>
 
-void dump_to_console(const char* string_before_line, unsigned char* buffer, unsigned long long buffer_length, unsigned long max_length, unsigned long line_width = 16)
+void dump_to_console(const char* line_prefix, unsigned char* buffer, unsigned long long buffer_length, unsigned long max_length, unsigned long line_width = 16)
 {
-	printf("%ssize: %llu\n", string_before_line, buffer_length);
-	printf("%soffset(h) ", string_before_line);
+	printf("%ssize: %llu\n", line_prefix, buffer_length);
+	printf("%soffset(h) ", line_prefix);
 	unsigned long line_offset = 0;
 	while (line_offset < line_width)
 	{
@@ -20,7 +20,7 @@ void dump_to_console(const char* string_before_line, unsigned char* buffer, unsi
 			printf(" ");
 
 		if (buffer_offset % line_width == 0)
-			printf("\n%s%08X: ", string_before_line, buffer_offset);
+			printf("\n%s%08X: ", line_prefix, buffer_offset);
 
 		printf("%02X ", buffer[buffer_offset++]);
 	}
@@ -48,24 +48,24 @@ c_debugger::~c_debugger()
 	delete &m_process;
 }
 
-void c_debugger::add_breakpoint(BYTE break_on, SIZE_T call_offset, const wchar_t* name, bool print_registers, void(*callback)(c_debugger&, c_registers&))
+void c_debugger::add_breakpoint(BYTE break_on, SIZE_T offset, const wchar_t* name, bool print_registers, void(*callback)(c_debugger&, c_registers&))
 {
 	if (m_breakpoints.count < m_breakpoints.get_max_count())
 	{
 		s_breakpoint& breakpoint = m_breakpoints[m_breakpoints.count++];
 
-		printf("Adding breakpoint at 0x%016zX for %ls\n", call_offset, name);
+		printf("Adding breakpoint at 0x%016zX for %ls\n", offset, name);
 
 		breakpoint.break_on = break_on;
 		breakpoint.print_registers = print_registers;
-		breakpoint.module_offset = call_offset;
+		breakpoint.module_offset = offset;
 		wcsncpy_s(breakpoint.name, name, 64);
 		breakpoint.callback = callback;
 	}
 	else
 	{
 
-		printf("Unable to add breakpoint at 0x%016zX for %ls\n", call_offset, name);
+		printf("Unable to add breakpoint at 0x%016zX for %ls\n", offset, name);
 	}
 }
 

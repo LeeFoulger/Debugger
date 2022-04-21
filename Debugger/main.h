@@ -10,10 +10,10 @@
 #include <stdio.h>
 #include <tlhelp32.h>
 
-#include "macros.h"
-#include "process.h"
-#include "debugger.h"
-#include "breakpoints/breakpoints.h"
+#include <macros.h>
+#include <process.h>
+#include <debugger.h>
+#include <breakpoints/breakpoints.h>
 
 void csstrncpy(char* dest, rsize_t size_in_bytes, const char* src, rsize_t max_count);
 void cswcsncpy(wchar_t* dest, rsize_t size_in_bytes, const wchar_t* src, rsize_t max_count);

@@ -1,4 +1,4 @@
-#include "main.h"
+#include <main.h>
 
 c_debugger g_debugger(new c_process());
 

@@ -1,13 +1,13 @@
-#include "main.h"
+#include <main.h>
 
 c_process::c_process():
 	m_command_line(new wchar_t[4096]),
 	m_process_name(new wchar_t[MAX_PATH]),
 	m_current_directory(new wchar_t[MAX_PATH])
 {
-	ZeroMemory(m_command_line, sizeof(m_command_line));
-	ZeroMemory(m_process_name, sizeof(m_process_name));
-	ZeroMemory(m_current_directory, sizeof(m_current_directory));
+	ZeroMemory(m_command_line, 4096);
+	ZeroMemory(m_process_name, MAX_PATH);
+	ZeroMemory(m_current_directory, MAX_PATH);
 
 	ZeroMemory(&m_startup_info, sizeof(m_startup_info));
 	ZeroMemory(&m_process_info, sizeof(m_process_info));
