@@ -29,8 +29,8 @@ public:
 	const wchar_t* get_current_directory();
 	void set_current_directory(const wchar_t* current_directory);
 
-	const wchar_t* get_name();
-	void set_name(const wchar_t* process_name);
+	const wchar_t* get_process_name();
+	void set_process_name(const wchar_t* process_name);
 
 protected:
 	wchar_t* m_command_line;

@@ -58,13 +58,16 @@ public:
 	c_debugger(c_process* process);
 	~c_debugger();
 
-	void run_debugger(bool print_debug_strings = true);
+	void attach();
+	void detach();
 
 	void add_breakpoint(BYTE, SIZE_T, const wchar_t*, bool, void(*callback)(c_debugger&, class c_registers&) = nullptr);
 
-	void add_module_info_callback(void(*callback)(c_debugger&, LPMODULEINFO));
+	void add_module_info_callback(const char*, void(*callback)(c_debugger&, LPMODULEINFO));
 
 	c_process& get_process();
+
+	void run_debugger(bool print_debug_strings = true);
 
 	LPVOID allocate_debuggee_memory(
 		_In_opt_ LPVOID lpAddress,
@@ -105,6 +108,7 @@ public:
 
 protected:
 	c_process& m_process;
+	bool m_process_is_attached;
 
 	DEBUG_EVENT m_debug_event;
 	DWORD m_continue_status;

@@ -16,6 +16,7 @@ int wmain(int argc, wchar_t* argv[])
 
 	create_debugger_additions(g_debugger);
 
+	g_debugger.attach();
 	g_debugger.run_debugger();
 
 	return 0;

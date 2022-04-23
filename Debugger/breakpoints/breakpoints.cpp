@@ -8,9 +8,11 @@ void create_debugger_additions(c_debugger& debugger)
 	if (argc < 3 && wcscmp(argv[1], L"halo_online.exe") == 0)
 		debugger.add_breakpoint(_instruction_call, 0x0075227E - PE32BASE, L"command_line_get_credentials", false, on_command_line_get_credentials_breakpoint);
 
-	debugger.add_module_info_callback(add_break_on_winmain);
-	debugger.add_module_info_callback(add_breaks_following_winmain);
-	debugger.add_module_info_callback(add_test_breaks);
+#define module_info_callback(callback) debugger.add_module_info_callback((#callback), (callback))
+	module_info_callback(add_break_on_winmain);
+	module_info_callback(add_breaks_following_winmain);
+	module_info_callback(add_test_breaks);
+#undef module_info_callback
 }
 
 #include "breakpoints.hf2p.inl"
@@ -39,7 +41,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 	}
 
 #ifdef _WIN64
-	if (wcscmp(debugger.get_process().get_name(), L"atlas_tag_test.exe") == 0)
+	if (wcscmp(debugger.get_process().get_process_name(), L"atlas_tag_test.exe") == 0)
 	{
 		debugger.add_breakpoint(0x40, 0x00000001403916E0 - PE64BASE, L"is_debugger_present", false, on_is_debugger_present_breakpoint);
 		debugger.add_breakpoint(0xC2, 0x00000001401A9A60 - PE64BASE, L"shell_screen_pause", false, on_shell_screen_pause_breakpoint);
@@ -49,7 +51,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 		debugger.add_breakpoint(0xC3, 0x0000000140235724 - PE64BASE, L"shell_get_gamertag on return", false, on_shell_get_gamertag_return_breakpoint); // name isn't correct but that's fine
 	}
 #else
-	if (wcscmp(debugger.get_process().get_name(), L"halo_online.exe") == 0)
+	if (wcscmp(debugger.get_process().get_process_name(), L"halo_online.exe") == 0)
 	{
 		debugger.add_breakpoint(0xFF, 0x0056918C - PE32BASE, L"restricted_region_add_member::internal", false, on_restricted_region_add_member_internal_breakpoint);
 		debugger.add_breakpoint(_instruction_call, 0x005B103C - PE32BASE, L"rasterizer_draw_watermark", false, on_rasterizer_draw_watermark_breakpoint);
@@ -59,7 +61,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 
 void add_breaks_following_winmain(c_debugger& debugger, LPMODULEINFO module_info)
 {
-	if (wcscmp(debugger.get_process().get_name(), L"halo_online.exe") == 0)
+	if (wcscmp(debugger.get_process().get_process_name(), L"halo_online.exe") == 0)
 	{
 		// EntryPoint->WinMain
 		debugger.add_breakpoint(_instruction_call, 0x004013C3 - PE32BASE, L"static_string<64>::print", true);
@@ -103,7 +105,7 @@ void add_break_on_winmain(c_debugger& debugger, LPMODULEINFO module_info)
 
 	debugger.add_breakpoint(_instruction_call, entry_point_addr - image_base_addr, L"EntryPoint", true);
 
-	if (wcscmp(process.get_name(), L"halo_online.exe") == 0)
+	if (wcscmp(process.get_process_name(), L"halo_online.exe") == 0)
 	{
 		unsigned char winmain_call_pattern[] =
 		{

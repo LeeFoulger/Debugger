@@ -1,5 +1,21 @@
 #include <main.h>
 
+DWORD WINAPI debugger_wait_routine(LPVOID lpThreadParameter)
+{
+	c_debugger* debugger = static_cast<c_debugger*>(lpThreadParameter);
+
+	while (true)
+	{
+		if (GetAsyncKeyState(VK_NEXT) & 0xFFFF)
+			break;
+		Sleep(1);
+	}
+
+	debugger->detach();
+
+	return 0;
+}
+
 void dump_to_console(const char* line_prefix, unsigned char* buffer, unsigned long long buffer_length, unsigned long max_length, unsigned long line_width = 16)
 {
 	printf("%ssize: %llu\n", line_prefix, buffer_length);
@@ -34,6 +50,7 @@ void add_break_on_winmain(c_debugger*, LPMODULEINFO);
 
 c_debugger::c_debugger(c_process* process) :
 	m_process(*process),
+	m_process_is_attached(false),
 	m_debug_event({ 0 }),
 	m_continue_status(DBG_CONTINUE),
 	m_thread_handle(NULL),
@@ -46,6 +63,20 @@ c_debugger::c_debugger(c_process* process) :
 c_debugger::~c_debugger()
 {
 	delete &m_process;
+}
+
+void c_debugger::attach()
+{
+	DebugActiveProcess(m_process.get_process_id());
+	m_process_is_attached = true;
+
+	CreateThread(NULL, 0, debugger_wait_routine, this, NULL, NULL);
+}
+
+void c_debugger::detach()
+{
+	DebugActiveProcessStop(m_process.get_process_id());
+	m_process_is_attached = false;
 }
 
 void c_debugger::add_breakpoint(BYTE break_on, SIZE_T offset, const wchar_t* name, bool print_registers, void(*callback)(c_debugger&, c_registers&))
@@ -64,21 +95,20 @@ void c_debugger::add_breakpoint(BYTE break_on, SIZE_T offset, const wchar_t* nam
 	}
 	else
 	{
-
 		printf("Unable to add breakpoint at 0x%016zX for %ls\n", offset, name);
 	}
 }
 
-void c_debugger::add_module_info_callback(void(*callback)(c_debugger&, LPMODULEINFO))
+void c_debugger::add_module_info_callback(const char* callback_name, void(*callback)(c_debugger&, LPMODULEINFO))
 {
 	if (m_module_info_callbacks.count < m_module_info_callbacks.get_max_count())
 	{
-		printf("Adding `MODULEINFO` callback for 0x%p\n", callback);
+		printf("Adding `MODULEINFO` callback for %s\n", callback_name);
 		m_module_info_callbacks[m_module_info_callbacks.count++] = callback;
 	}
 	else
 	{
-		printf("Unable to add `MODULEINFO` callback for 0x%p\n", callback);
+		printf("Unable to add `MODULEINFO` callback for %s\n", callback_name);
 	}
 }
 
@@ -113,12 +143,11 @@ void c_debugger::run_debugger(bool print_debug_strings)
 
 	WCHAR module_name[MAX_PATH] = { 0 };
 
-	DebugActiveProcess(m_process.get_process_id());
-
-	bool process_running = true;
-	while (process_running)
+	while (m_process_is_attached)
 	{
-		memset(module_name, 0, MAX_PATH * 2);
+		memset(modules, 0, sizeof(modules));
+		memset(instructions, 0, sizeof(instructions));
+		memset(module_name, 0, sizeof(module_name));
 
 		m_continue_status = DBG_CONTINUE;
 
@@ -269,7 +298,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 							printf("\n%ls\n  ", (name&&* name) ? name : L"no name");
 							if (call_address > (SIZE_T)module_info.lpBaseOfDll)
 							{
-								printf("thread id: %08d, call %ls+0x%08zX\n", m_debug_event.dwThreadId, m_process.get_name(), call_address - (SIZE_T)module_info.lpBaseOfDll);
+								printf("thread id: %08d, call %ls+0x%08zX\n", m_debug_event.dwThreadId, m_process.get_process_name(), call_address - (SIZE_T)module_info.lpBaseOfDll);
 							}
 
 							SIZE_T stack_data_size = 64; // context.Xbp - context.Xsp;
@@ -318,7 +347,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 		}
 		case EXIT_PROCESS_DEBUG_EVENT:
 		{
-			process_running = false;
+			m_process_is_attached = false;
 			break;
 		}
 		case OUTPUT_DEBUG_STRING_EVENT:

@@ -42,21 +42,19 @@ bool c_process::create()
 	result = CreateProcessW(NULL, m_command_line, NULL, NULL, FALSE, CREATE_DEFAULT_ERROR_MODE, NULL, get_current_directory(), &m_startup_info, &m_process_info) == TRUE;
 	Sleep(25);
 
-	set_name(NULL);
+	set_process_name(NULL);
 
 	return result;
 }
 
 bool c_process::open()
 {
-	bool result = false;
-
 	set_current_directory(nullptr);
 
 	PROCESSENTRY32 process_entry32 = { 0 };
 	process_entry32.dwSize = sizeof(PROCESSENTRY32);
 
-	// Iterate through all active processes and find the Wesnoth process
+	// iterate through all active processes and find our process
 	HANDLE process_snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	Process32First(process_snapshot, &process_entry32);
 
@@ -64,16 +62,16 @@ bool c_process::open()
 	{
 		if (wcscmp(process_entry32.szExeFile, m_process_name) == 0)
 		{
-			m_process_info.dwProcessId = process_entry32.th32ProcessID;
+			// save the process_id and open a handle to the process
 
-			// Save the process_id and open a handle to the process
+			m_process_info.dwProcessId = process_entry32.th32ProcessID;
 			m_process_info.hProcess = OpenProcess(PROCESS_ALL_ACCESS, true, process_entry32.th32ProcessID);
 
-			result = m_process_info.hProcess != INVALID_HANDLE_VALUE;
+			return m_process_info.hProcess != INVALID_HANDLE_VALUE;
 		}
 	} while (Process32Next(process_snapshot, &process_entry32));
 
-	return result;
+	return false;
 }
 
 void c_process::close()
@@ -87,13 +85,19 @@ void c_process::close()
 
 void c_process::suspend_thread()
 {
-	if (m_process_info.hThread && !m_suspended)
-		m_suspended = SUCCEEDED(SuspendThread(m_process_info.hThread));
+	if (!m_process_info.hThread || m_suspended)
+		return;
+
+	SuspendThread(m_process_info.hThread);
+	m_suspended = true;
 }
 void c_process::resume_thread()
 {
-	if (m_process_info.hThread && m_suspended)
-		m_suspended = !SUCCEEDED(ResumeThread(m_process_info.hThread));
+	if (!m_process_info.hThread || !m_suspended)
+		return;
+
+	ResumeThread(m_process_info.hThread);
+	m_suspended = false;
 }
 
 bool c_process::thread_is_suspended()
@@ -156,15 +160,15 @@ void c_process::set_current_directory(const wchar_t* current_directory)
 	GetCurrentDirectory(MAX_PATH, m_current_directory);
 }
 
-const wchar_t* c_process::get_name()
+const wchar_t* c_process::get_process_name()
 {
 	if (*m_process_name)
 		return m_process_name;
 
-	set_name(nullptr);
+	set_process_name(nullptr);
 	return m_process_name;
 }
-void c_process::set_name(const wchar_t* process_name)
+void c_process::set_process_name(const wchar_t* process_name)
 {
 	if (process_name)
 	{
