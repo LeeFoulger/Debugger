@@ -11,6 +11,7 @@ void on_command_line_get_credentials_breakpoint(c_debugger&, c_registers&);
 void on_restricted_region_add_member_internal_breakpoint(c_debugger&, c_registers&);
 void on_rasterizer_draw_watermark_breakpoint(c_debugger&, c_registers&);
 void on_machinima_camera_debug_breakpoint(c_debugger&, c_registers&);
+void on_cache_file_blocking_read_breakpoint(c_debugger&, c_registers&);
 
 void on_cached_map_files_open_all_breakpoint(c_debugger&, c_registers&);
 void on_main_game_load_map_breakpoint(c_debugger&, c_registers&);
