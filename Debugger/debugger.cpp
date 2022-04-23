@@ -62,7 +62,7 @@ c_debugger::c_debugger(c_process* process) :
 
 c_debugger::~c_debugger()
 {
-	delete &m_process;
+	delete& m_process;
 }
 
 void c_debugger::attach()
@@ -125,7 +125,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 
 	bool first_break_has_occurred = false;
 
-	HMODULE modules[128] = { 0 };
+	HMODULE modules[1] = { 0 };
 	MODULEINFO module_info = { 0 };
 
 	SIZE_T bytes_written = 0;
@@ -295,7 +295,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 							read_debuggee_memory((LPCVOID)context.Xsp, &return_address, sizeof(return_address), NULL);
 							call_address += return_address;
 
-							printf("\n%ls\n  ", (name&&* name) ? name : L"no name");
+							printf("\n%ls\n  ", (name && *name) ? name : L"no name");
 							if (call_address > (SIZE_T)module_info.lpBaseOfDll)
 							{
 								printf("thread id: %08d, call %ls+0x%08zX\n", m_debug_event.dwThreadId, m_process.get_process_name(), call_address - (SIZE_T)module_info.lpBaseOfDll);
