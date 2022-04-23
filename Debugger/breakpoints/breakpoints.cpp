@@ -55,6 +55,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 	{
 		debugger.add_breakpoint(0xFF, 0x0056918C - PE32BASE, L"restricted_region_add_member::internal", false, on_restricted_region_add_member_internal_breakpoint);
 		debugger.add_breakpoint(_instruction_call, 0x005B103C - PE32BASE, L"rasterizer_draw_watermark", false, on_rasterizer_draw_watermark_breakpoint);
+		debugger.add_breakpoint(0x84, 0x004E2A3F - PE32BASE, L"machinima_camera_debug check result", false, on_machinima_camera_debug_breakpoint);
 	}
 #endif // _WIN64
 }
