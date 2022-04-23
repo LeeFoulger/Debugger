@@ -116,6 +116,11 @@ public:
 		_In_ DWORD flProtect,
 		_Out_opt_ SIZE_T* lpNumberOfBytesWritten
 	);
+	BOOL dump_debuggee_memory(
+		_In_ LPVOID lpAddress,
+		_In_ SIZE_T dwSize,
+		_In_ LPCWSTR lpFileName
+	);
 
 protected:
 	c_process& m_process;

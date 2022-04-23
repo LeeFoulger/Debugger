@@ -516,3 +516,29 @@ LPVOID c_debugger::allocate_and_write_debuggee_memory(
 
 	return lpAddress;
 }
+
+BOOL c_debugger::dump_debuggee_memory(
+	_In_ LPVOID lpAddress,
+	_In_ SIZE_T dwSize,
+	_In_ LPCWSTR lpFileName
+)
+{
+	if (!lpAddress || !dwSize || !(*lpFileName))
+		return FALSE;
+
+	FILE* file;
+	_wfopen_s(&file, lpFileName, L"w");
+	if (file == NULL || file == INVALID_HANDLE_VALUE)
+		return FALSE;
+
+	UCHAR* memory = new UCHAR[dwSize];
+	read_debuggee_memory(lpAddress, memory, dwSize, NULL);
+	fwrite(memory, sizeof(UCHAR), dwSize, file);
+
+	fflush(file);
+	fclose(file);
+
+	delete[] memory;
+
+	return TRUE;
+}
