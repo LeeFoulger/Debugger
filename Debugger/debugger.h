@@ -81,6 +81,11 @@ public:
 		_In_ DWORD flNewProtect,
 		_Out_ PDWORD lpflOldProtect
 	);
+	SIZE_T query_debuggee_memory(
+		_In_opt_ LPCVOID lpAddress,
+		_Out_writes_bytes_to_(dwLength, return) PMEMORY_BASIC_INFORMATION lpBuffer,
+		_In_ SIZE_T dwLength
+	);
 	BOOL read_debuggee_memory(
 		_In_ LPCVOID lpBaseAddress,
 		_Out_writes_bytes_to_(nSize, *lpNumberOfBytesRead) LPVOID lpBuffer,

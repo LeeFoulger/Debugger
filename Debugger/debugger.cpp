@@ -453,6 +453,15 @@ BOOL c_debugger::protect_debuggee_memory(
 	return VirtualProtectEx(m_process.get_process_handle(), lpAddress, dwSize, flNewProtect, lpflOldProtect);
 }
 
+SIZE_T c_debugger::query_debuggee_memory(
+	_In_opt_ LPCVOID lpAddress,
+	_Out_writes_bytes_to_(dwLength, return) PMEMORY_BASIC_INFORMATION lpBuffer,
+	_In_ SIZE_T dwLength
+)
+{
+	return VirtualQueryEx(m_process.get_process_handle(), lpAddress, lpBuffer, dwLength);
+}
+
 BOOL c_debugger::read_debuggee_memory(
 	_In_ LPCVOID lpBaseAddress,
 	_Out_writes_bytes_to_(nSize, *lpNumberOfBytesRead) LPVOID lpBuffer,
