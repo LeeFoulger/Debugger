@@ -443,6 +443,16 @@ LPVOID c_debugger::allocate_debuggee_memory(
 	return VirtualAllocEx(m_process.get_process_handle(), lpAddress, dwSize, flAllocationType, flProtect);
 }
 
+BOOL c_debugger::protect_debuggee_memory(
+	_In_ LPVOID lpAddress,
+	_In_ SIZE_T dwSize,
+	_In_ DWORD flNewProtect,
+	_Out_ PDWORD lpflOldProtect
+)
+{
+	return VirtualProtectEx(m_process.get_process_handle(), lpAddress, dwSize, flNewProtect, lpflOldProtect);
+}
+
 BOOL c_debugger::read_debuggee_memory(
 	_In_ LPCVOID lpBaseAddress,
 	_Out_writes_bytes_to_(nSize, *lpNumberOfBytesRead) LPVOID lpBuffer,

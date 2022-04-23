@@ -75,6 +75,12 @@ public:
 		_In_ DWORD flAllocationType,
 		_In_ DWORD flProtect
 	);
+	BOOL protect_debuggee_memory(
+		_In_ LPVOID lpAddress,
+		_In_ SIZE_T dwSize,
+		_In_ DWORD flNewProtect,
+		_Out_ PDWORD lpflOldProtect
+	);
 	BOOL read_debuggee_memory(
 		_In_ LPCVOID lpBaseAddress,
 		_Out_writes_bytes_to_(nSize, *lpNumberOfBytesRead) LPVOID lpBuffer,
