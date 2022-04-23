@@ -6,7 +6,7 @@ DWORD WINAPI debugger_wait_routine(LPVOID lpThreadParameter)
 
 	while (true)
 	{
-		if (GetAsyncKeyState(VK_NEXT) & 0xFFFF)
+		if ((GetAsyncKeyState(VK_NEXT) & 0x8001) == 0x8001)
 			break;
 		Sleep(1);
 	}
