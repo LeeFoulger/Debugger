@@ -57,6 +57,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 		debugger.add_breakpoint(_instruction_call, 0x005B103C - PE32BASE, L"rasterizer_draw_watermark", false, on_rasterizer_draw_watermark_breakpoint);
 		debugger.add_breakpoint(0x84, 0x004E2A3F - PE32BASE, L"machinima_camera_debug check result", false, on_machinima_camera_debug_breakpoint);
 		debugger.add_breakpoint(0x55, 0x00483D40 - PE32BASE, L"cache_file_blocking_read", false, on_cache_file_blocking_read_breakpoint);
+		debugger.add_breakpoint(0x84, 0x00482DB2 - PE32BASE, L"cache_files_verify_header_rsa_signature check result", false, on_cache_files_verify_header_rsa_signature_breakpoint);
 	}
 #endif // _WIN64
 }
