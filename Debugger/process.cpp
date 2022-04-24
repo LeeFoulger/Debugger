@@ -178,3 +178,25 @@ void c_process::set_process_name(const wchar_t* process_name)
 
 	GetModuleBaseName(m_process_info.hProcess, NULL, m_process_name, MAX_PATH);
 }
+
+DWORD process_get_modules(c_process& process, HMODULE** out_modules)
+{
+	DWORD module_count = 1;
+	HMODULE* modules = new HMODULE[module_count]{};
+	DWORD cb_needed = 0;
+
+	EnumProcessModules(process.get_process_handle(), modules, module_count * sizeof(HMODULE), &cb_needed);
+
+	delete[] modules;
+	modules = nullptr;
+
+	module_count = cb_needed / sizeof(HMODULE);
+	modules = new HMODULE[module_count]{};
+
+	EnumProcessModules(process.get_process_handle(), modules, module_count * sizeof(HMODULE), &cb_needed);
+
+	if (out_modules)
+		*out_modules = modules;
+
+	return module_count;
+}

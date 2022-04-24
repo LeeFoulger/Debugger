@@ -42,3 +42,5 @@ protected:
 
 	bool m_suspended;
 };
+
+DWORD process_get_modules(c_process& process, HMODULE** out_modules);
