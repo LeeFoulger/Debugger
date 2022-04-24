@@ -120,7 +120,7 @@ void on_cached_map_files_open_all_breakpoint(c_debugger& debugger, c_registers& 
 	printf("");
 }
 
-enum e_game_mode : ULONG
+enum e_game_mode : unsigned long
 {
 	_game_mode_none = 0,
 	_game_mode_campaign,
@@ -132,7 +132,7 @@ enum e_game_mode : ULONG
 	k_game_mode_count,
 };
 
-enum e_game_engine_variant : ULONG
+enum e_game_engine_variant : unsigned long
 {
 	_game_engine_base_variant = 0,
 	_game_engine_ctf_variant,
@@ -186,13 +186,13 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 		debugger.read_debuggee_memory(registers.cast_cx_as<LPCVOID>(), game_options, sizeof(game_options), NULL);
 
 		// game mode: multiplayer
-		*reinterpret_cast<ULONG*>(game_options) = _game_mode_multiplayer;
+		*reinterpret_cast<unsigned long*>(game_options) = _game_mode_multiplayer;
 
 		// scenario path: scenario_path
 		csstrncpy(game_options + 0x24, MAX_PATH, scenario_path, MAX_PATH);
 
 		// game engine: slayer
-		*reinterpret_cast<ULONG*>(game_options + 0x32C) = _game_engine_slayer_variant;
+		*reinterpret_cast<unsigned long*>(game_options + 0x32C) = _game_engine_slayer_variant;
 
 		debugger.write_debuggee_memory(registers.cast_cx_as<LPVOID>(), game_options, sizeof(game_options), NULL);
 	}

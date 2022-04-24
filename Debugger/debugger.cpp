@@ -531,9 +531,9 @@ BOOL c_debugger::dump_debuggee_memory(
 	if (file == NULL || file == INVALID_HANDLE_VALUE)
 		return FALSE;
 
-	UCHAR* memory = new UCHAR[dwSize];
+	unsigned char* memory = new unsigned char[dwSize];
 	read_debuggee_memory(lpAddress, memory, dwSize, NULL);
-	fwrite(memory, sizeof(UCHAR), dwSize, file);
+	fwrite(memory, sizeof(unsigned char), dwSize, file);
 
 	fflush(file);
 	fclose(file);
