@@ -17,8 +17,7 @@ void on_command_line_get_credentials_breakpoint(c_debugger& debugger, c_register
 
 	if (disable_saber_code_applied_in_scenario_load)
 	{
-		unsigned char patch_data_bytes[] = { 0x00 };
-		debugger.write_debuggee_memory(registers.get_runtime_addr_as<LPVOID>(0x01346881 - PE32BASE), patch_data_bytes, sizeof(patch_data_bytes), NULL);
+		debugger_write_array(debugger, registers.get_runtime_addr_as<LPVOID>(0x01346881 - PE32BASE), unsigned char, { 0x00 });
 	}
 
 	printf("");
@@ -194,6 +193,6 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 		// game engine: slayer
 		*reinterpret_cast<unsigned long*>(game_options + 0x32C) = _game_engine_slayer_variant;
 
-		debugger.write_debuggee_memory(registers.cast_cx_as<LPVOID>(), game_options, sizeof(game_options), NULL);
+		debugger_write_data(debugger, registers.cast_cx_as<LPVOID>(), game_options);
 	}
 }

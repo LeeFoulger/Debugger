@@ -156,6 +156,17 @@ BOOL debugger_write_debuggee_string(
 	return debugger.write_debuggee_memory(lpAddress, string, string_size_in_bytes, NULL);
 }
 
+template<typename t_address_type, typename t_data_type, size_t k_count, size_t k_data_size = k_count * sizeof(t_data_type)>
+void debugger_write_data(
+	c_debugger& debugger,
+	t_address_type address,
+	t_data_type(&buffer)[k_count]
+)
+{
+	debugger.write_debuggee_memory(*reinterpret_cast<LPVOID*>(&address), buffer, k_data_size, NULL);
+}
+#define debugger_write_array(in_debugger, in_address, array_type, ...) { array_type in_array[] = __VA_ARGS__; debugger_write_data((in_debugger), (in_address), in_array); }
+
 class c_registers
 {
 public:
