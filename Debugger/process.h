@@ -44,3 +44,4 @@ protected:
 };
 
 DWORD process_get_modules(c_process& process, HMODULE** out_modules);
+DWORD process_get_module_index(c_process& process, HMODULE* modules, DWORD module_count, LPCWSTR module_name);

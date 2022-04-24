@@ -200,3 +200,19 @@ DWORD process_get_modules(c_process& process, HMODULE** out_modules)
 
 	return module_count;
 }
+
+DWORD process_get_module_index(c_process& process, HMODULE* modules, DWORD module_count, LPCWSTR module_name)
+{
+	DWORD module_index = 0;
+	WCHAR iterated_module_name[MAX_PATH] = {};
+	for (module_index = 0; module_index < module_count; module_index++)
+	{
+		GetModuleBaseNameW(process.get_process_handle(), modules[module_index], iterated_module_name, MAX_PATH);
+		if (wcscmp(iterated_module_name, module_name) == 0)
+		{
+			break;
+		}
+	}
+
+	return module_index;
+}
