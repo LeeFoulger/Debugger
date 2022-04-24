@@ -167,6 +167,8 @@ void debugger_write_data(
 }
 #define debugger_write_array(in_debugger, in_address, array_type, ...) { array_type in_array[] = __VA_ARGS__; debugger_write_data((in_debugger), (in_address), in_array); }
 
+void debugger_unprotect_module(c_debugger& debugger, LPCWSTR module_name);
+
 class c_registers
 {
 public:

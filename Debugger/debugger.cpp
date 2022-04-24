@@ -542,3 +542,40 @@ BOOL c_debugger::dump_debuggee_memory(
 
 	return TRUE;
 }
+
+void debugger_unprotect_module(c_debugger& debugger, LPCWSTR module_name)
+{
+	c_process& process = debugger.get_process();
+	HANDLE process_handle = process.get_process_handle();
+
+	HMODULE* modules = nullptr;
+	DWORD module_count = process_get_modules(process, &modules);
+	assert(modules != nullptr);
+
+	DWORD module_index = process_get_module_index(process, modules, module_count, module_name);
+
+	MODULEINFO module_info = { 0 };
+	GetModuleInformation(process_handle, modules[module_index], &module_info, sizeof(module_info));
+
+	delete[] modules;
+
+	// which of these is better?
+	if (false)
+	{
+		// is this better?
+		DWORD protect;
+		debugger.protect_debuggee_memory(module_info.lpBaseOfDll, module_info.SizeOfImage, PAGE_EXECUTE_READWRITE, &protect);
+	}
+	else
+	{
+		// or is this better?
+		MEMORY_BASIC_INFORMATION memory_info = { 0 };
+		for (SIZE_T module_offset = 0; module_offset < debugger.query_debuggee_memory(reinterpret_cast<LPCVOID>(reinterpret_cast<SIZE_T>(module_info.lpBaseOfDll) + module_offset), &memory_info, sizeof(MEMORY_BASIC_INFORMATION)); module_offset += memory_info.RegionSize)
+		{
+			if (memory_info.Protect != PAGE_EXECUTE_READ)
+				continue;
+
+			debugger.protect_debuggee_memory(memory_info.BaseAddress, memory_info.RegionSize, PAGE_EXECUTE_READWRITE, &memory_info.Protect);
+		}
+	}
+}
