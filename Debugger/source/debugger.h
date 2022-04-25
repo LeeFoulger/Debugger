@@ -24,11 +24,8 @@
 #define Xsp Esp
 #endif // WIN64
 
-enum e_instruction : BYTE
-{
-	_instruction_call = 0xE8,
-	_instruction_break = 0xCC
-};
+static const BYTE k_call_instruction = 0xE8;
+static const BYTE k_break_instruction = 0xCC;
 
 template<typename t_type, SIZE_T k_max_count>
 struct s_static_array
@@ -45,6 +42,7 @@ class c_debugger;
 class c_registers;
 struct s_breakpoint
 {
+	const char* opcode_name;
 	BYTE break_on;
 	bool print_registers;
 	SIZE_T module_offset;
@@ -61,7 +59,7 @@ public:
 	void attach();
 	void detach();
 
-	void add_breakpoint(BYTE, SIZE_T, const wchar_t*, bool, void(*callback)(c_debugger&, class c_registers&) = nullptr);
+	void add_breakpoint(SIZE_T, bool, const char*, const wchar_t*, void(*callback)(c_debugger&, class c_registers&) = nullptr);
 
 	void add_module_info_callback(const char*, void(*callback)(c_debugger&, LPMODULEINFO));
 

@@ -43,9 +43,6 @@ void dump_to_console(const char* line_prefix, unsigned char* buffer, unsigned lo
 	printf("\n");
 }
 
-const e_instruction call_op = _instruction_call;
-const e_instruction break_op = _instruction_break;
-
 void add_break_on_winmain(c_debugger*, LPMODULEINFO);
 
 c_debugger::c_debugger(c_process* process) :
@@ -79,17 +76,20 @@ void c_debugger::detach()
 	m_process_is_attached = false;
 }
 
-void c_debugger::add_breakpoint(BYTE break_on, SIZE_T offset, const wchar_t* name, bool print_registers, void(*callback)(c_debugger&, c_registers&))
+void c_debugger::add_breakpoint(SIZE_T offset, bool print_registers, const char* opcode_name, const wchar_t* name, void(*callback)(c_debugger&, c_registers&))
 {
+	if (!opcode_name)
+		return;
+
 	if (m_breakpoints.count < m_breakpoints.get_max_count())
 	{
 		s_breakpoint& breakpoint = m_breakpoints[m_breakpoints.count++];
 
 		printf("Adding breakpoint at 0x%016zX for %ls\n", offset, name);
 
-		breakpoint.break_on = break_on;
-		breakpoint.print_registers = print_registers;
 		breakpoint.module_offset = offset;
+		breakpoint.print_registers = print_registers;
+		breakpoint.opcode_name = opcode_name;
 		wcsncpy_s(breakpoint.name, name, NUMBER_OF(breakpoint.name));
 		breakpoint.callback = callback;
 	}
@@ -123,7 +123,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 
 	CONTEXT context = { 0 };
 
-	bool first_break_has_occurred = false;
+	bool first_run = true;
 
 	HMODULE modules[1] = { 0 };
 	MODULEINFO module_info = { 0 };
@@ -162,8 +162,10 @@ void c_debugger::run_debugger(bool print_debug_strings)
 			{
 			case EXCEPTION_BREAKPOINT:
 			{
-				if (!first_break_has_occurred)
+				if (first_run)
 				{
+					first_run = false;
+
 					m_thread_handle = OpenThread(THREAD_ALL_ACCESS, true, m_debug_event.dwThreadId);
 
 					EnumProcessModules(m_process.get_process_handle(), modules, sizeof(modules), (LPDWORD)&bytes_read);
@@ -184,10 +186,12 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						read_debuggee_memory(call_breakpoint_address, &instructions, READ_PAGE_SIZE, &bytes_read);
 						for (SIZE_T c = 0; c < bytes_read; c++)
 						{
-							if (breakpoint.break_on != instructions[c])
+							if (!instruction_startswith(instructions + c, instructions + (bytes_read - c), breakpoint.opcode_name))
 								continue;
 
-							if (breakpoint.break_on == call_op)
+							breakpoint.break_on = instructions[c];
+
+							if (breakpoint.break_on == k_call_instruction)
 							{
 								offset = (SIZE_T)call_breakpoint_address + c;
 								read_debuggee_memory((LPVOID)(offset + 1), &call_location, 4, &call_location_bytes_read);
@@ -202,7 +206,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 
 							if (breakpoints_set < m_breakpoints.get_max_count())
 							{
-								write_debuggee_memory((LPVOID)offset, &break_op, sizeof(break_op), &bytes_written);
+								write_debuggee_memory((LPVOID)offset, &k_break_instruction, sizeof(k_break_instruction), &bytes_written);
 								FlushInstructionCache(m_process.get_process_handle(), (LPVOID)offset, 1);
 
 								breakpoints_set++;
@@ -248,7 +252,6 @@ void c_debugger::run_debugger(bool print_debug_strings)
 					}
 				}
 
-				first_break_has_occurred = true;
 				m_continue_status = DBG_CONTINUE;
 				break;
 			}
@@ -265,7 +268,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 
 					if (last_call_location)
 					{
-						write_debuggee_memory((LPVOID)last_call_location, &break_op, sizeof(break_op), &bytes_written);
+						write_debuggee_memory((LPVOID)last_call_location, &k_break_instruction, sizeof(k_break_instruction), &bytes_written);
 						FlushInstructionCache(m_process.get_process_handle(), (LPVOID)last_call_location, 1);
 
 						//DWORD module_offset = /*0x00400000*/PE32_BASE - (DWORD)module_info.lpBaseOfDll;
