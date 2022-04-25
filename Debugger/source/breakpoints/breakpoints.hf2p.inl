@@ -5,19 +5,11 @@ const bool disable_saber_code_applied_in_scenario_load = false;
 void on_command_line_get_credentials_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	LPVOID debuggee_command_line = debugger_allocate_and_write_debuggee_string(debugger, "--account 123 --sign-in-code 123 --environment 123");
-	debugger.write_debuggee_pointer(registers.get_runtime_addr_as<LPVOID>(0x052BE944 - PE32BASE), debuggee_command_line, NULL);
-
-	static char* data[0x375F0]{};
-	if (*data == 0)
-	{
-		debugger.read_debuggee_memory(registers.get_runtime_addr_as<LPVOID>(0x043E1408 - PE32BASE), data, 0x375F0, NULL);
-	}
-
-	printf("");
+	debugger.write_debuggee_pointer(registers.get_runtime_addr_as<LPVOID>(0x052BE944 - PE32_BASE), debuggee_command_line, NULL);
 
 	if (disable_saber_code_applied_in_scenario_load)
 	{
-		debugger_write_array(debugger, registers.get_runtime_addr_as<LPVOID>(0x01346881 - PE32BASE), unsigned char, { 0x00 });
+		debugger_write_array(debugger, registers.get_runtime_addr_as<LPVOID>(0x01346881 - PE32_BASE), unsigned char, { 0x00 });
 	}
 
 	printf("");
@@ -74,14 +66,16 @@ void on_machinima_camera_debug_breakpoint(c_debugger& debugger, c_registers& reg
 	// .text:004E2A3F	test    al, al			<--- current breakpoint
 	// .text:004E2A41	jz      loc_4E2C7B		<--- current eip
 	// .text:004E2A47	mov     eax, [esi+84h]	<--- new eip
-	registers.get_raw_context().Xip += (0x004E2A47 - 0x004E2A41);
+
+	const size_t jump_size = 0x004E2A47 - 0x004E2A41;
+	registers.get_raw_context().Xip += jump_size;
 }
 
 void on_cache_file_blocking_read_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	debugger.dump_debuggee_memory(registers.get_runtime_addr_as<LPCVOID>(0x042DDCD0 - PE32BASE), 0x000034F0, L"bin\\cache_file_tag_globals.bin");
-	debugger.dump_debuggee_memory(registers.get_runtime_addr_as<LPCVOID>(0x043E1408 - PE32BASE), 0x000375F0, L"bin\\cache_file_table_of_contents.bin");
-	debugger.dump_debuggee_memory(registers.get_runtime_addr_as<LPCVOID>(0x044189F8 - PE32BASE), 0x000036E8, L"bin\\cache_file_copy_globals.bin");
+	debugger.dump_debuggee_memory(registers.get_runtime_addr_as<LPCVOID>(0x042DDCD0 - PE32_BASE), 0x000034F0, L"bin\\cache_file_tag_globals.bin");
+	debugger.dump_debuggee_memory(registers.get_runtime_addr_as<LPCVOID>(0x043E1408 - PE32_BASE), 0x000375F0, L"bin\\cache_file_table_of_contents.bin");
+	debugger.dump_debuggee_memory(registers.get_runtime_addr_as<LPCVOID>(0x044189F8 - PE32_BASE), 0x000036E8, L"bin\\cache_file_copy_globals.bin");
 
 	printf("");
 }
@@ -91,12 +85,14 @@ void on_cache_files_verify_header_rsa_signature_breakpoint(c_debugger& debugger,
 	// .text:00482DB2	test    al, al			<--- current breakpoint
 	// .text:00482DB4	jz      loc_482DD2		<--- current eip
 	// .text:00482DD2	mov     al, 1			<--- new eip
-	registers.get_raw_context().Xip += (0x00482DD2 - 0x00482DB4);
+
+	const size_t jump_size = 0x00482DD2 - 0x00482DB4;
+	registers.get_raw_context().Xip += jump_size;
 }
 
 void on_cached_map_files_open_all_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	SIZE_T resource_paths_offset = 0x012ECEA4 - PE32BASE;
+	SIZE_T resource_paths_offset = 0x012ECEA4 - PE32_BASE;
 	char resource_paths[7][32] = {
 		"test\\resources.dat",
 		"test\\textures.dat",

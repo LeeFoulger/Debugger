@@ -48,7 +48,7 @@ struct s_breakpoint
 	BYTE break_on;
 	bool print_registers;
 	SIZE_T module_offset;
-	WCHAR name[64];
+	WCHAR name[128];
 	void(*callback)(class c_debugger&, class c_registers&);
 };
 
@@ -177,9 +177,9 @@ public:
 		context(context),
 
 #ifdef _WIN64
-		static_base_addr(PE64BASE),
+		static_base_addr(PE64_BASE),
 #else
-		static_base_addr(PE32BASE),
+		static_base_addr(PE32_BASE),
 #endif // WIN64
 		runtime_base_addr(reinterpret_cast<SIZE_T>(module_info->lpBaseOfDll))
 	{

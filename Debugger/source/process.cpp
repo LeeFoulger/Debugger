@@ -30,9 +30,9 @@ c_process::c_process():
 
 c_process::~c_process()
 {
-	delete[] m_command_line;
-	delete[] m_process_name;
-	delete[] m_current_directory;
+	SAFE_DELETE(m_command_line);
+	SAFE_DELETE(m_process_name);
+	SAFE_DELETE(m_current_directory);
 }
 
 bool c_process::create()
@@ -187,8 +187,7 @@ DWORD process_get_modules(c_process& process, HMODULE** out_modules)
 
 	EnumProcessModules(process.get_process_handle(), modules, module_count * sizeof(HMODULE), &cb_needed);
 
-	delete[] modules;
-	modules = nullptr;
+	SAFE_DELETE(modules);
 
 	module_count = cb_needed / sizeof(HMODULE);
 	modules = new HMODULE[module_count]{};

@@ -90,7 +90,7 @@ void c_debugger::add_breakpoint(BYTE break_on, SIZE_T offset, const wchar_t* nam
 		breakpoint.break_on = break_on;
 		breakpoint.print_registers = print_registers;
 		breakpoint.module_offset = offset;
-		wcsncpy_s(breakpoint.name, name, 64);
+		wcsncpy_s(breakpoint.name, name, NUMBER_OF(breakpoint.name));
 		breakpoint.callback = callback;
 	}
 	else
@@ -268,7 +268,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						write_debuggee_memory((LPVOID)last_call_location, &break_op, sizeof(break_op), &bytes_written);
 						FlushInstructionCache(m_process.get_process_handle(), (LPVOID)last_call_location, 1);
 
-						//DWORD module_offset = /*0x00400000*/PE32BASE - (DWORD)module_info.lpBaseOfDll;
+						//DWORD module_offset = /*0x00400000*/PE32_BASE - (DWORD)module_info.lpBaseOfDll;
 
 						decltype(s_breakpoint::callback) callback = nullptr;
 						LPWSTR name = NULL;
@@ -319,8 +319,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 							printf("  stack:\n");
 							dump_to_console("    ", stack_data, stack_data_size, 64, 16);
 
-							delete[] stack_data;
-							stack_data = nullptr;
+							SAFE_DELETE(stack_data);
 						}
 
 						last_call_location = 0;
@@ -382,7 +381,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						wprintf_s(L"[debug] %s\n", buffer);
 				}
 
-				delete[] buffer;
+				SAFE_DELETE(buffer);
 			}
 			else
 			{
@@ -413,7 +412,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						printf_s("[debug] %s\n", buffer);
 				}
 
-				delete[] buffer;
+				SAFE_DELETE(buffer);
 			}
 
 			m_continue_status = DBG_CONTINUE;
@@ -538,7 +537,7 @@ BOOL c_debugger::dump_debuggee_memory(
 	fflush(file);
 	fclose(file);
 
-	delete[] memory;
+	SAFE_DELETE(memory);
 
 	return TRUE;
 }
@@ -557,7 +556,7 @@ void debugger_unprotect_module(c_debugger& debugger, LPCWSTR module_name)
 	MODULEINFO module_info = { 0 };
 	GetModuleInformation(process_handle, modules[module_index], &module_info, sizeof(module_info));
 
-	delete[] modules;
+	SAFE_DELETE(modules);
 
 	// which of these is better?
 	if (false)

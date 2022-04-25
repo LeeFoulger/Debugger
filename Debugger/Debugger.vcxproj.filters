@@ -15,41 +15,50 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="process.cpp">
+    <ClCompile Include="source\process.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="debugger.cpp">
+    <ClCompile Include="source\debugger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="breakpoints\breakpoints.cpp">
+    <ClCompile Include="source\breakpoints\breakpoints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="external_libraries\nmd_assembly_wrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="process.h">
+    <ClInclude Include="source\process.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="main.h">
+    <ClInclude Include="source\main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="debugger.h">
+    <ClInclude Include="source\debugger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="macros.h">
+    <ClInclude Include="source\macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="breakpoints\breakpoints.h">
+    <ClInclude Include="source\breakpoints\breakpoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external_libraries\nmd_assembly\nmd_assembly.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external_libraries\nmd_assembly_wrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="breakpoints\breakpoints.hf2p.inl">
+    <None Include="source\breakpoints\breakpoints.hf2p.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="breakpoints\breakpoints.tools.odst.inl">
+    <None Include="source\breakpoints\breakpoints.tools.odst.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

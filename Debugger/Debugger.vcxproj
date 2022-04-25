@@ -100,7 +100,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)external_libraries\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,7 +114,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)external_libraries\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,7 +130,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)external_libraries\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,7 +148,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source\;$(ProjectDir)external_libraries\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,21 +158,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="breakpoints\breakpoints.cpp" />
-    <ClCompile Include="debugger.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="process.cpp" />
+    <ClCompile Include="external_libraries\nmd_assembly_wrapper.cpp" />
+    <ClCompile Include="source\breakpoints\breakpoints.cpp" />
+    <ClCompile Include="source\debugger.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\process.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="breakpoints\breakpoints.h" />
-    <ClInclude Include="debugger.h" />
-    <ClInclude Include="macros.h" />
-    <ClInclude Include="main.h" />
-    <ClInclude Include="process.h" />
+    <ClInclude Include="external_libraries\nmd_assembly_wrapper.h" />
+    <ClInclude Include="source\breakpoints\breakpoints.h" />
+    <ClInclude Include="source\debugger.h" />
+    <ClInclude Include="external_libraries\nmd_assembly\nmd_assembly.h" />
+    <ClInclude Include="source\macros.h" />
+    <ClInclude Include="source\main.h" />
+    <ClInclude Include="source\process.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="breakpoints\breakpoints.hf2p.inl" />
-    <None Include="breakpoints\breakpoints.tools.odst.inl" />
+    <None Include="source\breakpoints\breakpoints.hf2p.inl" />
+    <None Include="source\breakpoints\breakpoints.tools.odst.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

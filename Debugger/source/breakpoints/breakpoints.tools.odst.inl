@@ -105,3 +105,5 @@ void on_shell_get_gamertag_return_breakpoint(c_debugger& debugger, c_registers& 
 // set gamertag here
 //extern wchar_t g_gamertag[16] = L"gamertag";
 
+extern wchar_t g_gamertag[16] = L"Twister";
+
