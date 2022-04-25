@@ -1,3 +1,4 @@
+#include <string_utils.h>
 
 #define NMD_ASSEMBLY_IMPLEMENTATION
 #include <nmd_assembly/nmd_assembly.h>
@@ -42,7 +43,7 @@ bool instruction_startswith(const unsigned char* buffer, const unsigned char* bu
 
 		nmd_x86_format(&instruction, formatted_instruction, NMD_X86_INVALID_RUNTIME_ADDRESS, NMD_X86_FORMAT_FLAGS_DEFAULT);
 
-		return _nmd_strstr(formatted_instruction, search) == formatted_instruction;
+		return string_starts(formatted_instruction, search);
 	}
 
 	return false;

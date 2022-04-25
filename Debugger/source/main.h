@@ -18,9 +18,3 @@
 
 // external library wrappers
 #include <nmd_assembly_wrapper.h>
-
-void csstrncpy(char* dest, rsize_t size_in_bytes, const char* src, rsize_t max_count);
-void cswcsncpy(wchar_t* dest, rsize_t size_in_bytes, const wchar_t* src, rsize_t max_count);
-
-template<typename t_string_type, size_t k_string_size>
-using c_string = t_string_type[k_string_size];

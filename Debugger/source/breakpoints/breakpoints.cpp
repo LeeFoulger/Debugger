@@ -1,4 +1,8 @@
 #include <main.h>
+#include <string_utils.h>
+
+#include <shellapi.h>
+#include <stdio.h>
 
 void create_debugger_additions(c_debugger& debugger)
 {

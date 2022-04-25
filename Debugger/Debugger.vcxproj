@@ -163,6 +163,7 @@
     <ClCompile Include="source\debugger.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\process.cpp" />
+    <ClCompile Include="source\string_utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external_libraries\nmd_assembly_wrapper.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="source\macros.h" />
     <ClInclude Include="source\main.h" />
     <ClInclude Include="source\process.h" />
+    <ClInclude Include="source\string_utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="source\breakpoints\breakpoints.hf2p.inl" />
