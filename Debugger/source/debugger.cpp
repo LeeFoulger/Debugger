@@ -1,5 +1,8 @@
 #include <main.h>
 
+#include <cassert>
+#include <stdio.h>
+
 DWORD WINAPI debugger_wait_routine(LPVOID lpThreadParameter)
 {
 	c_debugger* debugger = static_cast<c_debugger*>(lpThreadParameter);

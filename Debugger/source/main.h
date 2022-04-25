@@ -4,13 +4,9 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include <cassert>
 #include <Psapi.h>
-#include <shellapi.h>
-#include <stdio.h>
-#include <tlhelp32.h>
 
-// solution files
+// project files
 #include <macros.h>
 #include <process.h>
 #include <debugger.h>

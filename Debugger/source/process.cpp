@@ -1,5 +1,8 @@
 #include <main.h>
 
+#include <shellapi.h>
+#include <tlhelp32.h>
+
 c_process::c_process():
 	m_command_line(new wchar_t[4096]),
 	m_process_name(new wchar_t[MAX_PATH]),
