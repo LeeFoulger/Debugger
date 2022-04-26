@@ -9,7 +9,7 @@ void on_command_line_get_credentials_breakpoint(c_debugger& debugger, c_register
 
 	if (disable_saber_code_applied_in_scenario_load)
 	{
-		debugger_write_array(debugger, registers.get_runtime_addr_as<LPVOID>(0x01346881 - PE32_BASE), unsigned char, { 0x00 });
+		debugger_write_data(debugger, registers.get_runtime_addr_as<LPVOID>(0x01346881 - PE32_BASE), { 0x00ui8 });
 	}
 
 	printf("");

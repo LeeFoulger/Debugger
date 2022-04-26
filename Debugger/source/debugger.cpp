@@ -185,7 +185,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						read_debuggee_memory(breakpoint_address, &instructions, READ_PAGE_SIZE, &bytes_read);
 						for (SIZE_T c = 0; c < bytes_read; c++)
 						{
-							if (!instruction_startswith(instructions + c, instructions + (bytes_read - c), breakpoint.opcode_name))
+							if (!instruction_startswith_impl(instructions + c, instructions + (bytes_read - c), breakpoint.opcode_name))
 								continue;
 
 							breakpoint.break_on = instructions[c];

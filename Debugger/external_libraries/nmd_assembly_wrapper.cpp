@@ -9,7 +9,7 @@ const NMD_X86_MODE mode = NMD_X86_MODE_64;
 const NMD_X86_MODE mode = NMD_X86_MODE_32;
 #endif
 
-void dissassemble_x86(const unsigned char* buffer, const unsigned char* buffer_end, int(print_func)(const char*, ...))
+void disassemble_x86_impl(const unsigned char* buffer, const unsigned char* buffer_end, int(print_func)(const char*, ...))
 {
 	if (!buffer || !buffer_end || !print_func)
 		return;
@@ -28,7 +28,7 @@ void dissassemble_x86(const unsigned char* buffer, const unsigned char* buffer_e
 	}
 }
 
-bool instruction_startswith(const unsigned char* buffer, const unsigned char* buffer_end, const char* search)
+bool instruction_startswith_impl(const unsigned char* buffer, const unsigned char* buffer_end, const char* search)
 {
 	if (!buffer || !buffer_end || !search)
 		return false;
