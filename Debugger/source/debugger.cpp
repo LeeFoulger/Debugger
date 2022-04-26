@@ -134,11 +134,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 	SIZE_T bytes_written = 0;
 	SIZE_T bytes_read = 0;
 
-	SIZE_T offset = 0;
-
-	SIZE_T call_location = 0;
-	SIZE_T call_location_bytes_read = 0;
-	SIZE_T last_call_location = 0;
+	SIZE_T last_instruction_pointer = 0;
 
 	BYTE instructions[READ_PAGE_SIZE] = { 0 };
 
@@ -184,9 +180,9 @@ void c_debugger::run_debugger(bool print_debug_strings)
 					for (SIZE_T i = 0; i < m_breakpoints.count; i++)
 					{
 						s_breakpoint& breakpoint = m_breakpoints[i];
-						LPVOID call_breakpoint_address = (LPVOID)((SIZE_T)module_info.lpBaseOfDll + breakpoint.module_offset);
+						LPVOID breakpoint_address = (LPVOID)((SIZE_T)module_info.lpBaseOfDll + breakpoint.module_offset);
 
-						read_debuggee_memory(call_breakpoint_address, &instructions, READ_PAGE_SIZE, &bytes_read);
+						read_debuggee_memory(breakpoint_address, &instructions, READ_PAGE_SIZE, &bytes_read);
 						for (SIZE_T c = 0; c < bytes_read; c++)
 						{
 							if (!instruction_startswith(instructions + c, instructions + (bytes_read - c), breakpoint.opcode_name))
@@ -194,21 +190,10 @@ void c_debugger::run_debugger(bool print_debug_strings)
 
 							breakpoint.break_on = instructions[c];
 
-							if (breakpoint.break_on == k_call_instruction)
-							{
-								offset = (SIZE_T)call_breakpoint_address + c;
-								read_debuggee_memory((LPVOID)(offset + 1), &call_location, 4, &call_location_bytes_read);
-								call_location += offset + 5;
-								if (call_location < (SIZE_T)module_info.lpBaseOfDll || call_location >(SIZE_T)module_info.lpBaseOfDll + module_info.SizeOfImage)
-									continue;
-							}
-							else
-							{
-								offset = (SIZE_T)call_breakpoint_address + c;
-							}
-
 							if (breakpoints_set < m_breakpoints.get_max_count())
 							{
+								SIZE_T offset = (SIZE_T)breakpoint_address + c;
+
 								write_debuggee_memory((LPVOID)offset, &k_break_instruction, sizeof(k_break_instruction), &bytes_written);
 								FlushInstructionCache(m_process.get_process_handle(), (LPVOID)offset, 1);
 
@@ -251,7 +236,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 							FlushInstructionCache(m_process.get_process_handle(), (LPVOID)context.Xip, 1);
 						}
 
-						last_call_location = context.Xip;
+						last_instruction_pointer = context.Xip;
 					}
 				}
 
@@ -269,10 +254,10 @@ void c_debugger::run_debugger(bool print_debug_strings)
 
 					c_registers registers(&module_info, context);
 
-					if (last_call_location)
+					if (last_instruction_pointer)
 					{
-						write_debuggee_memory((LPVOID)last_call_location, &k_break_instruction, sizeof(k_break_instruction), &bytes_written);
-						FlushInstructionCache(m_process.get_process_handle(), (LPVOID)last_call_location, 1);
+						write_debuggee_memory((LPVOID)last_instruction_pointer, &k_break_instruction, sizeof(k_break_instruction), &bytes_written);
+						FlushInstructionCache(m_process.get_process_handle(), (LPVOID)last_instruction_pointer, 1);
 
 						//DWORD module_offset = /*0x00400000*/PE32_BASE - (DWORD)module_info.lpBaseOfDll;
 
@@ -283,9 +268,9 @@ void c_debugger::run_debugger(bool print_debug_strings)
 						{
 							s_breakpoint& breakpoint = m_breakpoints[i];
 							SIZE_T instruction_pointer_offset = context.Xip - (SIZE_T)module_info.lpBaseOfDll;
-							SIZE_T last_call_location_offset = last_call_location - (SIZE_T)module_info.lpBaseOfDll;
+							SIZE_T last_instruction_offset = last_instruction_pointer - (SIZE_T)module_info.lpBaseOfDll;
 
-							if (instruction_pointer_offset == breakpoint.module_offset || last_call_location_offset == breakpoint.module_offset)
+							if (instruction_pointer_offset == breakpoint.module_offset || last_instruction_offset == breakpoint.module_offset)
 							{
 								callback = breakpoint.callback;
 								name = breakpoint.name;
@@ -328,7 +313,7 @@ void c_debugger::run_debugger(bool print_debug_strings)
 							SAFE_DELETE(stack_data);
 						}
 
-						last_call_location = 0;
+						last_instruction_pointer = 0;
 
 						if (callback)
 							callback(*this, registers);
