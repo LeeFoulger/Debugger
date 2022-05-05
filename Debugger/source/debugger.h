@@ -364,7 +364,7 @@ public:
 		if (m_address == 0)
 			return;
 
-		memcpy((t_type*)&m_value, (t_type*)&value, sizeof(t_type));
+		memcpy(&m_value, &value, sizeof(t_type));
 
 		write_remote();
 	}
@@ -396,6 +396,7 @@ private:
 
 	void read_remote()
 	{
+		memset(&m_value, 0xFF, sizeof(t_type));
 		m_debugger.read_debuggee_memory(reinterpret_cast<LPCVOID>(m_address), &m_value, sizeof(m_value), NULL);
 	}
 
@@ -440,7 +441,7 @@ public:
 		if (m_address == 0)
 			return;
 
-		memcpy((t_type*)&m_value, (t_type*)&value, sizeof(t_type));
+		memcpy(m_value, value, sizeof(t_type));
 
 		write_remote();
 	}
@@ -472,6 +473,7 @@ private:
 
 	void read_remote()
 	{
+		memset(m_value, 0, sizeof(t_type));
 		m_debugger.read_debuggee_pointer(reinterpret_cast<LPCVOID>(m_address), m_value, sizeof(t_type), NULL);
 	}
 
