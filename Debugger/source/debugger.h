@@ -27,6 +27,7 @@
 static const BYTE k_call_instruction = 0xE8;
 static const BYTE k_break_instruction = 0xCC;
 
+// TODO: find a home for this
 template<typename t_type, SIZE_T k_max_count>
 struct s_static_array
 {
@@ -166,6 +167,7 @@ void debugger_write_data(
 
 void debugger_unprotect_module(c_debugger& debugger, LPCWSTR module_name);
 
+// TODO: find a home for this
 class c_registers
 {
 public:
@@ -300,10 +302,15 @@ public:
 		return context.Xbp - context.Xsp;
 	}
 
+	SIZE_T get_runtime_addr(SIZE_T offset = 0)
+	{
+		return runtime_base_addr + offset;
+	}
+
 	template<typename t_type>
 	t_type* get_runtime_addr_as(SIZE_T offset = 0)
 	{
-		return reinterpret_cast<t_type*>(runtime_base_addr + offset);
+		return reinterpret_cast<t_type*>(get_runtime_addr(offset));
 	}
 
 	CONTEXT& get_raw_context()
@@ -317,4 +324,159 @@ protected:
 	CONTEXT& context;
 	SIZE_T static_base_addr;
 	SIZE_T runtime_base_addr;
+};
+
+// TODO: find a home for this
+template<typename t_type>
+class c_remote_reference
+{
+public:
+	c_remote_reference(c_debugger& debugger) :
+		m_debugger(debugger),
+		m_address(0),
+		m_value()
+	{
+	}
+	c_remote_reference(c_debugger& debugger, size_t address) :
+		m_debugger(debugger),
+		m_address(address),
+		m_value()
+	{
+		if (m_address == 0)
+			throw;
+
+		read_remote();
+	}
+
+	void set_address(size_t address)
+	{
+		if (address != 0)
+			m_address = address;
+
+		if (m_address == 0)
+			throw;
+
+		read_remote();
+	}
+
+	void operator=(t_type value)
+	{
+		if (m_address == 0)
+			return;
+
+		memcpy((t_type*)&m_value, (t_type*)&value, sizeof(t_type));
+
+		write_remote();
+	}
+	bool operator==(t_type value)
+	{
+		if (m_address == 0)
+			return;
+
+		read_remote();
+		return m_value == value;
+	}
+	bool operator!=(t_type value)
+	{
+		if (m_address == 0)
+			return;
+
+		read_remote();
+		return m_value != value;
+	}
+	t_type& operator()()
+	{
+		return m_value;
+	}
+
+private:
+	c_debugger& m_debugger;
+	size_t m_address;
+	t_type m_value;
+
+	void read_remote()
+	{
+		m_debugger.read_debuggee_memory(reinterpret_cast<LPCVOID>(m_address), &m_value, sizeof(m_value), NULL);
+	}
+
+	void write_remote()
+	{
+		m_debugger.write_debuggee_memory(reinterpret_cast<LPVOID>(m_address), &m_value, sizeof(m_value), NULL);
+	}
+};
+
+// TODO: find a home for this
+template<typename t_type>
+class c_remote_pointer
+{
+public:
+	c_remote_pointer(c_debugger& debugger) :
+		m_debugger(debugger),
+		m_address(0),
+		m_value()
+	{
+	}
+	c_remote_pointer(c_debugger& debugger, size_t address) :
+		m_debugger(debugger),
+		m_address(0),
+		m_value()
+	{
+		set_address(address);
+	}
+
+	void set_address(size_t address)
+	{
+		if (address != 0)
+			m_address = address;
+
+		if (m_address == 0)
+			throw;
+
+		read_remote();
+	}
+
+	void operator=(t_type value)
+	{
+		if (m_address == 0)
+			return;
+
+		memcpy((t_type*)&m_value, (t_type*)&value, sizeof(t_type));
+
+		write_remote();
+	}
+	bool operator==(t_type value)
+	{
+		if (m_address == 0)
+			return;
+
+		read_remote();
+		return m_value == value;
+	}
+	bool operator!=(t_type value)
+	{
+		if (m_address == 0)
+			return;
+
+		read_remote();
+		return m_value != value;
+	}
+	t_type& operator()()
+	{
+		return m_value;
+	}
+
+private:
+	c_debugger& m_debugger;
+	size_t m_address;
+	t_type m_value;
+
+	void read_remote()
+	{
+		m_debugger.read_debuggee_pointer(reinterpret_cast<LPCVOID>(m_address), m_value, sizeof(t_type), NULL);
+	}
+
+	void write_remote()
+	{
+		m_debugger.write_debuggee_pointer(reinterpret_cast<LPVOID>(m_address), m_value, NULL);
+	}
 };
