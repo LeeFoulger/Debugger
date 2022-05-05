@@ -448,7 +448,7 @@ public:
 	bool operator==(t_type value)
 	{
 		if (m_address == 0)
-			return;
+			return false;
 
 		read_remote();
 		return m_value == value;
@@ -456,7 +456,7 @@ public:
 	bool operator!=(t_type value)
 	{
 		if (m_address == 0)
-			return;
+			return false;
 
 		read_remote();
 		return m_value != value;
