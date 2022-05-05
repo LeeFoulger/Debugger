@@ -56,6 +56,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 		debugger.add_breakpoint(0x00000001404A18D0 - PE64_BASE, false, "mov [rsp+8],rbx", L"restricted_region_add_member", on_restricted_region_add_member_breakpoint);
 		debugger.add_breakpoint(0x000000014036A700 - PE64_BASE, false, "mov rax,rsp", L"shell_get_system_identifier", on_shell_get_system_identifier_breakpoint);
 		debugger.add_breakpoint(0x0000000140235724 - PE64_BASE, false, "ret", L"shell_get_gamertag on return", on_shell_get_gamertag_return_breakpoint); // name isn't correct but that's fine
+		//debugger.add_breakpoint(0x00000001403AF200 - PE64_BASE, false, "sub rsp,28h", L"string_id_get_string_const", on_string_id_get_string_const_breakpoint);
 	}
 #else
 	if (wcscmp(debugger.get_process().get_process_name(), L"halo_online.exe") == 0)

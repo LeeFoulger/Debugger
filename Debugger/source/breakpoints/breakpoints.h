@@ -23,3 +23,4 @@ void on_shell_get_external_host_breakpoint(c_debugger&, c_registers&);
 void on_restricted_region_add_member_breakpoint(c_debugger&, c_registers&);
 void on_shell_get_system_identifier_breakpoint(c_debugger&, c_registers&);
 void on_shell_get_gamertag_return_breakpoint(c_debugger&, c_registers&);
+void on_string_id_get_string_const_breakpoint(c_debugger&, c_registers&);
