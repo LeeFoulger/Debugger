@@ -2,36 +2,31 @@
 
 void on_is_debugger_present_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	// forces is_debugger_present() to return true
-	static bool g_set_always_a_debugger_present = false;
+	static c_remote_reference<bool> g_set_always_a_debugger_present(debugger);
+	static c_remote_reference<bool> g_set_never_a_debugger_present(debugger);
 
-	// forces is_debugger_present() to return false
-	static bool g_set_never_a_debugger_present = false;
+	g_set_always_a_debugger_present.set_address(registers.get_runtime_addr(0x318A210));
+	g_set_never_a_debugger_present.set_address(registers.get_runtime_addr(0x318A211));
 
-	bool set_always_a_debugger_present;
-	bool set_never_a_debugger_present;
-	debugger.read_debuggee_memory(registers.get_runtime_addr_as<LPCVOID>(0x318A210), &set_always_a_debugger_present, sizeof(set_always_a_debugger_present), NULL);
-	debugger.read_debuggee_memory(registers.get_runtime_addr_as<LPCVOID>(0x318A211), &set_never_a_debugger_present, sizeof(set_never_a_debugger_present), NULL);
+	// forces `is_debugger_present()` to return true
+	static bool set_always_a_debugger_present = false;
 
+	// forces `is_debugger_present()` to return false
+	static bool set_never_a_debugger_present = false;
+	
 	if (set_always_a_debugger_present != g_set_always_a_debugger_present)
-	{
 		g_set_always_a_debugger_present = set_always_a_debugger_present;
-		debugger.write_debuggee_memory(registers.get_runtime_addr_as<LPVOID>(0x318A210), &g_set_always_a_debugger_present, sizeof(g_set_always_a_debugger_present), NULL);
-	}
-	if (g_set_never_a_debugger_present != set_never_a_debugger_present)
-	{
+
+	if (set_never_a_debugger_present != g_set_never_a_debugger_present)
 		g_set_never_a_debugger_present = set_never_a_debugger_present;
-		debugger.write_debuggee_memory(registers.get_runtime_addr_as<LPVOID>(0x318A211), &g_set_never_a_debugger_present, sizeof(g_set_never_a_debugger_present), NULL);
-	}
 
 	printf("");
 }
 
 void on_shell_screen_pause_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	bool g_shell_application_paused = false;
-	debugger.write_debuggee_memory(registers.get_runtime_addr_as<LPVOID>(0x2C204B9), &g_shell_application_paused, sizeof(g_shell_application_paused), NULL);
-	printf("");
+	// g_shell_application_paused
+	c_remote_reference<bool>(debugger, registers.get_runtime_addr(0x2C204B9)) = false;
 }
 
 
@@ -48,14 +43,13 @@ void on_shell_get_external_host_breakpoint(c_debugger& debugger, c_registers& re
 
 void on_restricted_region_add_member_breakpoint(c_debugger& debugger, c_registers& registers)
 {
+	static c_remote_reference<c_string<char, 64 + 1>> name(debugger);
+	static c_remote_reference<c_string<char, 64 + 1>> type(debugger);
 	static SIZE_T size = 0;
+
+	name.set_address(registers.get_raw_context().Rdx);
+	type.set_address(registers.get_raw_context().R8);
 	size = registers.get_raw_context().R9;
-
-	static char name[64 + 1]{};
-	debugger.read_debuggee_memory((LPCVOID)(registers.get_raw_context().Rdx), name, 64, NULL);
-
-	static char type[64 + 1]{};
-	debugger.read_debuggee_memory((LPCVOID)(registers.get_raw_context().R8), type, 64, NULL);
 
 	static wchar_t filename[MAX_PATH]{};
 	swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger.get_process().get_current_directory());
@@ -64,8 +58,8 @@ void on_restricted_region_add_member_breakpoint(c_debugger& debugger, c_register
 	if (_wfopen_s(&file, filename, L"a+"), file != NULL)
 	{
 		fprintf(file, "0x%08zX", size);
-		fprintf(file, ", %s", name ? name : "(null)");
-		fprintf(file, ", %s", type ? type : "(null)");
+		fprintf(file, ", %s", name());
+		fprintf(file, ", %s", type());
 		fprintf(file, "\n");
 		fclose(file);
 	}
