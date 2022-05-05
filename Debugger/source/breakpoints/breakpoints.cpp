@@ -37,12 +37,12 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 {
 	{
 		wchar_t filename[MAX_PATH]{};
-		swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger.get_process().get_current_directory());
+		swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.csv", debugger.get_process().get_current_directory());
 
 		FILE* file = NULL;
 		if (_wfopen_s(&file, filename, L"w"), file != NULL)
 		{
-			fprintf(file, "size, name, type");
+			fprintf(file, "size, name, type\n");
 			fclose(file);
 		}
 	}
