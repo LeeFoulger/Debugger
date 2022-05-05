@@ -7,3 +7,5 @@
 #define NUMBER_OF(value) sizeof(value)/sizeof(value[0])
 
 #define SAFE_DELETE(address) { delete[] address; address = nullptr; }
+
+#define RUNONCE(once, ...) static bool once = false; if (once) { __VA_ARGS__ } once = true
