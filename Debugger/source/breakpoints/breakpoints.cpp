@@ -148,7 +148,7 @@ void add_break_on_winmain(c_debugger& debugger, LPMODULEINFO module_info)
 				debugger.read_debuggee_memory(reinterpret_cast<LPVOID>(offset + 1), &call_location, 4, &call_location_bytes_read);
 
 				call_location += offset + 5;
-				if (call_location < image_base_addr || call_location >image_base_addr + image_size)
+				if (call_location < image_base_addr || call_location > (image_base_addr + image_size))
 					continue;
 
 				SIZE_T call_location_module_offset = offset - image_base_addr;
