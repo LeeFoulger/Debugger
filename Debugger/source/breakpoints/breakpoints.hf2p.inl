@@ -4,27 +4,21 @@ const bool disable_saber_code_applied_in_scenario_load = false;
 
 void on_command_line_get_credentials_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	LPVOID debuggee_command_line = debugger_allocate_and_write_debuggee_string(debugger, "--account 123 --sign-in-code 123 --environment 123");
-	debugger.write_debuggee_pointer(registers.get_runtime_addr_as<LPVOID>(0x052BE944 - PE32_BASE), debuggee_command_line, NULL);
+	static LPVOID debuggee_command_line = debugger_allocate_and_write_debuggee_string(debugger, "--account 123 --sign-in-code 123 --environment 123");
 
-	if (disable_saber_code_applied_in_scenario_load)
-	{
-		debugger_write_data(debugger, registers.get_runtime_addr_as<LPVOID>(0x01346881 - PE32_BASE), { 0x00ui8 });
-	}
-
-	printf("");
+	c_remote_reference<LPVOID>(debugger, registers.get_runtime_addr(0x052BE944 - PE32_BASE)) = debuggee_command_line;
+	c_remote_reference<bool>(debugger, registers.get_runtime_addr(0x01346881 - PE32_BASE)) = !disable_saber_code_applied_in_scenario_load;
 }
 
 void on_restricted_region_add_member_internal_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	static SIZE_T size = 0;
-	debugger.read_debuggee_memory((LPCVOID)(registers.cast_bp_as<SIZE_T>(0x10)), &size, 4, NULL);
+	static c_remote_pointer<c_string<char, 64 + 1>> name(debugger);
+	static c_remote_pointer<c_string<char, 64 + 1>> type(debugger);
+	static c_remote_reference<SIZE_T> size(debugger);
 
-	static char name[64 + 1]{};
-	debugger.read_debuggee_pointer((LPCVOID)(registers.cast_bp_as<SIZE_T>(0x8)), name, 64, NULL);
-
-	static char type[64 + 1]{};
-	debugger.read_debuggee_pointer((LPCVOID)(registers.cast_bp_as<SIZE_T>(0xC)), type, 64, NULL);
+	name.set_address(registers.cast_bp_as<SIZE_T>(0x08));
+	type.set_address(registers.cast_bp_as<SIZE_T>(0x0C));
+	size.set_address(registers.cast_bp_as<SIZE_T>(0x10));
 
 	static wchar_t filename[MAX_PATH]{};
 	swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger.get_process().get_current_directory());
@@ -32,9 +26,9 @@ void on_restricted_region_add_member_internal_breakpoint(c_debugger& debugger, c
 	static FILE* file = NULL;
 	if (_wfopen_s(&file, filename, L"a+"), file != NULL)
 	{
-		fprintf(file, "0x%08zX", size);
-		fprintf(file, ", %s", name ? name : "(null)");
-		fprintf(file, ", %s", type ? type : "(null)");
+		fprintf(file, "0x%08zX", size());
+		fprintf(file, ", %s", name());
+		fprintf(file, ", %s", type());
 		fprintf(file, "\n");
 		fclose(file);
 	}
@@ -42,12 +36,8 @@ void on_restricted_region_add_member_internal_breakpoint(c_debugger& debugger, c
 
 void on_rasterizer_draw_watermark_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	static c_string<wchar_t, 1024> watermark_old{};
-	if (*watermark_old == 0)
-	{
-		SIZE_T old_watermark_ptr = 0;
-		debugger.read_debuggee_pointer((LPCVOID)(registers.cast_sp_as<SIZE_T>(0x8)), watermark_old, 1024 * sizeof(wchar_t), NULL);
-	}
+	//static c_remote_pointer<c_string<wchar_t, 1024>> watermark_old(debugger);
+	//watermark_old.set_address(registers.cast_sp_as<SIZE_T>(0x8));
 
 	static c_string<wchar_t, 1024> watermark{};
 	static LPVOID watermark_addr = debugger_allocate_and_write_debuggee_string(debugger, watermark);
@@ -58,7 +48,7 @@ void on_rasterizer_draw_watermark_breakpoint(c_debugger& debugger, c_registers& 
 		debugger_write_debuggee_string(debugger, watermark_addr, watermark);
 	}
 
-	debugger.write_debuggee_pointer((LPVOID)(registers.cast_sp_as<SIZE_T>(0x8)), watermark_addr, NULL);
+	c_remote_reference<LPVOID>(debugger, registers.cast_sp_as<SIZE_T>(0x8)) = watermark_addr;
 }
 
 void on_machinima_camera_debug_breakpoint(c_debugger& debugger, c_registers& registers)
@@ -67,7 +57,7 @@ void on_machinima_camera_debug_breakpoint(c_debugger& debugger, c_registers& reg
 	// .text:004E2A41	jz      loc_4E2C7B		<--- current eip
 	// .text:004E2A47	mov     eax, [esi+84h]	<--- new eip
 
-	const size_t jump_size = 0x004E2A47 - 0x004E2A41;
+	const SIZE_T jump_size = 0x004E2A47 - 0x004E2A41;
 	registers.get_raw_context().Xip += jump_size;
 }
 
@@ -86,14 +76,17 @@ void on_cache_files_verify_header_rsa_signature_breakpoint(c_debugger& debugger,
 	// .text:00482DB4	jz      loc_482DD2		<--- current eip
 	// .text:00482DD2	mov     al, 1			<--- new eip
 
-	const size_t jump_size = 0x00482DD2 - 0x00482DB4;
+	const SIZE_T jump_size = 0x00482DD2 - 0x00482DB4;
 	registers.get_raw_context().Xip += jump_size;
 }
 
 void on_cached_map_files_open_all_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	SIZE_T resource_paths_offset = 0x012ECEA4 - PE32_BASE;
-	char resource_paths[7][32] = {
+	const SIZE_T resource_path_count = 7;
+	const SIZE_T resource_path_length = 32;
+
+	SIZE_T resource_path_offset_address = registers.get_runtime_addr(0x012ECEA4 - PE32_BASE);
+	static c_string<char, resource_path_length> resource_paths[resource_path_count] = {
 		"test\\resources.dat",
 		"test\\textures.dat",
 		"test\\textures_b.dat",
@@ -103,13 +96,13 @@ void on_cached_map_files_open_all_breakpoint(c_debugger& debugger, c_registers& 
 		"test\\lightmaps.dat"
 	};
 
-	LPVOID allocated_resource_paths = debugger.allocate_and_write_debuggee_memory(resource_paths, sizeof(resource_paths), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE, NULL);
+	static SIZE_T allocated_resource_paths = (SIZE_T)debugger.allocate_and_write_debuggee_memory(resource_paths, sizeof(resource_paths), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE, NULL);
+	static c_remote_reference<decltype(allocated_resource_paths)> resource_path_offset(debugger);
 
-	for (size_t i = 0; i < sizeof(resource_paths) / 32; i++)
+	for (SIZE_T i = 0; i < resource_path_count; i++)
 	{
-		LPVOID resource_path_offset_address = registers.get_runtime_addr_as<LPVOID>(resource_paths_offset + i * 4);
-		LPVOID allocated_resource_path_address = reinterpret_cast<LPVOID>(reinterpret_cast<SIZE_T>(allocated_resource_paths) + i * 32);
-		debugger.write_debuggee_pointer(resource_path_offset_address, allocated_resource_path_address, NULL);
+		resource_path_offset.set_address(resource_path_offset_address + (i * sizeof(void*)));
+		resource_path_offset = allocated_resource_paths + (i * resource_path_length);
 	}
 
 	printf("");
@@ -144,31 +137,51 @@ enum e_game_engine_variant : unsigned long
 	k_game_engine_variant_count,
 };
 
+struct s_game_options
+{
+	char __data[0xE620];
+
+	void game_mode(e_game_mode game_mode)
+	{
+		*reinterpret_cast<e_game_mode*>(__data) = game_mode;
+	}
+
+	void scenario_path(c_string<char, MAX_PATH> scenario_path)
+	{
+		csstrncpy(__data + 0x24, MAX_PATH, scenario_path, MAX_PATH);
+	}
+
+	void game_engine_variant(e_game_engine_variant game_engine_variant)
+	{
+		*reinterpret_cast<e_game_engine_variant*>(__data + 0x32C) = game_engine_variant;
+	}
+};
+
 void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	static char game_options[0xE620]{};
-	memset(game_options, 0, sizeof(game_options));
+	static c_remote_reference<s_game_options> game_options(debugger);
+	static c_string<char, MAX_PATH> scenario_path{};
 
-	char scenario_path[MAX_PATH]{};
 	csstrncpy(scenario_path, MAX_PATH, "default", MAX_PATH);
 
+	if (strcmp(scenario_path, "default") == 0)
 	{
 		wchar_t filename[MAX_PATH]{};
 		swprintf_s(filename, MAX_PATH, L"%s\\test\\scenario_path.txt", debugger.get_process().get_current_directory());
-
+	
 		FILE* file = NULL;
 		if (_wfopen_s(&file, filename, L"r"), file != NULL)
 		{
 			fgets(scenario_path, MAX_PATH, file);
 			fclose(file);
 		}
-
+	
 		if (*scenario_path == 0 || *scenario_path == '\r' || *scenario_path == '\n')
 		{
 			fputs("enter scenario path: ", stdout);
 			fgets(scenario_path, MAX_PATH, stdin);
 		}
-
+	
 		if (*scenario_path)
 		{
 			while (scenario_path[strlen(scenario_path) - 1] == '\r' || scenario_path[strlen(scenario_path) - 1] == '\n')
@@ -178,17 +191,12 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 
 	if (*scenario_path && strcmp(scenario_path, "default") != 0)
 	{
-		debugger.read_debuggee_memory(registers.cast_cx_as<LPCVOID>(), game_options, sizeof(game_options), NULL);
+		game_options.set_address(registers.cast_cx_as<SIZE_T>());
 
-		// game mode: multiplayer
-		*reinterpret_cast<unsigned long*>(game_options) = _game_mode_multiplayer;
+		game_options().game_mode(_game_mode_multiplayer);
+		game_options().scenario_path(scenario_path);
+		game_options().game_engine_variant(_game_engine_slayer_variant);
 
-		// scenario path: scenario_path
-		csstrncpy(game_options + 0x24, MAX_PATH, scenario_path, MAX_PATH);
-
-		// game engine: slayer
-		*reinterpret_cast<unsigned long*>(game_options + 0x32C) = _game_engine_slayer_variant;
-
-		debugger_write_data(debugger, registers.cast_cx_as<LPVOID>(), game_options);
+		game_options = game_options();
 	}
 }
