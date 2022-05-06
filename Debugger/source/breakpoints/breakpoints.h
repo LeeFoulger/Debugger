@@ -19,6 +19,8 @@ void on_main_kick_startup_masking_sequence_breakpoint(c_debugger&, c_registers&)
 void on_cached_map_files_open_all_breakpoint(c_debugger&, c_registers&);
 void on_main_game_load_map_breakpoint(c_debugger&, c_registers&);
 
+void on_setup_global_shader_breakpoint(c_debugger&, c_registers&);
+
 void on_is_debugger_present_breakpoint(c_debugger&, c_registers&);
 void on_shell_screen_pause_breakpoint(c_debugger&, c_registers&);
 void on_shell_get_external_host_breakpoint(c_debugger&, c_registers&);

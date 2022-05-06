@@ -50,6 +50,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 #ifdef _WIN64
 	if (wcscmp(debugger.get_process().get_process_name(), L"halo3_tag_test.exe") == 0)
 	{
+		debugger.add_breakpoint(0x00000001408DABAF - PE64_BASE, false, "lea rbx,[rbx*8]", L"c_rasterizer_global_shaders::setup_global_shader", on_setup_global_shader_breakpoint);
 	}
 	else if (wcscmp(debugger.get_process().get_process_name(), L"atlas_tag_test.exe") == 0)
 	{
