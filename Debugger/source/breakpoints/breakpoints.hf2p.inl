@@ -14,11 +14,11 @@ void on_restricted_region_add_member_internal_breakpoint(c_debugger& debugger, c
 {
 	static c_remote_pointer<c_string<char, 64 + 1>> name(debugger);
 	static c_remote_pointer<c_string<char, 64 + 1>> type(debugger);
-	static c_remote_reference<SIZE_T> size(debugger);
+	static c_remote_reference<size_t> size(debugger);
 
-	name.set_address(registers.cast_bp_as<SIZE_T>(0x08));
-	type.set_address(registers.cast_bp_as<SIZE_T>(0x0C));
-	size.set_address(registers.cast_bp_as<SIZE_T>(0x10));
+	name.set_address(registers.cast_bp_as<size_t>(0x08));
+	type.set_address(registers.cast_bp_as<size_t>(0x0C));
+	size.set_address(registers.cast_bp_as<size_t>(0x10));
 
 	static wchar_t filename[MAX_PATH]{};
 	swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger.get_process().get_current_directory());
@@ -37,7 +37,7 @@ void on_restricted_region_add_member_internal_breakpoint(c_debugger& debugger, c
 void on_rasterizer_draw_watermark_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	//static c_remote_pointer<c_string<wchar_t, 1024>> watermark_old(debugger);
-	//watermark_old.set_address(registers.cast_sp_as<SIZE_T>(0x8));
+	//watermark_old.set_address(registers.cast_sp_as<size_t>(0x8));
 
 	static c_string<wchar_t, 1024> watermark{};
 	static LPVOID watermark_addr = debugger_allocate_and_write_debuggee_string(debugger, watermark);
@@ -48,7 +48,7 @@ void on_rasterizer_draw_watermark_breakpoint(c_debugger& debugger, c_registers& 
 		debugger_write_debuggee_string(debugger, watermark_addr, watermark);
 	}
 
-	c_remote_reference<LPVOID>(debugger, registers.cast_sp_as<SIZE_T>(0x8)) = watermark_addr;
+	c_remote_reference<LPVOID>(debugger, registers.cast_sp_as<size_t>(0x8)) = watermark_addr;
 }
 
 void on_machinima_camera_debug_breakpoint(c_debugger& debugger, c_registers& registers)
@@ -57,7 +57,7 @@ void on_machinima_camera_debug_breakpoint(c_debugger& debugger, c_registers& reg
 	// .text:004E2A41	jz      loc_4E2C7B		<--- current eip
 	// .text:004E2A47	mov     eax, [esi+84h]	<--- new eip
 
-	const SIZE_T jump_size = 0x004E2A47 - 0x004E2A41;
+	const size_t jump_size = 0x004E2A47 - 0x004E2A41;
 	registers.get_raw_context().Xip += jump_size;
 }
 
@@ -76,16 +76,16 @@ void on_cache_files_verify_header_rsa_signature_breakpoint(c_debugger& debugger,
 	// .text:00482DB4	jz      loc_482DD2		<--- current eip
 	// .text:00482DD2	mov     al, 1			<--- new eip
 
-	const SIZE_T jump_size = 0x00482DD2 - 0x00482DB4;
+	const size_t jump_size = 0x00482DD2 - 0x00482DB4;
 	registers.get_raw_context().Xip += jump_size;
 }
 
 void on_cached_map_files_open_all_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	const SIZE_T resource_path_count = 7;
-	const SIZE_T resource_path_length = 32;
+	const size_t resource_path_count = 7;
+	const size_t resource_path_length = 32;
 
-	SIZE_T resource_path_offset_address = registers.get_runtime_addr(0x012ECEA4 - PE32_BASE);
+	size_t resource_path_offset_address = registers.get_runtime_addr(0x012ECEA4 - PE32_BASE);
 	static c_string<char, resource_path_length> resource_paths[resource_path_count] = {
 		"test\\resources.dat",
 		"test\\textures.dat",
@@ -96,10 +96,10 @@ void on_cached_map_files_open_all_breakpoint(c_debugger& debugger, c_registers& 
 		"test\\lightmaps.dat"
 	};
 
-	static SIZE_T allocated_resource_paths = (SIZE_T)debugger.allocate_and_write_debuggee_memory(resource_paths, sizeof(resource_paths), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE, NULL);
+	static size_t allocated_resource_paths = (size_t)debugger.allocate_and_write_debuggee_memory(resource_paths, sizeof(resource_paths), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE, NULL);
 	static c_remote_reference<decltype(allocated_resource_paths)> resource_path_offset(debugger);
 
-	for (SIZE_T i = 0; i < resource_path_count; i++)
+	for (size_t i = 0; i < resource_path_count; i++)
 	{
 		resource_path_offset.set_address(resource_path_offset_address + (i * sizeof(void*)));
 		resource_path_offset = allocated_resource_paths + (i * resource_path_length);
@@ -191,7 +191,7 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 
 	if (*scenario_path && strcmp(scenario_path, "default") != 0)
 	{
-		game_options.set_address(registers.cast_cx_as<SIZE_T>());
+		game_options.set_address(registers.cast_cx_as<size_t>());
 
 		game_options().game_mode(_game_mode_multiplayer);
 		game_options().scenario_path(scenario_path);

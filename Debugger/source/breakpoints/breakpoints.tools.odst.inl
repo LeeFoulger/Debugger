@@ -32,9 +32,9 @@ void on_shell_screen_pause_breakpoint(c_debugger& debugger, c_registers& registe
 
 void on_shell_get_external_host_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	//SIZE_T return_address = 0;
-	//SIZE_T call_address = -5;
-	//debugger.read_debuggee_memory((LPCVOID)registers.cast_sp_as<SIZE_T>(), &return_address, sizeof(return_address), NULL);
+	//size_t return_address = 0;
+	//size_t call_address = -5;
+	//debugger.read_debuggee_memory((LPCVOID)registers.cast_sp_as<size_t>(), &return_address, sizeof(return_address), NULL);
 	//call_address += return_address;
 
 	//printf("%016zX\tcall shell_get_external_host\n", call_address);
@@ -45,7 +45,7 @@ void on_restricted_region_add_member_breakpoint(c_debugger& debugger, c_register
 {
 	static c_remote_reference<c_string<char, 64 + 1>> name(debugger);
 	static c_remote_reference<c_string<char, 64 + 1>> type(debugger);
-	static SIZE_T size = 0;
+	static size_t size = 0;
 
 	name.set_address(registers.get_raw_context().Rdx);
 	type.set_address(registers.get_raw_context().R8);

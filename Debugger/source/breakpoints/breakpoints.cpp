@@ -112,10 +112,10 @@ void add_break_on_winmain(c_debugger& debugger, LPMODULEINFO module_info)
 	HANDLE process_handle = process.get_process_handle();
 	LPVOID entry_point = module_info->EntryPoint;
 	LPVOID image_base = module_info->lpBaseOfDll;
-	SIZE_T image_size = module_info->SizeOfImage;
+	size_t image_size = module_info->SizeOfImage;
 
-	SIZE_T entry_point_addr = reinterpret_cast<SIZE_T>(module_info->EntryPoint);
-	SIZE_T image_base_addr = reinterpret_cast<SIZE_T>(module_info->lpBaseOfDll);
+	size_t entry_point_addr = reinterpret_cast<size_t>(module_info->EntryPoint);
+	size_t image_base_addr = reinterpret_cast<size_t>(module_info->lpBaseOfDll);
 
 	debugger.add_breakpoint(entry_point_addr - image_base_addr, true, "call", L"EntryPoint");
 
@@ -131,28 +131,28 @@ void add_break_on_winmain(c_debugger& debugger, LPMODULEINFO module_info)
 			'\x68', '\x00', '\x00', '\x40', '\x00'	  /* 	4:   68, 00 00 40 00   push    400000h ; hInstance     */
 		};
 
-		// replace `hInstance` with `image_base`
+		// replace `hInstance` with `lpBaseOfDll`
 		*reinterpret_cast<DWORD*>(winmain_call_pattern + 5) = (DWORD)image_base_addr;
 
 		unsigned char entry_point_instructions[READ_PAGE_SIZE] = { 0 };
-		SIZE_T bytes_read = 0;
+		size_t bytes_read = 0;
 		debugger.read_debuggee_memory(entry_point, entry_point_instructions, READ_PAGE_SIZE, &bytes_read);
 
-		for (SIZE_T entry_point_offset = 0; entry_point_offset < READ_PAGE_SIZE; entry_point_offset++)
+		for (size_t entry_point_offset = 0; entry_point_offset < READ_PAGE_SIZE; entry_point_offset++)
 		{
 			if (memcmp(entry_point_instructions + entry_point_offset, winmain_call_pattern, sizeof(winmain_call_pattern)) == 0)
 			{
-				SIZE_T offset = entry_point_addr + entry_point_offset + sizeof(winmain_call_pattern);
+				size_t offset = entry_point_addr + entry_point_offset + sizeof(winmain_call_pattern);
 
-				SIZE_T call_location = 0;
-				SIZE_T call_location_bytes_read = 0;
+				size_t call_location = 0;
+				size_t call_location_bytes_read = 0;
 				debugger.read_debuggee_memory(reinterpret_cast<LPVOID>(offset + 1), &call_location, 4, &call_location_bytes_read);
 
 				call_location += offset + 5;
 				if (call_location < image_base_addr || call_location > (image_base_addr + image_size))
 					continue;
 
-				SIZE_T call_location_module_offset = offset - image_base_addr;
+				size_t call_location_module_offset = offset - image_base_addr;
 				debugger.add_breakpoint(call_location_module_offset, true, "call", L"WinMain");
 				break;
 			}
