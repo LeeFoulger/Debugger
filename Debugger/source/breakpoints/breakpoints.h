@@ -14,6 +14,7 @@ void on_machinima_camera_debug_breakpoint(c_debugger&, c_registers&);
 void on_cache_file_blocking_read_breakpoint(c_debugger&, c_registers&);
 void on_cache_files_verify_header_rsa_signature_breakpoint(c_debugger&, c_registers&);
 void on_contrails_render_callback_breakpoint(c_debugger&, c_registers&);
+void on_main_kick_startup_masking_sequence_breakpoint(c_debugger&, c_registers&);
 
 void on_cached_map_files_open_all_breakpoint(c_debugger&, c_registers&);
 void on_main_game_load_map_breakpoint(c_debugger&, c_registers&);
