@@ -80,6 +80,16 @@ void on_cache_files_verify_header_rsa_signature_breakpoint(c_debugger& debugger,
 	registers.get_raw_context().Xip += jump_size;
 }
 
+void on_contrails_render_callback_breakpoint(c_debugger& debugger, c_registers& registers)
+{
+	// .text:005D6B76	pop     ebp				<--- current breakpoint
+	// .text:005D6B77	jmp     loc_5D6B80		<--- current eip
+	// .text:005D6CB9	ret						<--- new eip
+
+	const size_t jump_size = 0x005D6CB9 - 0x005D6B77;
+	registers.get_raw_context().Xip += jump_size;
+}
+
 void on_cached_map_files_open_all_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	const size_t resource_path_count = 7;
