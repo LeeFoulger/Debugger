@@ -359,6 +359,11 @@ public:
 		read_remote();
 	}
 
+	size_t get_address()
+	{
+		return m_address;
+	}
+
 	void operator=(t_type value)
 	{
 		if (m_address == 0)
@@ -378,11 +383,7 @@ public:
 	}
 	bool operator!=(t_type value)
 	{
-		if (m_address == 0)
-			return false;
-
-		read_remote();
-		return m_value != value;
+		return !(*this == value);
 	}
 	t_type& operator()()
 	{
@@ -396,13 +397,12 @@ private:
 
 	void read_remote()
 	{
-		memset(&m_value, 0xFF, sizeof(t_type));
-		m_debugger.read_debuggee_memory(reinterpret_cast<LPCVOID>(m_address), &m_value, sizeof(m_value), NULL);
+		m_debugger.read_debuggee_memory(reinterpret_cast<LPCVOID>(m_address), &m_value, sizeof(t_type), NULL);
 	}
 
 	void write_remote()
 	{
-		m_debugger.write_debuggee_memory(reinterpret_cast<LPVOID>(m_address), &m_value, sizeof(m_value), NULL);
+		m_debugger.write_debuggee_memory(reinterpret_cast<LPVOID>(m_address), &m_value, sizeof(t_type), NULL);
 	}
 };
 
@@ -413,27 +413,32 @@ class c_remote_pointer
 public:
 	c_remote_pointer(c_debugger& debugger) :
 		m_debugger(debugger),
-		m_address(0),
-		m_value()
+		m_address(m_debugger),
+		m_value((t_type*)VirtualAlloc(0, sizeof(t_type), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE))
 	{
 	}
 	c_remote_pointer(c_debugger& debugger, size_t address) :
 		m_debugger(debugger),
-		m_address(0),
-		m_value()
+		m_address(m_debugger, address),
+		m_value((t_type*)VirtualAlloc(0, sizeof(t_type), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE))
 	{
-		set_address(address);
+		read_remote();
+	}
+
+	~c_remote_pointer()
+	{
+		VirtualFree(m_value, sizeof(t_type), MEM_RELEASE);
 	}
 
 	void set_address(size_t address)
 	{
-		if (address != 0)
-			m_address = address;
-
-		if (m_address == 0)
-			throw;
-
+		m_address.set_address(address);
 		read_remote();
+	}
+
+	size_t get_address()
+	{
+		return m_address();
 	}
 
 	void operator=(t_type value)
@@ -451,34 +456,29 @@ public:
 			return false;
 
 		read_remote();
-		return m_value == value;
+		return memcmp(m_value, value, sizeof(t_type)) == 0;
 	}
 	bool operator!=(t_type value)
 	{
-		if (m_address == 0)
-			return false;
-
-		read_remote();
-		return m_value != value;
+		return !(*this == value);
 	}
 	t_type& operator()()
 	{
-		return m_value;
+		return *m_value;
 	}
 
 private:
 	c_debugger& m_debugger;
-	size_t m_address;
-	t_type m_value;
+	c_remote_reference<size_t> m_address;
+	t_type* m_value;
 
 	void read_remote()
 	{
-		memset(m_value, 0, sizeof(t_type));
-		m_debugger.read_debuggee_pointer(reinterpret_cast<LPCVOID>(m_address), m_value, sizeof(t_type), NULL);
+		m_debugger.read_debuggee_memory(reinterpret_cast<LPCVOID>(m_address()), m_value, sizeof(t_type), NULL);
 	}
 
 	void write_remote()
 	{
-		m_debugger.write_debuggee_pointer(reinterpret_cast<LPVOID>(m_address), m_value, NULL);
+		m_debugger.read_debuggee_memory(reinterpret_cast<LPVOID>(m_address()), m_value, NULL);
 	}
 };
