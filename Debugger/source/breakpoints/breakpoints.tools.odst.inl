@@ -14,10 +14,10 @@ void on_is_debugger_present_breakpoint(c_debugger& debugger, c_registers& regist
 	// forces `is_debugger_present()` to return false
 	static bool set_never_a_debugger_present = false;
 	
-	if (set_always_a_debugger_present != g_set_always_a_debugger_present)
+	if (g_set_always_a_debugger_present != set_always_a_debugger_present)
 		g_set_always_a_debugger_present = set_always_a_debugger_present;
 
-	if (set_never_a_debugger_present != g_set_never_a_debugger_present)
+	if (g_set_never_a_debugger_present != set_never_a_debugger_present)
 		g_set_never_a_debugger_present = set_never_a_debugger_present;
 
 	printf("");
@@ -101,23 +101,21 @@ void on_shell_get_gamertag_return_breakpoint(c_debugger& debugger, c_registers& 
 
 void on_string_id_get_string_const_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	static c_remote_reference<size_t> g_string_id_globals_ascii_storage_address(debugger, registers.get_runtime_addr(0x318DDC0));
-	static c_remote_reference<size_t> g_string_id_globals_ascii_strings_address(debugger, registers.get_runtime_addr(0x318DDD0));
+	static c_remote_pointer<char[0x340000]> g_string_id_globals_ascii_storage(debugger, registers.get_runtime_addr(0x318DDC0));
+	static c_remote_pointer<size_t[0x14000]> g_string_id_globals_ascii_strings(debugger, registers.get_runtime_addr(0x318DDD0));
 	static c_remote_reference<size_t> g_string_id_globals_ascii_string_count(debugger, registers.get_runtime_addr(0x318DDD8));
-	static c_remote_reference<char[0x340000]> g_string_id_globals_ascii_storage(debugger, g_string_id_globals_ascii_storage_address());
-	static c_remote_reference<size_t[0x14000]> g_string_id_globals_ascii_strings(debugger, g_string_id_globals_ascii_strings_address());
 	static size_t string_id_globals_ascii_strings[0x14000]{};
 
 	RUNONCE(test, { return; });
 
-	if (g_string_id_globals_ascii_storage_address() == g_string_id_globals_ascii_strings()[0])
+	if (g_string_id_globals_ascii_storage.get_address() == g_string_id_globals_ascii_strings()[0])
 	{
-		if (string_id_globals_ascii_strings[1] != (g_string_id_globals_ascii_strings()[1] - g_string_id_globals_ascii_storage_address()))
+		if (string_id_globals_ascii_strings[1] != (g_string_id_globals_ascii_strings()[1] - g_string_id_globals_ascii_storage.get_address()))
 		{
 			for (size_t i = 0; i < g_string_id_globals_ascii_string_count(); i++)
 			{
 				if (g_string_id_globals_ascii_strings()[i])
-					string_id_globals_ascii_strings[i] = (g_string_id_globals_ascii_strings()[i] - g_string_id_globals_ascii_storage_address());
+					string_id_globals_ascii_strings[i] = (g_string_id_globals_ascii_strings()[i] - g_string_id_globals_ascii_storage.get_address());
 			}
 		}
 
