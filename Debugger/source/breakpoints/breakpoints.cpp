@@ -51,6 +51,12 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 	if (wcscmp(debugger.get_process().get_process_name(), L"halo3_tag_test.exe") == 0)
 	{
 		debugger.add_breakpoint(0x00000001408DABAF - PE64_BASE, false, "lea rbx,[rbx*8]", L"c_rasterizer_global_shaders::setup_global_shader", on_setup_global_shader_breakpoint);
+
+		{
+			// allow `c_start_menu_screen_widget::handle_global_start_button_press` to be called
+			unsigned char patch[4] = { 0x90, 0x90, 0x90, 0x90 };
+			c_remote_reference<decltype(patch)>(debugger, ((size_t)module_info->lpBaseOfDll + (0x000000014094458B - PE64_BASE))) = patch;
+		}
 	}
 	else if (wcscmp(debugger.get_process().get_process_name(), L"atlas_tag_test.exe") == 0)
 	{
