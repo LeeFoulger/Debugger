@@ -1,5 +1,7 @@
 #pragma once
 
+// build: 8504977
+
 void on_is_debugger_present_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	static c_remote_reference<bool> g_set_always_a_debugger_present(debugger);
@@ -25,10 +27,18 @@ void on_is_debugger_present_breakpoint(c_debugger& debugger, c_registers& regist
 
 void on_shell_screen_pause_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	// g_shell_application_paused
-	c_remote_reference<bool>(debugger, registers.get_runtime_addr(0x2C204B9)) = false;
-}
+	static c_remote_reference<bool> g_shell_application_paused(debugger);
 
+	if (!g_shell_application_paused.get_address())
+	{
+		if (wcscmp(debugger.get_process().get_process_name(), L"halo3_tag_test.exe") == 0)
+			g_shell_application_paused.set_address(registers.get_runtime_addr(0x2883039));
+		else if (wcscmp(debugger.get_process().get_process_name(), L"atlas_tag_test.exe") == 0)
+			g_shell_application_paused.set_address(registers.get_runtime_addr(0x2C204B9));
+	}
+
+	g_shell_application_paused = false;
+}
 
 void on_shell_get_external_host_breakpoint(c_debugger& debugger, c_registers& registers)
 {

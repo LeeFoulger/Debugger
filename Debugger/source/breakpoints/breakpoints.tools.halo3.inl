@@ -1,5 +1,7 @@
 #pragma once
 
+// build: 8510025
+
 struct s_rasterizer_global_shader_globals
 {
 	bool initialized;
