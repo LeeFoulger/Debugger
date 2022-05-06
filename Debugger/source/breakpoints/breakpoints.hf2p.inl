@@ -12,8 +12,8 @@ void on_command_line_get_credentials_breakpoint(c_debugger& debugger, c_register
 
 void on_restricted_region_add_member_internal_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	static c_remote_pointer<c_string<char, 64 + 1>> name(debugger);
-	static c_remote_pointer<c_string<char, 64 + 1>> type(debugger);
+	static c_remote_pointer<c_string<char, 128>> name(debugger);
+	static c_remote_pointer<c_string<char, 128>> type(debugger);
 	static c_remote_reference<size_t> size(debugger);
 
 	name.set_address(registers.cast_bp_as<size_t>(0x08));

@@ -52,6 +52,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 	{
 		debugger.add_breakpoint(0x0000000140139510 - PE64_BASE, false, "ret", L"shell_screen_pause", on_shell_screen_pause_breakpoint);
 		//debugger.add_breakpoint(0x0000000140138FE0 - PE64_BASE, false, "xor eax,eax", L"shell_get_external_host", on_shell_get_external_host_breakpoint);
+		debugger.add_breakpoint(0x00000001404D7140 - PE64_BASE, false, "mov [rsp+8],rbx", L"restricted_region_add_member", on_restricted_region_add_member_breakpoint);
 		debugger.add_breakpoint(0x00000001402DBEF0 - PE64_BASE, false, "mov rax,rsp", L"shell_get_system_identifier", on_shell_get_system_identifier_breakpoint);
 		debugger.add_breakpoint(0x00000001401BC774 - PE64_BASE, false, "ret", L"shell_get_gamertag on return", on_shell_get_gamertag_return_breakpoint);
 
@@ -59,8 +60,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 
 		{
 			// allow `c_start_menu_screen_widget::handle_global_start_button_press` to be called
-			unsigned char patch[4] = { 0x90, 0x90, 0x90, 0x90 };
-			c_remote_reference<decltype(patch)>(debugger, ((size_t)module_info->lpBaseOfDll + (0x000000014094458B - PE64_BASE))) = patch;
+			c_remote_reference<c_bytes<4>>(debugger, ((size_t)module_info->lpBaseOfDll + (0x000000014094458B - PE64_BASE))) = { 0x90, 0x90, 0x90, 0x90 };
 		}
 	}
 	else if (wcscmp(debugger.get_process().get_process_name(), L"atlas_tag_test.exe") == 0)

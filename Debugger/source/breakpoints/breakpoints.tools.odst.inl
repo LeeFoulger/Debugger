@@ -53,8 +53,8 @@ void on_shell_get_external_host_breakpoint(c_debugger& debugger, c_registers& re
 
 void on_restricted_region_add_member_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	static c_remote_reference<c_string<char, 64 + 1>> name(debugger);
-	static c_remote_reference<c_string<char, 64 + 1>> type(debugger);
+	static c_remote_reference<c_string<char, 128>> name(debugger);
+	static c_remote_reference<c_string<char, 128>> type(debugger);
 	static size_t size = 0;
 
 	name.set_address(registers.get_raw_context().Rdx);
