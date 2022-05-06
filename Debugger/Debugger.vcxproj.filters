@@ -67,5 +67,8 @@
     <None Include="source\breakpoints\breakpoints.tools.odst.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="source\breakpoints\breakpoints.tools.halo3.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

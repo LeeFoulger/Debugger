@@ -25,7 +25,7 @@ void create_debugger_additions(c_debugger& debugger)
 #ifdef _WIN64
 //#include "breakpoints.tools.halo1.inl"
 //#include "breakpoints.tools.halo2.inl"
-//#include "breakpoints.tools.halo3.inl"
+#include "breakpoints.tools.halo3.inl"
 #include "breakpoints.tools.odst.inl"
 //#include "breakpoints.tools.reach.inl"
 //#include "breakpoints.tools.halo4.inl"
@@ -48,7 +48,10 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 	}
 
 #ifdef _WIN64
-	if (wcscmp(debugger.get_process().get_process_name(), L"atlas_tag_test.exe") == 0)
+	if (wcscmp(debugger.get_process().get_process_name(), L"halo3_tag_test.exe") == 0)
+	{
+	}
+	else if (wcscmp(debugger.get_process().get_process_name(), L"atlas_tag_test.exe") == 0)
 	{
 		debugger.add_breakpoint(0x00000001403916E0 - PE64_BASE, false, "push rbx", L"is_debugger_present", on_is_debugger_present_breakpoint);
 		debugger.add_breakpoint(0x00000001401A9A60 - PE64_BASE, false, "ret", L"shell_screen_pause", on_shell_screen_pause_breakpoint);
