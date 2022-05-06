@@ -135,7 +135,7 @@ void add_break_on_winmain(c_debugger& debugger, LPMODULEINFO module_info)
 		*reinterpret_cast<DWORD*>(winmain_call_pattern + 5) = (DWORD)image_base_addr;
 
 		unsigned char entry_point_instructions[READ_PAGE_SIZE] = { 0 };
-		size_t bytes_read = 0;
+		SIZE_T bytes_read = 0;
 		debugger.read_debuggee_memory(entry_point, entry_point_instructions, READ_PAGE_SIZE, &bytes_read);
 
 		for (size_t entry_point_offset = 0; entry_point_offset < READ_PAGE_SIZE; entry_point_offset++)
@@ -145,7 +145,7 @@ void add_break_on_winmain(c_debugger& debugger, LPMODULEINFO module_info)
 				size_t offset = entry_point_addr + entry_point_offset + sizeof(winmain_call_pattern);
 
 				size_t call_location = 0;
-				size_t call_location_bytes_read = 0;
+				SIZE_T call_location_bytes_read = 0;
 				debugger.read_debuggee_memory(reinterpret_cast<LPVOID>(offset + 1), &call_location, 4, &call_location_bytes_read);
 
 				call_location += offset + 5;
