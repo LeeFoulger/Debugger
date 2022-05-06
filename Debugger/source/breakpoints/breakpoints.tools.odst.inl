@@ -51,15 +51,15 @@ void on_restricted_region_add_member_breakpoint(c_debugger& debugger, c_register
 	type.set_address(registers.get_raw_context().R8);
 	size = registers.get_raw_context().R9;
 
-	static wchar_t filename[MAX_PATH]{};
-	swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger.get_process().get_current_directory());
+	static c_string<wchar_t, MAX_PATH> filename{};
+	swprintf_s(filename.value, MAX_PATH, L"%s\\bin\\globals.csv", debugger.get_process().get_current_directory());
 
 	static FILE* file = NULL;
-	if (_wfopen_s(&file, filename, L"a+"), file != NULL)
+	if (_wfopen_s(&file, filename.value, L"a+"), file != NULL)
 	{
 		fprintf(file, "0x%08zX", size);
-		fprintf(file, ", %s", name());
-		fprintf(file, ", %s", type());
+		fprintf(file, ", %s", type().value);
+		fprintf(file, ", %s", name().value);
 		fprintf(file, "\n");
 		fclose(file);
 	}

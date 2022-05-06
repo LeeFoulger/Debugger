@@ -42,7 +42,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 		FILE* file = NULL;
 		if (_wfopen_s(&file, filename, L"w"), file != NULL)
 		{
-			fprintf(file, "size, name, type\n");
+			fprintf(file, "size, type, name\n");
 			fclose(file);
 		}
 	}

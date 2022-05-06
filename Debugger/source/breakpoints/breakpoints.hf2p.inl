@@ -20,15 +20,15 @@ void on_restricted_region_add_member_internal_breakpoint(c_debugger& debugger, c
 	type.set_address(registers.cast_bp_as<size_t>(0x0C));
 	size.set_address(registers.cast_bp_as<size_t>(0x10));
 
-	static wchar_t filename[MAX_PATH]{};
-	swprintf_s(filename, MAX_PATH, L"%s\\bin\\globals.txt", debugger.get_process().get_current_directory());
+	static c_string<wchar_t, MAX_PATH> filename{};
+	swprintf_s(filename.value, MAX_PATH, L"%s\\bin\\globals.csv", debugger.get_process().get_current_directory());
 
 	static FILE* file = NULL;
-	if (_wfopen_s(&file, filename, L"a+"), file != NULL)
+	if (_wfopen_s(&file, filename.value, L"a+"), file != NULL)
 	{
 		fprintf(file, "0x%08zX", size());
-		fprintf(file, ", %s", name());
-		fprintf(file, ", %s", type());
+		fprintf(file, ", %s", type().value);
+		fprintf(file, ", %s", name().value);
 		fprintf(file, "\n");
 		fclose(file);
 	}
@@ -40,12 +40,12 @@ void on_rasterizer_draw_watermark_breakpoint(c_debugger& debugger, c_registers& 
 	//watermark_old.set_address(registers.cast_sp_as<size_t>(0x8));
 
 	static c_string<wchar_t, 1024> watermark{};
-	static LPVOID watermark_addr = debugger_allocate_and_write_debuggee_string(debugger, watermark);
+	static LPVOID watermark_addr = debugger_allocate_and_write_debuggee_string(debugger, watermark.value);
 
-	if (*watermark == 0)
+	if (*watermark.value == 0)
 	{
-		swprintf_s(watermark, L"DEBUGGER ATTACHED");
-		debugger_write_debuggee_string(debugger, watermark_addr, watermark);
+		swprintf_s(watermark.value, L"DEBUGGER ATTACHED");
+		debugger_write_debuggee_string(debugger, watermark_addr, watermark.value);
 	}
 
 	c_remote_reference<LPVOID>(debugger, registers.cast_sp_as<size_t>(0x8)) = watermark_addr;
@@ -148,7 +148,7 @@ struct s_game_options
 
 	void scenario_path(c_string<char, MAX_PATH> scenario_path)
 	{
-		csstrncpy(__data + 0x24, MAX_PATH, scenario_path, MAX_PATH);
+		csstrncpy(__data + 0x24, MAX_PATH, scenario_path.value, MAX_PATH);
 	}
 
 	void game_engine_variant(e_game_engine_variant game_engine_variant)
@@ -160,11 +160,13 @@ struct s_game_options
 void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	static c_remote_reference<s_game_options> game_options(debugger);
+	game_options.set_address(registers.cast_cx_as<size_t>());
+
 	static c_string<char, MAX_PATH> scenario_path{};
 
-	csstrncpy(scenario_path, MAX_PATH, "default", MAX_PATH);
+	csstrncpy(scenario_path.value, MAX_PATH, "default", MAX_PATH);
 
-	if (strcmp(scenario_path, "default") == 0)
+	if (strcmp(scenario_path.value, "default") == 0)
 	{
 		wchar_t filename[MAX_PATH]{};
 		swprintf_s(filename, MAX_PATH, L"%s\\test\\scenario_path.txt", debugger.get_process().get_current_directory());
@@ -172,27 +174,25 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 		FILE* file = NULL;
 		if (_wfopen_s(&file, filename, L"r"), file != NULL)
 		{
-			fgets(scenario_path, MAX_PATH, file);
+			fgets(scenario_path.value, MAX_PATH, file);
 			fclose(file);
 		}
 	
-		if (*scenario_path == 0 || *scenario_path == '\r' || *scenario_path == '\n')
+		if (*scenario_path.value == 0 || *scenario_path.value == '\r' || *scenario_path.value == '\n')
 		{
 			fputs("enter scenario path: ", stdout);
-			fgets(scenario_path, MAX_PATH, stdin);
+			fgets(scenario_path.value, MAX_PATH, stdin);
 		}
 	
-		if (*scenario_path)
+		if (*scenario_path.value)
 		{
-			while (scenario_path[strlen(scenario_path) - 1] == '\r' || scenario_path[strlen(scenario_path) - 1] == '\n')
-				scenario_path[strlen(scenario_path) - 1] = 0;
+			while (scenario_path.value[strlen(scenario_path.value) - 1] == '\r' || scenario_path.value[strlen(scenario_path.value) - 1] == '\n')
+				scenario_path.value[strlen(scenario_path.value) - 1] = 0;
 		}
 	}
 
-	if (*scenario_path && strcmp(scenario_path, "default") != 0)
+	if (*scenario_path.value && strcmp(scenario_path.value, "default") != 0)
 	{
-		game_options.set_address(registers.cast_cx_as<size_t>());
-
 		game_options().game_mode(_game_mode_multiplayer);
 		game_options().scenario_path(scenario_path);
 		game_options().game_engine_variant(_game_engine_slayer_variant);

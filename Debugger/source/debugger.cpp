@@ -481,7 +481,11 @@ BOOL c_debugger::write_debuggee_memory(
 	_Out_opt_ SIZE_T* lpNumberOfBytesWritten
 )
 {
-	return WriteProcessMemory(m_process.get_process_handle(), lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten);
+	DWORD protect;
+	protect_debuggee_memory(lpBaseAddress, nSize, PAGE_READWRITE, &protect);
+	BOOL result = WriteProcessMemory(m_process.get_process_handle(), lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten);
+	protect_debuggee_memory(lpBaseAddress, nSize, protect, &protect);
+	return result;
 }
 
 BOOL c_debugger::write_debuggee_pointer(
