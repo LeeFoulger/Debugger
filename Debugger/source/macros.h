@@ -9,3 +9,5 @@
 #define SAFE_DELETE(address) { delete[] address; address = nullptr; }
 
 #define RUNONCE(once, ...) static bool once = false; if (once) { __VA_ARGS__ } once = true
+
+#define TODO(...)

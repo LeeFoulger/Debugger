@@ -27,7 +27,7 @@
 static const BYTE k_call_instruction = 0xE8;
 static const BYTE k_break_instruction = 0xCC;
 
-// TODO: find a home for this
+TODO("find a home for this")
 template<typename t_type, SIZE_T k_max_count>
 struct s_static_array
 {
@@ -167,7 +167,7 @@ void debugger_write_data(
 
 void debugger_unprotect_module(c_debugger& debugger, LPCWSTR module_name);
 
-// TODO: find a home for this
+TODO("find a home for this")
 class c_registers
 {
 public:
@@ -326,7 +326,7 @@ protected:
 	SIZE_T runtime_base_addr;
 };
 
-// TODO: find a home for this
+TODO("find a home for this")
 template<typename t_type>
 class c_remote_reference
 {
@@ -406,7 +406,7 @@ private:
 	}
 };
 
-// TODO: find a home for this
+TODO("find a home for this")
 template<typename t_type>
 class c_remote_pointer
 {
