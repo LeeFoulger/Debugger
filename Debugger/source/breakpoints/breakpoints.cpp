@@ -56,13 +56,8 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 		debugger.add_breakpoint(0x00000001402DBEF0 - PE64_BASE, false, "mov rax,rsp", L"shell_get_system_identifier", on_shell_get_system_identifier_breakpoint);
 		debugger.add_breakpoint(0x00000001401BC774 - PE64_BASE, false, "ret", L"shell_get_gamertag on return", on_shell_get_gamertag_return_breakpoint);
 
-		{
-			//debugger.add_breakpoint(0x00000001408DABAF - PE64_BASE, false, "lea rbx,[rbx*8]", L"c_rasterizer_global_shaders::setup_global_shader", on_setup_global_shader_breakpoint);
+		explicit_shader_fix_patch(debugger, module_info);
 
-			TODO("pattern match BE FE FF FF FF E9 ?? ?? ?? ?? C1 E9 07 B8 FD FF FF FF F6 C1 01 0F 45 F0")
-			c_remote_reference<c_bytes<4>>(debugger, ((size_t)module_info->lpBaseOfDll + (0x00000001409DB834 - PE64_BASE))) = { 0xFF, 0xFF, 0xFF, 0xFF }; // FE FF FF FF -> FF FF FF FF, set explicit shader index to 'copy w/scale'
-			c_remote_reference<c_bytes<4>>(debugger, ((size_t)module_info->lpBaseOfDll + (0x00000001409DB841 - PE64_BASE))) = { 0xFF, 0xFF, 0xFF, 0xFF }; // FD FF FF FF -> FF FF FF FF, set explicit shader index to 'copy w/scale'
-		}
 		{
 			// allow `c_start_menu_screen_widget::handle_global_start_button_press` to be called
 			c_remote_reference<c_bytes<4>>(debugger, ((size_t)module_info->lpBaseOfDll + (0x000000014094458B - PE64_BASE))) = { 0x90, 0x90, 0x90, 0x90 };
