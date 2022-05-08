@@ -428,7 +428,7 @@ public:
 	~c_remote_pointer()
 	{
 		if (m_value)
-			VirtualFree(m_value, sizeof(t_type), MEM_RELEASE);
+			VirtualFree(m_value, 0, MEM_RELEASE);
 	}
 
 	void set_address(size_t address)
