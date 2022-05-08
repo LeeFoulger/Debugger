@@ -38,23 +38,32 @@ void explicit_shader_fix_patch(c_debugger& debugger, LPMODULEINFO module_info)
 {
 	//debugger.add_breakpoint(0x00000001408DABAF - PE64_BASE, false, "lea rbx,[rbx*8]", L"c_rasterizer_global_shaders::setup_global_shader", on_setup_global_shader_breakpoint);
 
-	static c_remote_reference<c_bytes<0x1000>> page(debugger);
+	static c_remote_reference<c_bytes<0x4000>> page(debugger);
 	static c_remote_reference<c_bytes<32>> found_addr(debugger);
 	static c_remote_reference<unsigned long> patch0(debugger);
 	static c_remote_reference<unsigned long> patch1(debugger);
-
-	unsigned char pattern[] = { 0xC1, 0xE8, 0x06, 0xA8, 0x01, 0x74, 0x0A, 0xBE, 0xFE, 0xFF, 0xFF, 0xFF, 0xE9, 0x39, 0xFB, 0xFF, 0xFF, 0xC1, 0xE9, 0x07, 0xB8, 0xFD, 0xFF, 0xFF, 0xFF, 0xF6, 0xC1, 0x01 };
-	char mask[] = "x??xx???xxxx?????x??xxxxxxxx";
 
 	size_t found_offset = 0;
 	for (size_t page_offset = 0; page_offset < module_info->SizeOfImage; page_offset += sizeof(page()))
 	{
 		page.set_address((size_t)module_info->lpBaseOfDll + page_offset);
 
-		unsigned char* addr = find_pattern(page().value, pattern, mask);
-		if (addr)
+		// halo3.dll, pre-1.1767
+		// halo3_tag_test.exe
+		// guerilla.exe
+		// sapien.exe
+		// tool.exe
+		// tool_fast.exe
+		unsigned long offset = find_pattern(page().value, "C1 ?? ?? A8 01 ?? ?? ?? FE FF FF FF ?? ?? ?? ?? ?? C1 ?? ?? ?? FD FF FF FF F6 C1 01");
+		if (offset == 'nope')
 		{
-			found_offset = addr - page().value;
+			// halo3.dll, post-1.1767
+			offset = find_pattern(page().value, "C1 ?? ?? A8 01 ?? ?? ?? ?? FE FF FF FF ?? ?? C1 ?? ?? ?? FD FF FF FF ?? C1 01");
+		}
+
+		if (offset != 'nope')
+		{
+			found_offset = page.get_address() + offset;
 			break;
 		}
 	}
@@ -62,7 +71,7 @@ void explicit_shader_fix_patch(c_debugger& debugger, LPMODULEINFO module_info)
 		return;
 
 	static bool valid_instructions = false;
-	found_addr.set_address(page.get_address() + found_offset);
+	found_addr.set_address(found_offset);
 	disassemble_x86(found_addr().value, [](const char* format, ...) -> int
 	{
 		if (valid_instructions)
@@ -102,16 +111,8 @@ void explicit_shader_fix_patch(c_debugger& debugger, LPMODULEINFO module_info)
 		{
 			//MessageBox(NULL, L"Valid Instructions Found!", L"Success", MB_OK);
 
-			if (valid_instruction_count == 4)
-			{
-				patch0.set_address(found_addr.get_address() + 0x1);
-				patch1.set_address(found_addr.get_address() + 0xE);
-			}
-			if (valid_instruction_count == 6)
-			{
-				patch0.set_address(found_addr.get_address() + 0x8);
-				patch1.set_address(found_addr.get_address() + 0x15);
-			}
+			patch0.set_address(found_addr.get_address() + find_pattern(found_addr().value, "FE FF FF FF"));
+			patch1.set_address(found_addr.get_address() + find_pattern(found_addr().value, "FD FF FF FF"));
 
 			valid_instructions = true;
 		}
