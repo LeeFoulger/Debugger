@@ -28,21 +28,10 @@ bool string_ends(const char* s1, const char* s2)
 // https://github.com/OneshotGH/CSGOSimple-master/blob/master/CSGOSimple/helpers/utils.cpp
 // bytes separated by <space>
 // must not end with <space>
-bool pattern_to_bytes(s_byte** out_bytes, unsigned long* out_byte_count, const char* pattern)
+bool pattern_to_bytes(s_byte* bytes, const char* pattern)
 {
-	if (!out_bytes || !out_byte_count)
-		return false;
-
-	unsigned long length = (unsigned long)strlen(pattern);
-
-	unsigned long byte_count = 1;
-	for (unsigned long i = 0; i < length; i++)
-		byte_count += pattern[i] == ' ';
-
-	s_byte* bytes = new s_byte[byte_count]{};
-
 	char* start = const_cast<char*>(pattern);
-	char* end = const_cast<char*>(pattern) + length;
+	char* end = const_cast<char*>(pattern) + strlen(pattern);
 
 	unsigned long index = 0;
 	for (char* current = start; current < end; ++current, index++)
@@ -63,7 +52,5 @@ bool pattern_to_bytes(s_byte** out_bytes, unsigned long* out_byte_count, const c
 		}
 	}
 
-	*out_bytes = bytes;
-	*out_byte_count = byte_count;
 	return true;
 };
