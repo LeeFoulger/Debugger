@@ -25,6 +25,7 @@ bool string_ends(const char* s1, const char* s2)
 	return strstr(s1, s2) == s1 + (strlen(s1) - strlen(s2));
 }
 
+// https://github.com/OneshotGH/CSGOSimple-master/blob/master/CSGOSimple/helpers/utils.cpp
 // bytes separated by <space>
 // must not end with <space>
 bool pattern_to_bytes(s_byte** out_bytes, unsigned long* out_byte_count, const char* pattern)
