@@ -1,12 +1,14 @@
 #pragma once
 
+#include <d3d11.h>
+
 // build: 8510025
 
 struct s_rasterizer_global_shader_globals
 {
 	bool initialized;
-	void* pixel_shaders[11];
-	void* vertex_shaders[11];
+	ID3D11PixelShader* pixel_shaders[11];
+	ID3D11VertexShader* vertex_shaders[11];
 };
 static_assert(sizeof(s_rasterizer_global_shader_globals) == 0xB8, "sizeof(s_rasterizer_global_shader_globals) != 0xB8");
 
@@ -97,8 +99,8 @@ void explicit_shader_fix_patch(c_debugger& debugger, LPMODULEINFO module_info)
 			"test"
 		};
 
-		static int valid_instruction_count = 0;
-		for (int i = 0; i < NUMBER_OF(valid_instruction_strings); i++)
+		static size_t valid_instruction_count = 0;
+		for (size_t i = 0; i < NUMBER_OF(valid_instruction_strings); i++)
 		{
 			if (valid_instruction_count == i && strstr(buffer, valid_instruction_strings[i]) == buffer)
 			{
