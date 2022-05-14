@@ -252,8 +252,6 @@ void c_debugger::run_debugger(bool print_debug_strings)
 					GetThreadContext(m_thread_handle, &context);
 					SuspendThread(m_thread_handle);
 
-					c_registers registers(&module_info, context);
-
 					if (last_instruction_pointer)
 					{
 						write_debuggee_memory((LPVOID)last_instruction_pointer, &k_break_instruction, sizeof(k_break_instruction), &bytes_written);
@@ -278,6 +276,8 @@ void c_debugger::run_debugger(bool print_debug_strings)
 								break;
 							}
 						}
+
+						c_registers registers(&module_info, context);
 
 						if (print_registers)
 						{
