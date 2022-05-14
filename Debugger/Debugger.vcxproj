@@ -162,6 +162,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\buffer.cpp" />
     <ClCompile Include="external_libraries\nmd_assembly_wrapper.cpp" />
     <ClCompile Include="source\breakpoints\breakpoints.cpp" />
     <ClCompile Include="source\debugger.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="source\string_utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\buffer.h" />
     <ClInclude Include="external_libraries\nmd_assembly_wrapper.h" />
     <ClInclude Include="source\breakpoints\breakpoints.h" />
     <ClInclude Include="source\debugger.h" />

@@ -12,5 +12,7 @@
 #include <debugger.h>
 #include <breakpoints/breakpoints.h>
 
+#include <buffer.h>
+
 // external library wrappers
 #include <nmd_assembly_wrapper.h>
