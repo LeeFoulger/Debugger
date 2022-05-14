@@ -13,6 +13,7 @@
 #include <breakpoints/breakpoints.h>
 
 #include <buffer.h>
+#include <internet_file.h>
 
 // external library wrappers
 #include <nmd_assembly_wrapper.h>
