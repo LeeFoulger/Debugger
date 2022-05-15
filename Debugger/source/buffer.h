@@ -13,10 +13,10 @@ public:
 	void expand(size_t size);
 	void compact(size_t size);
 
-	void read_from_file(const wchar_t* filenamme);
-	void write_to_file(const wchar_t* filenamme);
-	void read_from_file(const char* filenamme);
-	void write_to_file(const char* filenamme);
+	void read_from_file(const wchar_t* filename);
+	void write_to_file(const wchar_t* filename);
+	void read_from_file(const char* filename);
+	void write_to_file(const char* filename);
 
 	const size_t size()
 	{
