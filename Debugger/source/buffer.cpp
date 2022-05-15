@@ -88,6 +88,18 @@ void c_buffer::read_from_file(const wchar_t* filename)
 	}
 }
 
+void c_buffer::write_to_file(const wchar_t* filename)
+{
+	FILE* file;
+	_wfopen_s(&file, filename, L"wb");
+	if (file)
+	{
+		fwrite(m_data, sizeof(unsigned char), m_size, file);
+		fflush(file);
+		fclose(file);
+	}
+}
+
 void c_buffer::read_from_file(const char* filename)
 {
 	size_t temp;
@@ -97,3 +109,11 @@ void c_buffer::read_from_file(const char* filename)
 	read_from_file(filename_wide);
 }
 
+void c_buffer::write_to_file(const char* filename)
+{
+	size_t temp;
+	wchar_t filename_wide[MAX_PATH]{};
+	mbstowcs_s(&temp, filename_wide, MAX_PATH, filename, MAX_PATH);
+
+	write_to_file(filename_wide);
+}
