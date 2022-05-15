@@ -20,6 +20,8 @@ c_buffer::~c_buffer()
 
 void c_buffer::create(size_t size)
 {
+	destroy();
+
 	m_size += size;
 	m_data = new unsigned char[m_size];
 	memset(m_data, 0, m_size);

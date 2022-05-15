@@ -1,5 +1,7 @@
 #include <main.h>
 
+#include <stdlib.h>
+
 #include <wininet.h>
 #pragma comment(lib, "wininet.lib")
 
@@ -26,10 +28,18 @@ void c_internet_file::set_connection_handle(const wchar_t* user_agent)
 	m_connection = InternetOpenW(user_agent, INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, NULL);
 }
 
-bool c_internet_file::download_file(c_buffer& buffer, const wchar_t* url)
+bool c_internet_file::download_data(c_buffer& buffer, const wchar_t* url)
 {
-	if (!m_connection)
+	if (!m_connection || !url)
 		return false;
+
+	if (wcsstr(url, L"http://") != url && wcsstr(url, L"https://") != url)
+	{
+		wchar_t tmp[256]{};
+		wcscat_s(tmp, 256, L"http://");
+		wcscat_s(tmp, 256, url);
+		url = tmp;
+	}
 
 	const HINTERNET open_address = InternetOpenUrlW(m_connection, url, NULL, 0, INTERNET_FLAG_PRAGMA_NOCACHE | INTERNET_FLAG_KEEP_CONNECTION, NULL);
 	if (!open_address)
@@ -47,4 +57,16 @@ bool c_internet_file::download_file(c_buffer& buffer, const wchar_t* url)
 	buffer.compact(4096);
 
 	return true;
+}
+
+bool c_internet_file::download_data(c_buffer& buffer, const char* url)
+{
+	if (!url)
+		return false;
+
+	size_t temp;
+	wchar_t url_wide[256]{};
+	mbstowcs_s(&temp, url_wide, 256, url, 256);
+
+	return download_data(buffer, url_wide);
 }
