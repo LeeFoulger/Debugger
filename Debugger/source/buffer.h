@@ -13,6 +13,9 @@ public:
 	void expand(size_t size);
 	void compact(size_t size);
 
+	void read_from_file(const wchar_t* filenamme);
+	void read_from_file(const char* filenamme);
+
 	const size_t size()
 	{
 		return m_size;

@@ -8,12 +8,11 @@
 
 // project files
 #include <macros.h>
+#include <buffer.h>
+#include <vector.h>
 #include <process.h>
 #include <debugger.h>
 #include <breakpoints/breakpoints.h>
-
-#include <buffer.h>
-#include <vector.h>
 #include <internet_file.h>
 
 // external library wrappers
