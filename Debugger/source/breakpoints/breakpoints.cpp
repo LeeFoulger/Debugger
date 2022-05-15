@@ -82,7 +82,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 		debugger.add_breakpoint(0x00483D40 - PE32_BASE, false, "push ebp", L"cache_file_blocking_read", on_cache_file_blocking_read_breakpoint);
 		debugger.add_breakpoint(0x00482DB2 - PE32_BASE, false, "test al,al", L"cache_files_verify_header_rsa_signature check result", on_cache_files_verify_header_rsa_signature_breakpoint);
 		debugger.add_breakpoint(0x005D6B76 - PE32_BASE, false, "pop ebp", L"contrails_render_callback", on_contrails_render_callback_breakpoint);
-		debugger.add_breakpoint(0x0049713F - PE32_BASE, false, "cmp [4BC1E48h],al", L"main_kick_startup_masking_sequence: startup_sequence check result", on_main_kick_startup_masking_sequence_breakpoint);
+		bink_format_patch(debugger, module_info, false);
 	}
 #endif // _WIN64
 }

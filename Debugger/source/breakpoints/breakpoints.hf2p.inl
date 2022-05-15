@@ -92,13 +92,41 @@ void on_contrails_render_callback_breakpoint(c_debugger& debugger, c_registers& 
 
 void on_main_kick_startup_masking_sequence_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	//c_remote_reference<c_string<char, 32>>(debugger, ((size_t)module_info->lpBaseOfDll + (0x011992C8 - PE32_BASE))) = (c_string<char, 32>)"_ink\\%s.bik";
 	// .text:0049713F	cmp		[4BC1E48h],	al		<--- current breakpoint
 	// .text:00497145	jz      short loc_4971CD	<--- current eip
 	// .text:004971CD	mov		[42E1E49h],	1		<--- new eip
 
 	const size_t jump_size = 0x004971CD - 0x00497145;
 	registers.get_raw_context().Xip += jump_size;
+}
+
+void bink_format_patch(c_debugger& debugger, LPMODULEINFO module_info, bool use_breakpoint)
+{
+	//c_remote_reference<c_string<char, 32>>(debugger, ((size_t)module_info->lpBaseOfDll + (0x011992C8 - PE32_BASE))) = (c_string<char, 32>)"_ink\\%s.bik";
+
+	if (use_breakpoint)
+	{
+		debugger.add_breakpoint(0x0049713F - PE32_BASE, false, "cmp [", L"main_kick_startup_masking_sequence: startup_sequence check result", on_main_kick_startup_masking_sequence_breakpoint);
+	}
+	else
+	{
+		size_t bink_format_offset = 0;
+		static c_remote_reference<c_bytes<0x1000>> page(debugger);
+		for (size_t page_offset = 0; page_offset < module_info->SizeOfImage; page_offset += sizeof(page()))
+		{
+			page.set_address((size_t)module_info->lpBaseOfDll + page_offset);
+
+			// 'bink\%s.bik'
+			size_t offset = find_pattern(page().value, "62 69 6E 6B 5C 25 73 2E 62 69 6B");
+			if (offset != 'nope')
+			{
+				// main_status
+				bink_format_offset = page_offset + offset;
+				break;
+			}
+		}
+		c_remote_reference<char>(debugger, (size_t)module_info->lpBaseOfDll + bink_format_offset) = '_';
+	}
 }
 
 void on_cached_map_files_open_all_breakpoint(c_debugger& debugger, c_registers& registers)
