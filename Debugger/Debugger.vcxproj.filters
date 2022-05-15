@@ -71,6 +71,9 @@
     <ClInclude Include="source\internet_file.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="source\breakpoints\breakpoints.hf2p.inl">

@@ -182,6 +182,7 @@
     <ClInclude Include="source\main.h" />
     <ClInclude Include="source\process.h" />
     <ClInclude Include="source\string_utils.h" />
+    <ClInclude Include="source\vector.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="source\breakpoints\breakpoints.hf2p.inl" />

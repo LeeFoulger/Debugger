@@ -13,6 +13,7 @@
 #include <breakpoints/breakpoints.h>
 
 #include <buffer.h>
+#include <vector.h>
 #include <internet_file.h>
 
 // external library wrappers
