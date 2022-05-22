@@ -132,6 +132,9 @@ protected:
 
 	s_static_array<s_breakpoint, 256> m_breakpoints;
 	s_static_array<void(*)(c_debugger&, LPMODULEINFO), 32> m_module_info_callbacks;
+
+	DWORD exception_handler();
+	DWORD output_debug_string_handler();
 };
 
 template<typename t_string_type, size_t k_string_size>

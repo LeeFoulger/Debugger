@@ -45,7 +45,8 @@ public:
 		if (!m_data)
 			create(from.size());
 
-		::memcpy(m_data, from.data(), from.size());
+		if (m_data)
+			::memcpy(m_data, from.data(), from.size());
 	}
 
 private:
