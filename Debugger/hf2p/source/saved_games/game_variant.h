@@ -63,7 +63,7 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1C, c_player_traits,
 
 enum e_game_engine_miscellaneous_options_flags
 {
-	_game_engine_miscellaneous_options_teams_enabled_flag,
+	_game_engine_miscellaneous_options_teams_enabled,
 
 	k_game_engine_miscellaneous_options_flags
 };
@@ -81,10 +81,10 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_miscellaneous_options,
 
 enum e_game_engine_respawn_options_flags
 {
-	_game_engine_respawn_options_inherit_respawn_time_flag,
-	_game_engine_respawn_options_respawn_with_teammate_flag,
-	_game_engine_respawn_options_respawn_at_location_flag,
-	_game_engine_respawn_options_respawn_on_kills_flag,
+	_game_engine_respawn_options_inherit_respawn_time,
+	_game_engine_respawn_options_respawn_with_teammate,
+	_game_engine_respawn_options_respawn_at_location,
+	_game_engine_respawn_options_respawn_on_kills,
 
 	k_game_engine_respawn_options_flags
 };
@@ -122,14 +122,14 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x28, c_game_engine_respawn_options,
 
 enum e_game_engine_social_options_flags
 {
-	_game_engine_social_options_observers_enabled_flag,
-	_game_engine_social_options_team_changing_enabled_flag,
-	_game_engine_social_options_team_changing_balancing_only_flag,
-	_game_engine_social_options_friendly_fire_enabled_flag,
-	_game_engine_social_options_betrayal_booting_enabled_flag,
-	_game_engine_social_options_enemy_voice_enabled_flag,
-	_game_engine_social_options_open_channel_voice_enabled_flag,
-	_game_engine_social_options_dead_player_voice_enabled_flag,
+	_game_engine_social_options_observers_enabled,
+	_game_engine_social_options_team_changing_enabled,
+	_game_engine_social_options_team_changing_balancing_only,
+	_game_engine_social_options_friendly_fire_enabled,
+	_game_engine_social_options_betrayal_booting_enabled,
+	_game_engine_social_options_enemy_voice_enabled,
+	_game_engine_social_options_open_channel_voice_enabled,
+	_game_engine_social_options_dead_player_voice_enabled,
 
 	k_game_engine_social_options_flags
 };
@@ -143,8 +143,8 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_social_options,
 
 enum e_game_engine_map_override_options_flags
 {
-	_game_engine_map_override_options_grenades_on_map_flag,
-	_game_engine_map_override_options_indestructible_vehicles_flag,
+	_game_engine_map_override_options_grenades_on_map,
+	_game_engine_map_override_options_indestructible_vehicles,
 
 	k_game_engine_map_override_options_flags
 };
@@ -204,16 +204,15 @@ enum e_slayer_team_scoring_settings
 	_slayer_team_scoring_settings_minimum,
 	_slayer_team_scoring_settings_maximum,
 
-	k_slayer_team_scoring_settings_count
+	k_slayer_team_scoring_settings
 };
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x200, c_game_engine_slayer_variant, c_game_engine_base_variant,
 {
 	// `c_game_engine_base_variant::m_team_scoring` override
-	TODO(c_enum<e_slayer_team_scoring_settings, short, k_slayer_team_scoring_settings_count> m_team_scoring)
+	// c_enum<e_slayer_team_scoring_settings, short, k_slayer_team_scoring_settings> m_team_scoring
 
 	short m_score_to_win;
-
 	short m_kill_points;
 	short m_assist_points;
 	char m_death_points;
@@ -221,14 +220,14 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x200, c_game_engine_slayer_variant, 
 	char m_betrayal_points;
 	char m_leader_kill_points;
 	char m_elimination_points;
-
 	char m_assassination_bonus_points;
 	char m_headshot_bonus_points;
 	char m_melee_bonus_points;
 	char m_sticky_bonus_points;
 	char m_splatter_bonus_points;
 	char m_killing_spree_bonus_points;
-	char m_unknown_bonus_points;
+
+	char unknown0;
 
 	c_player_traits m_leader_player_traits;
 
