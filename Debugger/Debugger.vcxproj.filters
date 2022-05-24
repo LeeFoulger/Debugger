@@ -74,6 +74,12 @@
     <ClInclude Include="source\vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="hf2p\source\saved_games\game_variant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_options.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="source\breakpoints\breakpoints.hf2p.inl">

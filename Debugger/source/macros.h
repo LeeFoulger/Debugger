@@ -11,3 +11,9 @@
 #define RUNONCE(once, ...) static bool once = false; if (once) { __VA_ARGS__ } once = true
 
 #define TODO(...)
+
+#define DECLARE_STRUCT_WITH_SIZE_ASSERT0(name, size, ...) struct name __VA_ARGS__; static_assert(sizeof(name) == size)
+#define DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT0(name, inherited, size, ...) struct name : inherited __VA_ARGS__; static_assert(sizeof(name) == size)
+
+#define DECLARE_STRUCT_WITH_SIZE_ASSERT1(size, name, ...) struct name __VA_ARGS__; static_assert(sizeof(name) == size)
+#define DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(size, name, inherited, ...) struct name : inherited __VA_ARGS__; static_assert(sizeof(name) == size)

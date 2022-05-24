@@ -1,5 +1,8 @@
 #pragma once
 
+#include <game/game_options.h>
+#include <saved_games/game_variant.h>
+
 const bool disable_saber_code_applied_in_scenario_load = false;
 
 void on_command_line_get_credentials_breakpoint(c_debugger& debugger, c_registers& registers)
@@ -191,59 +194,10 @@ void on_cached_map_files_open_all_breakpoint(c_debugger& debugger, c_registers& 
 	printf("");
 }
 
-enum e_game_mode : unsigned long
-{
-	_game_mode_none = 0,
-	_game_mode_campaign,
-	_game_mode_multiplayer,
-	_game_mode_mapeditor,
-	_game_mode_savefilm,
-	_game_mode_survival,
-
-	k_game_mode_count,
-};
-
-enum e_game_engine_variant : unsigned long
-{
-	_game_engine_base_variant = 0,
-	_game_engine_ctf_variant,
-	_game_engine_slayer_variant,
-	_game_engine_oddball_variant,
-	_game_engine_king_variant,
-	_game_engine_sandbox_variant,
-	_game_engine_vip_variant,
-	_game_engine_juggernaut_variant,
-	_game_engine_territories_variant,
-	_game_engine_assault_variant,
-	_game_engine_infection_variant,
-
-	k_game_engine_variant_count,
-};
-
-struct s_game_options
-{
-	char __data[0xE620];
-
-	void game_mode(e_game_mode game_mode)
-	{
-		*reinterpret_cast<e_game_mode*>(__data) = game_mode;
-	}
-
-	void scenario_path(c_string<char, MAX_PATH> scenario_path)
-	{
-		csstrncpy(__data + 0x24, MAX_PATH, scenario_path.value, MAX_PATH);
-	}
-
-	void game_engine_variant(e_game_engine_variant game_engine_variant)
-	{
-		*reinterpret_cast<e_game_engine_variant*>(__data + 0x32C) = game_engine_variant;
-	}
-};
-
 void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
-	static c_remote_reference<s_game_options> game_options(debugger);
-	game_options.set_address(registers.cast_cx_as<size_t>());
+	static c_remote_reference<game_options> options(debugger);
+	options.set_address(registers.cast_cx_as<size_t>());
 
 	static c_string<char, MAX_PATH> scenario_path{};
 
@@ -276,10 +230,16 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 
 	if (*scenario_path.value && strcmp(scenario_path.value, "default") != 0)
 	{
-		game_options().game_mode(_game_mode_multiplayer);
-		game_options().scenario_path(scenario_path);
-		game_options().game_engine_variant(_game_engine_slayer_variant);
+		c_game_variant& game_variant = options().game_variant();
 
-		game_options = game_options();
+		options().game_mode(_game_mode_multiplayer);
+		options().scenario_path(scenario_path);
+
+		game_variant.m_game_engine_index = _game_engine_slayer_variant;
+		game_variant.m_variant.m_base_variant.m_miscellaneous_options.m_time_limit = 0;
+		game_variant.m_variant.m_base_variant.m_respawn_options.m_respawn_time = 0;
+		game_variant.m_variant.m_base_variant.m_respawn_options.m_suicide_penalty = 0;
+
+		options = options();
 	}
 }
