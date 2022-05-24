@@ -83,6 +83,7 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 		debugger.add_breakpoint(0x00482DB2 - PE32_BASE, false, "test al,al", L"cache_files_verify_header_rsa_signature check result", on_cache_files_verify_header_rsa_signature_breakpoint);
 		debugger.add_breakpoint(0x005D6B76 - PE32_BASE, false, "pop ebp", L"contrails_render_callback", on_contrails_render_callback_breakpoint);
 		bink_format_patch(debugger, module_info, false);
+		language_patch(debugger, module_info);
 	}
 #endif // _WIN64
 }

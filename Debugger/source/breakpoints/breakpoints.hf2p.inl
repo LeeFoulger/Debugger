@@ -129,6 +129,40 @@ void bink_format_patch(c_debugger& debugger, LPMODULEINFO module_info, bool use_
 	}
 }
 
+void language_patch(c_debugger& debugger, LPMODULEINFO module_info)
+{
+	static c_remote_reference<unsigned char> patch0(debugger);
+	static c_remote_reference<unsigned long> patch1(debugger);
+
+	size_t found_offset = 0;
+	static c_remote_reference<c_bytes<0x1000>> page(debugger);
+	for (size_t page_offset = 0; page_offset < module_info->SizeOfImage; page_offset += sizeof(page()))
+	{
+		page.set_address((size_t)module_info->lpBaseOfDll + page_offset);
+
+		// cmp     g_game_language, 0Bh
+		// jz      short loc_6B9263
+		// mov     g_game_language, 0Bh
+		size_t offset = find_pattern(page().value, "83 3D ?? ?? ?? ?? 0B 74 ?? ?? ?? ?? ?? ?? ?? 0B 00 00 00");
+		if (offset != 'nope')
+		{
+			found_offset = page_offset + offset;
+			break;
+		}
+	}
+
+	if (!found_offset)
+		return;
+
+	patch0.set_address((size_t)module_info->lpBaseOfDll + found_offset + 0x6);
+	patch1.set_address((size_t)module_info->lpBaseOfDll + found_offset + 0xF);
+
+	if (patch0.get_address() && patch0() == 11) patch0 = 0;
+	if (patch1.get_address() && patch1() == 11) patch1 = 0;
+
+	printf("");
+}
+
 void on_cached_map_files_open_all_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	const size_t resource_path_count = 7;
