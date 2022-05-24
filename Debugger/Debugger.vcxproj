@@ -172,6 +172,7 @@
     <ClCompile Include="source\string_utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="hf2p\source\cseries\cseries.h" />
     <ClInclude Include="hf2p\source\game\game_options.h" />
     <ClInclude Include="hf2p\source\saved_games\game_variant.h" />
     <ClInclude Include="source\internet_file.h" />
