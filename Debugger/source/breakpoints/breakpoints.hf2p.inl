@@ -1,8 +1,6 @@
 #pragma once
 
-#include <cseries/cseries.h>
 #include <game/game_options.h>
-#include <saved_games/game_variant.h>
 
 const bool disable_saber_code_applied_in_scenario_load = false;
 
@@ -233,7 +231,7 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 	{
 		c_game_variant& game_variant = options().game_variant();
 
-		options().game_mode(_game_mode_multiplayer);
+		options().game_mode.set(_game_mode_multiplayer);
 		options().scenario_path(scenario_path);
 
 		game_variant.m_game_engine_index = _game_engine_slayer_variant;

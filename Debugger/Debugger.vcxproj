@@ -173,6 +173,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hf2p\source\cseries\cseries.h" />
+    <ClInclude Include="hf2p\source\game\game_engine.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_assault.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_ctf.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_default.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_infection.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_juggernaut.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_king.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_oddball.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_sandbox.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_slayer.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_territories.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_traits.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_variant.h" />
+    <ClInclude Include="hf2p\source\game\game_engine_vip.h" />
     <ClInclude Include="hf2p\source\game\game_options.h" />
     <ClInclude Include="hf2p\source\saved_games\game_variant.h" />
     <ClInclude Include="source\internet_file.h" />

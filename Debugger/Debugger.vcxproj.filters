@@ -83,6 +83,48 @@
     <ClInclude Include="hf2p\source\cseries\cseries.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_slayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_default.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_ctf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_oddball.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_king.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_sandbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_vip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_juggernaut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_territories.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_assault.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_infection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hf2p\source\game\game_engine_variant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="source\breakpoints\breakpoints.hf2p.inl">
