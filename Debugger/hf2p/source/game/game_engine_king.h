@@ -62,7 +62,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x200, c_game_engine_king_variant, c_
 	short m_score_to_win;
 
 	// default: 90, max: 1000
-	short m_score_unknown;
+	short m_score_unknown; // halo online specific
 
 	c_enum<e_king_moving_hill_settings, char, k_king_moving_hill_settings_default, k_king_moving_hill_settings> m_moving_hill;
 	c_enum<e_king_moving_hill_order_settings, char, k_king_moving_hill_order_settings_default, k_king_moving_hill_order_settings> m_moving_hill_order;

@@ -27,7 +27,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_slayer_variant, 
 	short m_score_to_win;
 
 	// default: 20, max: 250
-	short m_unknown;
+	short m_unknown; // halo online specific
 
 	// default: 1, max: 20
 	short m_kill_points;
@@ -68,7 +68,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_slayer_variant, 
 	// default: 0, max: 20
 	char m_killing_spree_points;
 
-	// leader_traits / leader_team_traits
+	// leader team traits if teams enabled
 	c_player_traits m_leader_traits;
 
 	unsigned char pad[2];

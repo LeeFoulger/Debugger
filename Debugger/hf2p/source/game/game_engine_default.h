@@ -76,7 +76,7 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x28, c_game_engine_respawn_options,
 	unsigned char m_betrayal_penalty;
 
 	// seconds
-	unsigned char m_unknown_penalty;
+	unsigned char m_unknown_penalty; // halo online specific
 
 	// seconds
 	unsigned char m_respawn_growth;
