@@ -1,19 +1,20 @@
 #pragma once
 
 #include <cseries/cseries.h>
+#include <game/game_engine_traits.h>
 
 #pragma pack(push, 1)
 
 enum e_sandbox_flags
 {
-	_sandbox_flags_open_channel_voice,
+	_sandbox_flags_open_channel_voice = 0,
 
 	k_sandbox_flags
 };
 
 enum e_sandbox_editing_mode
 {
-	_sandbox_flags_all_players,
+	_sandbox_flags_all_players = 0,
 	_sandbox_flags_only_leader,
 
 	k_sandbox_editing_mode

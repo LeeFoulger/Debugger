@@ -7,7 +7,7 @@
 
 enum e_game_engine_miscellaneous_options_flags
 {
-	_game_engine_miscellaneous_options_teams_enabled,
+	_game_engine_miscellaneous_options_teams_enabled = 0,
 
 	k_game_engine_miscellaneous_options_flags
 };
@@ -25,7 +25,7 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_miscellaneous_options,
 
 enum e_game_engine_respawn_options_flags
 {
-	_game_engine_respawn_options_inherit_respawn_time,
+	_game_engine_respawn_options_inherit_respawn_time = 0,
 	_game_engine_respawn_options_respawn_with_teammate,
 	_game_engine_respawn_options_respawn_at_location,
 	_game_engine_respawn_options_respawn_on_kills,
@@ -66,7 +66,7 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x28, c_game_engine_respawn_options,
 
 enum e_game_engine_social_options_flags
 {
-	_game_engine_social_options_observers_enabled,
+	_game_engine_social_options_observers_enabled = 0,
 	_game_engine_social_options_team_changing_enabled,
 	_game_engine_social_options_team_changing_balancing_only,
 	_game_engine_social_options_friendly_fire_enabled,
@@ -87,7 +87,7 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_social_options,
 
 enum e_game_engine_map_override_options_flags
 {
-	_game_engine_map_override_options_grenades_on_map,
+	_game_engine_map_override_options_grenades_on_map = 0,
 	_game_engine_map_override_options_indestructible_vehicles,
 
 	k_game_engine_map_override_options_flags

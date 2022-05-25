@@ -1,12 +1,13 @@
 #pragma once
 
 #include <cseries/cseries.h>
+#include <game/game_engine_traits.h>
 
 #pragma pack(push, 1)
 
 enum e_slayer_team_scoring_settings
 {
-	_slayer_team_scoring_settings_sum,
+	_slayer_team_scoring_settings_sum = 0,
 	_slayer_team_scoring_settings_minimum,
 	_slayer_team_scoring_settings_maximum,
 

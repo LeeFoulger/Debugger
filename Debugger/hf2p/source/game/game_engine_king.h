@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cseries/cseries.h>
+#include <game/game_engine_traits.h>
 
 #pragma pack(push, 1)
 
