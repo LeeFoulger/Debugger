@@ -5,10 +5,68 @@
 
 #pragma pack(push, 1)
 
+enum e_king_team_scoring_settings
+{
+	_king_team_scoring_settings_sum = 0,
+	_king_team_scoring_settings_minimum,
+	_king_team_scoring_settings_maximum,
+	_king_team_scoring_settings_team_score,
+
+	k_king_team_scoring_settings
+};
+
+enum e_king_variant_flags
+{
+	_king_variant_flags_opaque_hill = 0,
+
+	k_king_variant_flags
+};
+
+enum e_king_moving_hill_settings
+{
+	_king_moving_hill_settings_off = 0,
+	_king_moving_hill_settings_10_seconds,
+	_king_moving_hill_settings_15_seconds,
+	_king_moving_hill_settings_30_seconds,
+	_king_moving_hill_settings_1_minute,
+	_king_moving_hill_settings_2_minutes,
+	_king_moving_hill_settings_3_minutes,
+	_king_moving_hill_settings_4_minutes,
+	_king_moving_hill_settings_5_minutes,
+
+	k_king_moving_hill_settings
+};
+
+enum e_king_moving_hill_order_settings
+{
+	_king_moving_hill_order_settings_random = 0,
+	_king_moving_hill_order_settings_sequence,
+
+	k_king_moving_hill_order_settings
+};
+
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x200, c_game_engine_king_variant, c_game_engine_base_variant,
 {
-	TODO("map out this data")
-	char __data[0x30];
+	// `c_game_engine_base_variant::m_team_scoring` override
+	// c_enum<e_king_team_scoring_settings, short, k_king_team_scoring_settings> m_team_scoring
+
+	c_flags<e_king_variant_flags, unsigned long, k_king_variant_flags> m_flags;
+
+	short m_score_to_win;
+
+	short unknown0;
+
+	c_enum<e_king_moving_hill_settings, char, k_king_moving_hill_settings> m_moving_hill;
+	c_enum<e_king_moving_hill_order_settings, char, k_king_moving_hill_order_settings> m_moving_hill_order;
+
+	char m_uncontested_hill_bonus_points;
+	char m_points_per_kill;
+	char m_inside_hill_points;
+	char m_outside_hill_points;
+
+	c_player_traits m_inside_hill_traits_name;
+
+	char king_padding[6];
 });
 
 #pragma pack(pop)
