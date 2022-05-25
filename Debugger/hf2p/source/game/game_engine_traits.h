@@ -564,7 +564,7 @@ enum e_motion_tracker_range_setting
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_player_trait_sensors,
 {
 	c_enum<e_motion_tracker_setting, unsigned short, _motion_tracker_setting_unchanged, k_motion_tracker_settings> m_motion_tracker_settings;
-	c_enum < e_motion_tracker_range_setting, unsigned short, _motion_tracker_range_setting_unchanged, k_motion_tracker_range_settings> m_motion_tracker_range;
+	c_enum<e_motion_tracker_range_setting, unsigned short, _motion_tracker_range_setting_unchanged, k_motion_tracker_range_settings> m_motion_tracker_range;
 });
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1C, c_player_traits,
