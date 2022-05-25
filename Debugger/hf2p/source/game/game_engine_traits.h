@@ -1,6 +1,5 @@
 #pragma once
 
-
 #pragma pack(push, 1)
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x8, c_player_trait_shield_vitality,

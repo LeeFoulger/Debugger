@@ -22,48 +22,50 @@ enum e_oddball_variant_flags
 	k_oddball_variant_flags
 };
 
-DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x200, c_game_engine_oddball_variant, c_game_engine_base_variant,
+DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_oddball_variant, c_game_engine_base_variant,
 {
 	// `c_game_engine_base_variant::m_team_scoring` override
 	// c_enum<e_oddball_variant_team_scoring_settings, short, k_oddball_variant_team_scoring_settings> m_team_scoring
 
 	c_flags<e_oddball_variant_flags, unsigned long, k_oddball_variant_flags> m_flags;
 
+	// default: 200, max: 1001
 	short m_score_to_win;
 
 	// points per second when carrying the ball
+	// default: 180, max: 1000
 	short m_carrying_points;
 
-	// 4 variables in 5
-	/*
-	kill_points
+	// default: 1, max: 20
+	short m_unknown;
+
+	// default: 0, max: 20
+	char m_kill_points;
 
 	// number of points for a melee kill with the ball
-	ball_kill_points
+	// default: 0, max: 20
+	char m_ball_kill_points;
 
 	// number of points for killing the ball carrier
-	carrier_kill_points
+	// default: 0, max: 20
+	char m_carrier_kill_points;
 
-	ball_count
-	*/
-
-	short unknown0;
-	char unknown1;
-	char unknown2;
-	char unknown3;
-	char unknown4;
+	// default: 1, max: 2
+	char m_ball_count;
 
 	// time until first ball spawn after round start, and also delay in respawning ball if it goes out of play
-	// seconds
-	short m_ball_spawn_delay;
+	// default: 5, max: 120
+	short m_ball_spawn_delay; // seconds
 
 	// time until ball respawns if it is inactive
-	// seconds
-	short m_ball_inactive_respawn;
+	// default: 30, max: 120
+	short m_ball_inactive_respawn; // seconds
 
 	c_player_traits m_carrier_traits;
 
-	char pad[2];
+	unsigned char pad[2];
+
+	unsigned char unused[0x60];
 });
 
 #pragma pack(pop)

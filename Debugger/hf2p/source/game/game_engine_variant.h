@@ -14,5 +14,6 @@ enum e_game_engine_variant
 	_game_engine_assault_variant,
 	_game_engine_infection_variant,
 
-	k_game_engine_variant_count,
+	k_game_engine_variants,
+	k_game_engine_variant_default = _game_engine_base_variant
 };

@@ -2,6 +2,8 @@
 
 #include <saved_games/game_variant.h>
 
+#pragma region enums
+
 enum e_game_mode
 {
 	_game_mode_none = 0,
@@ -14,10 +16,11 @@ enum e_game_mode
 	k_game_mode_count,
 };
 
-struct c_game_variant;
+#pragma endregion
+
 struct game_options
 {
-	c_enum<e_game_mode, long, k_game_mode_count> game_mode;
+	c_enum<e_game_mode, long, _game_mode_multiplayer, k_game_mode_count> game_mode;
 
 	char __data[0xE620 - 4];
 

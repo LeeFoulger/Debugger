@@ -5,23 +5,14 @@
 
 #pragma pack(push, 1)
 
-enum e_game_engine_miscellaneous_options_flags
-{
-	_game_engine_miscellaneous_options_teams_enabled = 0,
+#pragma region enums
 
-	k_game_engine_miscellaneous_options_flags
+enum e_game_engine_miscellaneous_option_flags
+{
+	_game_engine_miscellaneous_option_teams_enabled = 0,
+
+	k_game_engine_miscellaneous_option_flags
 };
-
-DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_miscellaneous_options,
-{
-	c_flags<e_game_engine_miscellaneous_options_flags, unsigned char, k_game_engine_miscellaneous_options_flags> m_flags;
-
-	// minutes
-	unsigned char m_round_time_limit;
-
-	unsigned char m_number_of_rounds;
-	unsigned char m_early_victory_win_count;
-});
 
 enum e_game_engine_respawn_options_flags
 {
@@ -32,6 +23,41 @@ enum e_game_engine_respawn_options_flags
 
 	k_game_engine_respawn_options_flags
 };
+
+enum e_game_engine_social_options_flags
+{
+	_game_engine_social_options_observers_enabled = 0,
+	_game_engine_social_options_team_changing_enabled,
+	_game_engine_social_options_team_changing_balancing_only,
+	_game_engine_social_options_friendly_fire_enabled,
+	_game_engine_social_options_betrayal_booting_enabled,
+	_game_engine_social_options_enemy_voice_enabled,
+	_game_engine_social_options_open_channel_voice_enabled,
+	_game_engine_social_options_dead_player_voice_enabled,
+
+	k_game_engine_social_options_flags
+};
+
+enum e_game_engine_map_override_options_flags
+{
+	_game_engine_map_override_options_grenades_on_map = 0,
+	_game_engine_map_override_options_indestructible_vehicles,
+
+	k_game_engine_map_override_options_flags
+};
+
+#pragma endregion
+
+DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_miscellaneous_options,
+{
+	c_flags<e_game_engine_miscellaneous_option_flags, unsigned char, k_game_engine_miscellaneous_option_flags> m_flags;
+
+	// minutes
+	unsigned char m_round_time_limit;
+
+	unsigned char m_number_of_rounds;
+	unsigned char m_early_victory_win_count;
+});
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x28, c_game_engine_respawn_options,
 {
@@ -64,34 +90,12 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x28, c_game_engine_respawn_options,
 	c_player_traits m_respawn_player_traits;
 });
 
-enum e_game_engine_social_options_flags
-{
-	_game_engine_social_options_observers_enabled = 0,
-	_game_engine_social_options_team_changing_enabled,
-	_game_engine_social_options_team_changing_balancing_only,
-	_game_engine_social_options_friendly_fire_enabled,
-	_game_engine_social_options_betrayal_booting_enabled,
-	_game_engine_social_options_enemy_voice_enabled,
-	_game_engine_social_options_open_channel_voice_enabled,
-	_game_engine_social_options_dead_player_voice_enabled,
-
-	k_game_engine_social_options_flags
-};
-
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_social_options,
 {
 	c_flags<e_game_engine_social_options_flags, unsigned short, k_game_engine_social_options_flags> m_flags;
 
 	unsigned short m_team_changing;
 });
-
-enum e_game_engine_map_override_options_flags
-{
-	_game_engine_map_override_options_grenades_on_map = 0,
-	_game_engine_map_override_options_indestructible_vehicles,
-
-	k_game_engine_map_override_options_flags
-};
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x7C, c_game_engine_map_override_options,
 {
@@ -133,7 +137,7 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1D0, c_game_engine_base_variant,
 	c_game_engine_map_override_options m_map_override_options;
 
 	unsigned short m_flags;
-	short m_team_scoring;
+	short m_team_scoring_method;
 });
 
 #pragma pack(pop)

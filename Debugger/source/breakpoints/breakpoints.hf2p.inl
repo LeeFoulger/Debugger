@@ -231,14 +231,14 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 	{
 		c_game_variant& game_variant = options().game_variant();
 
-		options().game_mode.set(_game_mode_multiplayer);
+		options().game_mode = _game_mode_multiplayer;
 		options().scenario_path(scenario_path);
 
 		game_variant.m_game_engine_index = _game_engine_slayer_variant;
-		game_variant.m_slayer_variant.m_miscellaneous_options.m_flags.set(_game_engine_miscellaneous_options_teams_enabled);
-		game_variant.m_slayer_variant.m_miscellaneous_options.m_round_time_limit = 0;
-		game_variant.m_slayer_variant.m_respawn_options.m_respawn_time = 0;
-		game_variant.m_slayer_variant.m_respawn_options.m_suicide_penalty = 0;
+		game_variant.m_base_variant.m_miscellaneous_options.m_flags.set(_game_engine_miscellaneous_option_teams_enabled);
+		game_variant.m_base_variant.m_miscellaneous_options.m_round_time_limit = 0;
+		game_variant.m_base_variant.m_respawn_options.m_respawn_time = 0;
+		game_variant.m_base_variant.m_respawn_options.m_suicide_penalty = 0;
 
 		options = options();
 	}

@@ -5,6 +5,8 @@
 
 #pragma pack(push, 1)
 
+#pragma region enums
+
 enum e_slayer_team_scoring_settings
 {
 	_slayer_team_scoring_settings_sum = 0,
@@ -14,31 +16,64 @@ enum e_slayer_team_scoring_settings
 	k_slayer_team_scoring_settings
 };
 
-DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x200, c_game_engine_slayer_variant, c_game_engine_base_variant,
+#pragma endregion
+
+DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_slayer_variant, c_game_engine_base_variant,
 {
-	// `c_game_engine_base_variant::m_team_scoring` override
+	// `c_game_engine_base_variant::m_team_scoring_method` override
 	// c_enum<e_slayer_team_scoring_settings, short, k_slayer_team_scoring_settings> m_team_scoring
 
+	// default: 25, max: 251
 	short m_score_to_win;
+
+	// default: 20, max: 250
+	short m_unknown;
+
+	// default: 1, max: 20
 	short m_kill_points;
-	short m_assist_points;
+
+	// default: 0, max: 20
+	char m_assist_points;
+
+	// default: 0, max: 20
 	char m_death_points;
+
+	// default: -1, max: 20
 	char m_suicide_points;
+
+	// default: -1, max: 20
 	char m_betrayal_points;
-	char m_leader_kill_points;
+
+	// default: 0, max: 20
+	char m_leader_killed_points;
+
+	// default: 0, max: 20
 	char m_elimination_points;
-	char m_assassination_bonus_points;
-	char m_headshot_bonus_points;
-	char m_melee_bonus_points;
-	char m_sticky_bonus_points;
-	char m_splatter_bonus_points;
-	char m_killing_spree_bonus_points;
 
-	char unknown0;
+	// default: 0, max: 20
+	char m_assassination_points;
 
-	c_player_traits m_leader_player_traits;
+	// default: 0, max: 20
+	char m_headshot_points;
 
-	char slayer_padding[2];
+	// default: 0, max: 20
+	char m_melee_points;
+
+	// default: 0, max: 20
+	char m_sticky_points;
+
+	// default: 0, max: 20
+	char m_splatter_points;
+
+	// default: 0, max: 20
+	char m_killing_spree_points;
+
+	// leader_traits / leader_team_traits
+	c_player_traits m_leader_traits;
+
+	unsigned char pad[2];
+
+	unsigned char unused[0x60];
 });
 
 #pragma pack(pop)

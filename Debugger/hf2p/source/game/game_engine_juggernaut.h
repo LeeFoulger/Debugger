@@ -5,13 +5,16 @@
 
 #pragma pack(push, 1)
 
+#pragma region enums
+
 enum e_juggernaut_initial_juggernaut_settings
 {
 	_juggernaut_initial_juggernaut_settings_random = 0,
 	_juggernaut_initial_juggernaut_settings_first_kill,
 	_juggernaut_initial_juggernaut_settings_first_death,
 
-	k_juggernaut_initial_juggernaut_settings
+	k_juggernaut_initial_juggernaut_settings,
+	k_juggernaut_initial_juggernaut_settings_default = _juggernaut_initial_juggernaut_settings_random
 };
 
 enum e_juggernaut_next_juggernaut_settings
@@ -21,7 +24,8 @@ enum e_juggernaut_next_juggernaut_settings
 	_juggernaut_next_juggernaut_settings_unchanged,
 	_juggernaut_next_juggernaut_settings_random,
 
-	k_juggernaut_next_juggernaut_settings
+	k_juggernaut_next_juggernaut_settings,
+	k_juggernaut_next_juggernaut_settings_default = _juggernaut_next_juggernaut_settings_on_killing_juggernaut
 };
 
 enum e_juggernaut_flags
@@ -47,7 +51,8 @@ enum e_juggernaut_zone_movement_settings
 	_juggernaut_zone_movement_settings_on_arrival,
 	_juggernaut_zone_movement_settings_on_switch,
 
-	k_juggernaut_zone_movement_settings
+	k_juggernaut_zone_movement_settings,
+	k_juggernaut_zone_movement_settings_default = _juggernaut_zone_movement_settings_off
 };
 
 enum e_juggernaut_zone_order_settings
@@ -55,34 +60,54 @@ enum e_juggernaut_zone_order_settings
 	_juggernaut_zone_order_settings_random = 0,
 	_juggernaut_zone_order_settings_sequence,
 
-	k_juggernaut_zone_order_settings
+	k_juggernaut_zone_order_settings,
+	k_juggernaut_zone_order_settings_default = _juggernaut_zone_order_settings_random
 };
 
-DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x200, c_game_engine_juggernaut_variant, c_game_engine_base_variant,
+#pragma endregion
+
+DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_juggernaut_variant, c_game_engine_base_variant,
 {
-	// one of these is `score to win round`
-	short m_score_to_win0;
-	short m_score_to_win1;
+	// default: 15, max: 500
+	short m_score_to_win_round;
 
-	short unknown0;
+	// default: 13, max: 500
+	short m_score_unknown;
 
-	c_enum<e_juggernaut_initial_juggernaut_settings, char, k_juggernaut_initial_juggernaut_settings> m_initial_juggernaut;
-	c_enum<e_juggernaut_next_juggernaut_settings, char, k_juggernaut_next_juggernaut_settings> m_next_juggernaut;
+	// always set to '0'
+	short m_unknown;
+
+	c_enum<e_juggernaut_initial_juggernaut_settings, char, k_juggernaut_initial_juggernaut_settings_default, k_juggernaut_initial_juggernaut_settings> m_initial_juggernaut;
+	c_enum<e_juggernaut_next_juggernaut_settings, char, k_juggernaut_next_juggernaut_settings_default, k_juggernaut_next_juggernaut_settings> m_next_juggernaut;
 	c_flags<e_juggernaut_flags, unsigned char, k_juggernaut_flags> m_flags;
-	c_enum<e_juggernaut_zone_movement_settings, char, k_juggernaut_zone_movement_settings> m_zone_movement;
-	c_enum<e_juggernaut_zone_order_settings, char, k_juggernaut_zone_order_settings> m_zone_order;
+	c_enum<e_juggernaut_zone_movement_settings, char, k_juggernaut_zone_movement_settings_default, k_juggernaut_zone_movement_settings> m_zone_movement;
+	c_enum<e_juggernaut_zone_order_settings, char, k_juggernaut_zone_order_settings_default, k_juggernaut_zone_order_settings> m_zone_order;
 
+	// default: 0, max: 20
 	char m_kill_points;
+
+	// default: 1, max: 20
 	char m_juggeraut_kill_points;
+
+	// default: 1, max: 20
 	char m_kill_as_juggernaut_points;
+
+	// default: 1, max: 20
 	char m_destination_arrival_points;
+
+	// default: 1, max: 20
 	char m_suicide_points;
+
+	// default: 1, max: 20
 	char m_betrayal_points;
+
+	// default: 0, max: 10
 	char m_juggernaut_delay;
 
 	c_player_traits m_juggernaut_traits;
+	unsigned char pad[2];
 
-	char juggernaut_padding[2];
+	unsigned char unused[0x60];
 });
 
 #pragma pack(pop)

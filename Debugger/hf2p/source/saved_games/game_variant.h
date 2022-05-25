@@ -4,13 +4,10 @@
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x264, c_game_variant,
 {
-	e_game_engine_variant m_game_engine_index;
+	c_enum<e_game_engine_variant, long, k_game_engine_variant_default, k_game_engine_variants> m_game_engine_index;
 
 	union
 	{
-		// data for size correctness
-		char __data[0x260];
-
 		c_game_engine_base_variant m_base_variant;
 		c_game_engine_ctf_variant m_ctf_variant;
 		c_game_engine_slayer_variant m_slayer_variant;
