@@ -240,6 +240,9 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 		game_variant.m_base_variant.m_respawn_options.m_respawn_time = 0;
 		game_variant.m_base_variant.m_respawn_options.m_suicide_penalty = 0;
 
+		game_variant.m_base_variant.m_respawn_options.m_respawn_player_traits.m_appearance_traits.m_forced_change_color_setting = _forced_change_color_setting_mp_team_grey;
+		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_appearance_traits.m_forced_change_color_setting = _forced_change_color_setting_mp_team_purple;
+
 		options = options();
 	}
 }

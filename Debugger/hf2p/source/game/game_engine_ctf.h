@@ -93,7 +93,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_ctf_variant, c_g
 	short m_unknown; // halo online specific
 
 	// default: 30, max: 300
-	short m_flag_reset_time;
+	short m_flag_reset_time; // seconds
 
 	c_player_traits m_carrier_traits;
 
