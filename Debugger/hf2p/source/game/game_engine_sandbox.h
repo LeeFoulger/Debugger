@@ -5,6 +5,8 @@
 
 #pragma pack(push, 1)
 
+#pragma region enums
+
 enum e_sandbox_flags
 {
 	_sandbox_flags_open_channel_voice = 0,
@@ -39,6 +41,8 @@ enum e_sandbox_respawn_time
 	k_sandbox_respawn_times,
 	k_sandbox_respawn_times_default = _sandbox_respawn_time_5_seconds
 };
+
+#pragma endregion
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_sandbox_variant, c_game_engine_base_variant,
 {

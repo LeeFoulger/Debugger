@@ -5,6 +5,8 @@
 
 #pragma pack(push, 1)
 
+#pragma region enums
+
 enum e_oddball_variant_team_scoring_settings
 {
 	_oddball_variant_team_scoring_settings_sum = 0,
@@ -21,6 +23,8 @@ enum e_oddball_variant_flags
 
 	k_oddball_variant_flags
 };
+
+#pragma endregion
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_oddball_variant, c_game_engine_base_variant,
 {

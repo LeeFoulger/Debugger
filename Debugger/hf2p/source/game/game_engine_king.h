@@ -5,6 +5,8 @@
 
 #pragma pack(push, 1)
 
+#pragma region enums
+
 enum e_king_team_scoring_settings
 {
 	_king_team_scoring_settings_sum = 0,
@@ -46,6 +48,8 @@ enum e_king_moving_hill_order_settings
 	k_king_moving_hill_order_settings,
 	k_king_moving_hill_order_settings_default = _king_moving_hill_order_settings_sequence
 };
+
+#pragma endregion
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x200, c_game_engine_king_variant, c_game_engine_base_variant,
 {
