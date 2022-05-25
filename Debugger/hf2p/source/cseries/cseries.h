@@ -9,9 +9,12 @@ public:
 	{
 	}
 
-	inline void set(t_enum bit)
+	inline void set(t_enum bit, bool add)
 	{
-		if (bit < k_count)
+		if (bit >= k_count)
+			return;
+
+		if (add)
 			m_value |= (1 << bit);
 		else
 			m_value &= ~(1 << bit);
@@ -34,6 +37,16 @@ public:
 	{
 		if (value < k_count)
 			m_value = value;
+	}
+
+	inline bool operator==(t_enum value)
+	{
+		return !!(m_value == value);
+	}
+
+	inline bool operator!=(t_enum value)
+	{
+		return !!(m_value != value);
 	}
 
 	inline t_enum get()

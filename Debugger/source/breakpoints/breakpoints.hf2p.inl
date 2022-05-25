@@ -235,13 +235,26 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 		options().scenario_path(scenario_path);
 
 		game_variant.m_game_engine_index = _game_engine_slayer_variant;
-		game_variant.m_base_variant.m_miscellaneous_options.m_flags.set(_game_engine_miscellaneous_option_teams_enabled);
+
+		game_variant.m_base_variant.m_miscellaneous_options.m_flags.set(_game_engine_miscellaneous_option_teams_enabled, false);
 		game_variant.m_base_variant.m_miscellaneous_options.m_round_time_limit = 0;
+		game_variant.m_slayer_variant.m_map_override_options.m_player_traits.m_appearance_traits.m_forced_change_color_setting = _forced_change_color_setting_extra1;
+
 		game_variant.m_base_variant.m_respawn_options.m_respawn_time = 0;
 		game_variant.m_base_variant.m_respawn_options.m_suicide_penalty = 0;
 
-		game_variant.m_base_variant.m_respawn_options.m_respawn_player_traits.m_appearance_traits.m_forced_change_color_setting = _forced_change_color_setting_mp_team_grey;
-		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_appearance_traits.m_forced_change_color_setting = _forced_change_color_setting_mp_team_purple;
+		game_variant.m_base_variant.m_map_override_options.m_flags.set(_game_engine_map_override_options_grenades_on_map, true);
+		game_variant.m_base_variant.m_map_override_options.m_flags.set(_game_engine_map_override_options_indestructible_vehicles, true);
+		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_weapon_traits.m_initial_grenade_count = _grenade_count_setting_map_default;
+		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_weapon_traits.m_recharging_grenades = _recharging_grenades_setting_enabled;
+		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_weapon_traits.m_infinite_ammo = _infinite_ammo_setting_bottomless_clip;
+		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_weapon_traits.m_weapon_pickup = _weapon_pickup_setting_allowed;
+
+		if (game_variant.m_game_engine_index == _game_engine_slayer_variant)
+		{
+			game_variant.m_slayer_variant.m_score_to_win = 50;
+			game_variant.m_slayer_variant.m_suicide_points = 10;
+		}
 
 		options = options();
 	}

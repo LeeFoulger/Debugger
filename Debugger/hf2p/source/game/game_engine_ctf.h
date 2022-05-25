@@ -90,7 +90,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_ctf_variant, c_g
 	short m_score_to_win;
 
 	// default: 3, max: 50
-	short m_unknown; // halo online specific
+	short m_score_unknown; // halo online specific
 
 	// default: 30, max: 300
 	short m_flag_reset_time; // seconds

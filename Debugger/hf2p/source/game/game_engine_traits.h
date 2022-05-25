@@ -373,7 +373,6 @@ enum e_vehicle_usage_setting
 
 #pragma endregion
 
-
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_player_trait_movement,
 {
 	c_enum<e_player_speed_setting, unsigned char, _player_speed_setting_unchanged, k_player_speed_settings> m_speed_multiplier;
@@ -478,10 +477,10 @@ enum e_forced_change_color_setting
 	// GREY (PINK)
 	_forced_change_color_setting_mp_team_grey,
 
-	// XTRA 1
+	// XTRA 1 (WHITE)
 	_forced_change_color_setting_extra1,
 
-	// XTRA 2
+	// XTRA 2 (STEEL? DARK GREY?)
 	_forced_change_color_setting_extra2,
 
 	// XTRA 3
