@@ -63,7 +63,7 @@ enum e_language
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x30, s_player_configuration_from_client,
 {
-	wchar_t player_name[16];
+	wchar_t desired_name[16];
 	char player_team;
 	char player_assigned_team;
 	char active_armor_loadout;
@@ -93,12 +93,12 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0xB70, s_player_configuration,
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0xB90, game_player_options,
 {
 	bool valid;
-	uchar __unknown1;
-	short input_user_index;
+	bool left_game;
+	short user_index;
 	long controller_index;
 	uchar machine_identifier[0x10];
-	qword player_identifier;
-	s_player_configuration player_configuration;
+	qword identifier;
+	s_player_configuration player_data;
 });
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1A048, game_options,
