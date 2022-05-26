@@ -8,9 +8,18 @@
 
 #pragma region enums
 
+enum e_base_variant_flags
+{
+	_base_variant_flags_built_in = 0,
+
+	k_base_variant_flags
+};
+
 enum e_game_engine_miscellaneous_option_flags
 {
 	_game_engine_miscellaneous_option_teams_enabled = 0,
+	_game_engine_miscellaneous_option_round_reset_players,
+	_game_engine_miscellaneous_option_round_reset_map,
 
 	k_game_engine_miscellaneous_option_flags
 };
@@ -137,13 +146,11 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1D0, c_game_engine_base_variant,
 
 	char m_variant_backend_name[32];
 	s_saved_game_item_metadata m_metadata;
-
 	c_game_engine_miscellaneous_options m_miscellaneous_options;
 	c_game_engine_respawn_options m_respawn_options;
 	c_game_engine_social_options m_social_options;
 	c_game_engine_map_override_options m_map_override_options;
-
-	ushort m_flags;
+	c_flags<e_base_variant_flags, ushort, k_base_variant_flags> m_flags;
 	short m_team_scoring_method;
 });
 
