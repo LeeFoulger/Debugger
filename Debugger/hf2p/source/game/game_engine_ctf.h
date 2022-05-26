@@ -97,9 +97,9 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_ctf_variant, c_g
 
 	c_player_traits m_carrier_traits;
 
-	unsigned char pad[6];
+	t_padding<6> pad;
 
-	unsigned char unused[0x60];
+	t_padding<0x60> unused;
 });
 
 #pragma pack(pop)

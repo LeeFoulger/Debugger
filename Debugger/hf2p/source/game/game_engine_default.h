@@ -2,6 +2,7 @@
 
 #include <cseries/cseries.h>
 #include <game/game_engine_traits.h>
+#include <saved_games/saved_game_files.h>
 
 #pragma pack(push, 1)
 
@@ -50,77 +51,77 @@ enum e_game_engine_map_override_options_flags
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_miscellaneous_options,
 {
-	c_flags<e_game_engine_miscellaneous_option_flags, unsigned char, k_game_engine_miscellaneous_option_flags> m_flags;
+	c_flags<e_game_engine_miscellaneous_option_flags, uchar, k_game_engine_miscellaneous_option_flags> m_flags;
 
 	// minutes
-	unsigned char m_round_time_limit;
+	uchar m_round_time_limit;
 
-	unsigned char m_number_of_rounds;
-	unsigned char m_early_victory_win_count;
+	uchar m_number_of_rounds;
+	uchar m_early_victory_win_count;
 });
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x28, c_game_engine_respawn_options,
 {
-	c_flags<e_game_engine_respawn_options_flags, unsigned char, k_game_engine_respawn_options_flags> m_flags;
+	c_flags<e_game_engine_respawn_options_flags, uchar, k_game_engine_respawn_options_flags> m_flags;
 
-	unsigned char m_lives_per_round;
-	unsigned char m_team_lives_per_round;
-
-	// seconds
-	unsigned char m_respawn_time;
+	uchar m_lives_per_round;
+	uchar m_team_lives_per_round;
 
 	// seconds
-	unsigned char m_suicide_penalty;
+	uchar m_respawn_time;
 
 	// seconds
-	unsigned char m_betrayal_penalty;
+	uchar m_suicide_penalty;
 
 	// seconds
-	unsigned char m_unknown_penalty; // halo online specific
+	uchar m_betrayal_penalty;
 
 	// seconds
-	unsigned char m_respawn_growth;
+	uchar m_unknown_penalty; // halo online specific
 
 	// seconds
-	unsigned char m_respawn_player_traits_duration;
+	uchar m_respawn_growth;
+
+	// seconds
+	uchar m_respawn_player_traits_duration;
 
 	// woman bound for glory, why you leaving me again?
-	unsigned char pad[3];
+	t_padding<3> pad;
 
 	c_player_traits m_respawn_player_traits;
 });
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_social_options,
 {
-	c_flags<e_game_engine_social_options_flags, unsigned short, k_game_engine_social_options_flags> m_flags;
+	c_flags<e_game_engine_social_options_flags, ushort, k_game_engine_social_options_flags> m_flags;
 
-	unsigned short m_team_changing;
+	ushort m_team_changing;
 });
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x7C, c_game_engine_map_override_options,
 {
-	c_flags<e_game_engine_map_override_options_flags, unsigned long, k_game_engine_map_override_options_flags> m_flags;
+	c_flags<e_game_engine_map_override_options_flags, ulong, k_game_engine_map_override_options_flags> m_flags;
 
 	c_player_traits m_player_traits;
 
-	unsigned short m_weapon_set;
-	unsigned short m_vehicle_set;
+	ushort m_weapon_set;
+	ushort m_vehicle_set;
 
 	c_player_traits m_red_powerup_traits;
 	c_player_traits m_blue_powerup_traits;
 	c_player_traits m_yellow_powerup_traits;
 
 	// seconds
-	unsigned char m_red_powerup_traits_duration;
+	uchar m_red_powerup_traits_duration;
 
 	// seconds
-	unsigned char m_blue_powerup_traits_duration;
+	uchar m_blue_powerup_traits_duration;
 
 	// seconds
-	unsigned char m_yellow_powerup_traits_duration;
+	uchar m_yellow_powerup_traits_duration;
 
 	// gonna pack her bags and leave this house of pain
-	unsigned char pad[1];
+	t_padding<1> pad;
 });
 
 struct c_game_engine_base_variant_vtbl;
@@ -132,17 +133,17 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1D0, c_game_engine_base_variant,
 		c_game_engine_base_variant_vtbl* vftable;
 	};
 
-	unsigned long __unknown4;
+	ulong __unknown4;
 
 	char m_variant_backend_name[32];
-	char m_metadata[0xF8];
+	s_saved_game_item_metadata m_metadata;
 
 	c_game_engine_miscellaneous_options m_miscellaneous_options;
 	c_game_engine_respawn_options m_respawn_options;
 	c_game_engine_social_options m_social_options;
 	c_game_engine_map_override_options m_map_override_options;
 
-	unsigned short m_flags;
+	ushort m_flags;
 	short m_team_scoring_method;
 });
 

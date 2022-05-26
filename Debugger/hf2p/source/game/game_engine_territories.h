@@ -59,7 +59,7 @@ enum e_territories_sudden_death_settings
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_territories_variant, c_game_engine_base_variant,
 {
-	c_flags<e_territories_flags, unsigned short, k_territories_flags> m_flags;
+	c_flags<e_territories_flags, ushort, k_territories_flags> m_flags;
 
 	c_enum<e_territories_respawn_on_capture_settings, short, k_territories_respawn_on_capture_settings_default, k_territories_respawn_on_capture_settings> m_respawn_on_capture;
 	c_enum<e_territories_capture_time_settings, short, k_territories_capture_time_settings_default, k_territories_capture_time_settings> m_capture_time;
@@ -68,7 +68,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_territories_vari
 	c_player_traits m_defender_traits;
 	c_player_traits m_attacker_traits;
 
-	unsigned char unused[0x50];
+	t_padding<0x50> unused;
 });
 
 #pragma pack(pop)

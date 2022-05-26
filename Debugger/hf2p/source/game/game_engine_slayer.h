@@ -71,9 +71,9 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_slayer_variant, 
 	// leader team traits if teams enabled
 	c_player_traits m_leader_traits;
 
-	unsigned char pad[2];
+	t_padding<2> pad;
 
-	unsigned char unused[0x60];
+	t_padding<0x60> unused;
 });
 
 #pragma pack(pop)

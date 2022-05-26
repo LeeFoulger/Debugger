@@ -31,7 +31,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_oddball_variant,
 	// `c_game_engine_base_variant::m_team_scoring` override
 	// c_enum<e_oddball_variant_team_scoring_settings, short, k_oddball_variant_team_scoring_settings> m_team_scoring
 
-	c_flags<e_oddball_variant_flags, unsigned long, k_oddball_variant_flags> m_flags;
+	c_flags<e_oddball_variant_flags, ulong, k_oddball_variant_flags> m_flags;
 
 	// default: 200, max: 1001
 	short m_score_to_win;
@@ -67,9 +67,9 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_oddball_variant,
 
 	c_player_traits m_carrier_traits;
 
-	unsigned char pad[2];
+	t_padding<2> pad;
 
-	unsigned char unused[0x60];
+	t_padding<0x60> unused;
 });
 
 #pragma pack(pop)

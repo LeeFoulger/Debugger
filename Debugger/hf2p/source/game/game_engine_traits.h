@@ -152,14 +152,14 @@ enum e_shield_multiplier_setting
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x8, c_player_trait_shield_vitality,
 {
-	c_enum<e_damage_resistance_percentage_setting, unsigned char, _damage_resistance_percentage_setting_unchanged, k_damage_resistance_percentage_settings> m_damage_resistance;
-	c_enum<e_shield_recharge_rate_percentage_setting, unsigned char, _shield_recharge_rate_percentage_setting_unchanged, k_shield_recharge_rate_percentage_settings> m_shield_recharge_rate;
-	c_enum<e_vampirism_percentage_setting, unsigned char, _vampirism_percentage_setting_unchanged, k_vampirism_percentage_settings> m_shield_vampirism;
-	c_enum<e_headshot_immunity_setting, unsigned char, _headshot_immunity_setting_unchanged, k_headshot_immunity_settings> m_headshot_immunity;
-	c_enum<e_shield_multiplier_setting, unsigned char, _shield_multiplier_setting_unchanged, k_shield_multiplier_settings> m_shield_multiplier;
+	c_enum<e_damage_resistance_percentage_setting, uchar, _damage_resistance_percentage_setting_unchanged, k_damage_resistance_percentage_settings> m_damage_resistance;
+	c_enum<e_shield_recharge_rate_percentage_setting, uchar, _shield_recharge_rate_percentage_setting_unchanged, k_shield_recharge_rate_percentage_settings> m_shield_recharge_rate;
+	c_enum<e_vampirism_percentage_setting, uchar, _vampirism_percentage_setting_unchanged, k_vampirism_percentage_settings> m_shield_vampirism;
+	c_enum<e_headshot_immunity_setting, uchar, _headshot_immunity_setting_unchanged, k_headshot_immunity_settings> m_headshot_immunity;
+	c_enum<e_shield_multiplier_setting, uchar, _shield_multiplier_setting_unchanged, k_shield_multiplier_settings> m_shield_multiplier;
 
 	// elephant
-	unsigned char pad[3];
+	t_padding<3> pad;
 });
 
 #pragma region weapons_enums
@@ -273,13 +273,13 @@ enum e_weapon_pickup_setting
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x8, c_player_trait_weapons,
 {
-	c_enum<e_grenade_count_setting, unsigned short, _grenade_count_setting_unchanged, k_grenade_count_settings> m_initial_grenade_count;
+	c_enum<e_grenade_count_setting, ushort, _grenade_count_setting_unchanged, k_grenade_count_settings> m_initial_grenade_count;
 	char m_initial_primary_weapon;
 	char m_initial_secondary_weapon;
-	c_enum<e_damage_modifier_percentage_setting, unsigned char, _damage_modifier_percentage_setting_unchanged, k_damage_modifier_percentage_settings>  m_damage_modifier;
-	c_enum<e_recharging_grenades_setting, unsigned char, _recharging_grenades_setting_unchanged, k_recharging_grenades_settings>  m_recharging_grenades;
-	c_enum<e_infinite_ammo_setting, unsigned char, _infinite_ammo_setting_unchanged, k_infinite_ammo_settings>  m_infinite_ammo;
-	c_enum<e_weapon_pickup_setting, unsigned char, _weapon_pickup_setting_unchanged, k_weapon_pickup_settings> m_weapon_pickup;
+	c_enum<e_damage_modifier_percentage_setting, uchar, _damage_modifier_percentage_setting_unchanged, k_damage_modifier_percentage_settings>  m_damage_modifier;
+	c_enum<e_recharging_grenades_setting, uchar, _recharging_grenades_setting_unchanged, k_recharging_grenades_settings>  m_recharging_grenades;
+	c_enum<e_infinite_ammo_setting, uchar, _infinite_ammo_setting_unchanged, k_infinite_ammo_settings>  m_infinite_ammo;
+	c_enum<e_weapon_pickup_setting, uchar, _weapon_pickup_setting_unchanged, k_weapon_pickup_settings> m_weapon_pickup;
 });
 
 #pragma region movement_enums
@@ -369,12 +369,12 @@ enum e_vehicle_usage_setting
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_player_trait_movement,
 {
-	c_enum<e_player_speed_setting, unsigned char, _player_speed_setting_unchanged, k_player_speed_settings> m_speed_multiplier;
-	c_enum<e_player_gravity_setting, unsigned char, _player_gravity_setting_unchanged, k_player_gravity_settings> m_gravity_multiplier;
-	c_enum<e_vehicle_usage_setting, unsigned char, _vehicle_usage_setting_unchanged, k_vehicle_usage_settings> m_vehicle_usage;
+	c_enum<e_player_speed_setting, uchar, _player_speed_setting_unchanged, k_player_speed_settings> m_speed_multiplier;
+	c_enum<e_player_gravity_setting, uchar, _player_gravity_setting_unchanged, k_player_gravity_settings> m_gravity_multiplier;
+	c_enum<e_vehicle_usage_setting, uchar, _vehicle_usage_setting_unchanged, k_vehicle_usage_settings> m_vehicle_usage;
 
 	// shark
-	unsigned char pad[1];
+	t_padding<1> pad;
 });
 
 #pragma region appearance_enums
@@ -492,10 +492,10 @@ enum e_forced_change_color_setting
 // Traits that affect the player's appearance
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_player_appearance_traits,
 {
-	c_enum<e_active_camo_setting, unsigned char, _active_camo_setting_unchanged, k_active_camo_settings> m_active_camo_setting;
-	c_enum<e_waypoint_setting, unsigned char, _waypoint_setting_unchanged, k_waypoint_settings> m_waypoint_setting;
-	c_enum<e_aura_setting, unsigned char, _aura_setting_unchanged, k_aura_settings> m_aura_setting;
-	c_enum<e_forced_change_color_setting, unsigned char, _forced_change_color_setting_unchanged, k_forced_change_color_settings> m_forced_change_color_setting;
+	c_enum<e_active_camo_setting, uchar, _active_camo_setting_unchanged, k_active_camo_settings> m_active_camo_setting;
+	c_enum<e_waypoint_setting, uchar, _waypoint_setting_unchanged, k_waypoint_settings> m_waypoint_setting;
+	c_enum<e_aura_setting, uchar, _aura_setting_unchanged, k_aura_settings> m_aura_setting;
+	c_enum<e_forced_change_color_setting, uchar, _forced_change_color_setting_unchanged, k_forced_change_color_settings> m_forced_change_color_setting;
 });
 
 #pragma region sensor_enums
@@ -556,8 +556,8 @@ enum e_motion_tracker_range_setting
 // Traits that affect the HUD motion sensor behavior
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_player_trait_sensors,
 {
-	c_enum<e_motion_tracker_setting, unsigned short, _motion_tracker_setting_unchanged, k_motion_tracker_settings> m_motion_tracker_settings;
-	c_enum<e_motion_tracker_range_setting, unsigned short, _motion_tracker_range_setting_unchanged, k_motion_tracker_range_settings> m_motion_tracker_range;
+	c_enum<e_motion_tracker_setting, ushort, _motion_tracker_setting_unchanged, k_motion_tracker_settings> m_motion_tracker_settings;
+	c_enum<e_motion_tracker_range_setting, ushort, _motion_tracker_range_setting_unchanged, k_motion_tracker_range_settings> m_motion_tracker_range;
 });
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1C, c_player_traits,

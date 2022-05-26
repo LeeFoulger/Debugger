@@ -79,7 +79,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_juggernaut_varia
 
 	c_enum<e_juggernaut_initial_juggernaut_settings, char, k_juggernaut_initial_juggernaut_settings_default, k_juggernaut_initial_juggernaut_settings> m_initial_juggernaut;
 	c_enum<e_juggernaut_next_juggernaut_settings, char, k_juggernaut_next_juggernaut_settings_default, k_juggernaut_next_juggernaut_settings> m_next_juggernaut;
-	c_flags<e_juggernaut_flags, unsigned char, k_juggernaut_flags> m_flags;
+	c_flags<e_juggernaut_flags, uchar, k_juggernaut_flags> m_flags;
 	c_enum<e_juggernaut_zone_movement_settings, char, k_juggernaut_zone_movement_settings_default, k_juggernaut_zone_movement_settings> m_zone_movement;
 	c_enum<e_juggernaut_zone_order_settings, char, k_juggernaut_zone_order_settings_default, k_juggernaut_zone_order_settings> m_zone_order;
 
@@ -105,9 +105,10 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_juggernaut_varia
 	char m_juggernaut_delay;
 
 	c_player_traits m_juggernaut_traits;
-	unsigned char pad[2];
 
-	unsigned char unused[0x60];
+	t_padding<2> pad;
+
+	t_padding<0x60> unused;
 });
 
 #pragma pack(pop)

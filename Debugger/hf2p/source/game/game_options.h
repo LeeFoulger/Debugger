@@ -68,20 +68,20 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x30, s_player_configuration_from_client,
 	char player_assigned_team;
 	char active_armor_loadout;
 	char active_weapon_loadout;
-	unsigned long hopper_access_flags;
-	unsigned long cheating_flags;
-	unsigned long user_experience_flags;
+	ulong hopper_access_flags;
+	ulong cheating_flags;
+	ulong user_experience_flags;
 });
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0xB40, s_player_configuration_from_host,
 {
-	unsigned char player_identifier[0x8];
+	uchar player_identifier[0x8];
 	wchar_t player_name[16];
 	long player_team;
 	long player_assigned_team;
-	unsigned char player_appearance[0x660];
-	unsigned char saber_player_appearance[0x494];
-	unsigned char saber_player_customization[0x1C];
+	uchar player_appearance[0x660];
+	uchar saber_player_appearance[0x494];
+	uchar saber_player_customization[0x1C];
 });
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0xB70, s_player_configuration,
@@ -93,11 +93,11 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0xB70, s_player_configuration,
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0xB90, game_player_options,
 {
 	bool valid;
-	unsigned char __unknown1;
+	uchar __unknown1;
 	short input_user_index;
 	long controller_index;
-	unsigned char machine_identifier[0x10];
-	unsigned char player_identifier[0x8];
+	uchar machine_identifier[0x10];
+	qword player_identifier;
 	s_player_configuration player_configuration;
 });
 
@@ -107,7 +107,7 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1A048, game_options,
 	c_enum<e_game_simulation, char, _game_simulation_local, k_game_simulation_count> game_simulation;
 	char game_network_type;
 	short game_tick_rate;
-	unsigned char game_instance[0x8];
+	qword game_instance;
 	long random_seed;
 	c_enum<e_language, long, k_default_language, _language_english> language;
 	long determinism_version;
@@ -121,12 +121,12 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1A048, game_options,
 	bool dump_random_seeds;
 	bool playtest_mode;
 
-	unsigned char __unnknown12F;
+	uchar __unnknown12F;
 
 	c_enum<e_game_playback, short, _game_playback_local, k_game_playback_count> game_playback;
 	bool record_saved_film;
 
-	unsigned char __unnknown133;
+	uchar __unnknown133;
 
 	long playback_start_ticks;
 	long playback_length_in_ticks;
@@ -137,23 +137,23 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1A048, game_options,
 	bool campaign_survival_mode;
 	bool campaign_allow_persistent_storage;
 	bool campaign_customization_enabled;
-	unsigned char campaign_armaments[0x78];
+	uchar campaign_armaments[0x78];
 
-	unsigned char __unnknown1BE[2];
+	uchar __unnknown1BE[2];
 
-	unsigned char campaign_game_progression[0x80];
-	unsigned long game_active_primary_skulls;
-	unsigned long game_active_secondary_skulls;
-	unsigned char hub_armaments[120];
+	uchar campaign_game_progression[0x80];
+	ulong game_active_primary_skulls;
+	ulong game_active_secondary_skulls;
+	uchar hub_armaments[120];
 
-	unsigned char __unnknown2C0[0x10];
-	unsigned char __unnknown2D0[0x5C];
+	uchar __unnknown2C0[0x10];
+	uchar __unnknown2D0[0x5C];
 
 	char game_variant[sizeof(c_game_variant)];
 	char map_variant[0xE090];
 
-	unsigned char machine_options[0x128];
-	unsigned char player_options[16][sizeof(game_player_options)];
+	uchar machine_options[0x128];
+	uchar player_options[16][sizeof(game_player_options)];
 
 	c_game_variant& get_game_variant()
 	{

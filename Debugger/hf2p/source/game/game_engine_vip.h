@@ -64,7 +64,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_vip_variant, c_g
 	// default: 10, max: 500
 	short m_score_unknown; // halo online specific
 
-	c_flags<e_vip_flags, unsigned short, k_vip_flags> m_flags;
+	c_flags<e_vip_flags, ushort, k_vip_flags> m_flags;
 
 	// default: 0, max: 20
 	char m_kill_points;
@@ -94,7 +94,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_vip_variant, c_g
 	c_enum<e_vip_zone_movement_settings, char, k_vip_zone_movement_settings_default, k_vip_zone_movement_settings> m_zone_movement;
 	c_enum<e_vip_zone_order_settings, char, k_vip_zone_order_settings_default, k_vip_zone_order_settings> m_zone_order;
 
-	unsigned char pad[1];
+	t_padding<1> pad;
 
 	// default: 0, max: 50
 	short m_influence_radius;
@@ -103,7 +103,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_vip_variant, c_g
 	c_player_traits m_vip_influence_traits;
 	c_player_traits m_vip_traits;
 
-	unsigned char unused[0x28];
+	t_padding<0x28> unused;
 });
 
 #pragma pack(pop)

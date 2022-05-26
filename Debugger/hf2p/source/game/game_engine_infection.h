@@ -63,7 +63,7 @@ enum e_infection_initial_zombie_count_settings
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_infection_variant, c_game_engine_base_variant,
 {
-	c_flags<e_infection_variant_flags, unsigned char, k_infection_variant_flags> m_flags;
+	c_flags<e_infection_variant_flags, uchar, k_infection_variant_flags> m_flags;
 	c_enum<e_infection_safe_havens_settings, char, k_infection_safe_havens_settings_default, k_infection_safe_havens_settings> m_safe_havens;
 	c_enum<e_infection_next_zombie_settings, char, k_infection_next_zombie_settings_default, k_infection_next_zombie_settings> m_next_zombie;
 	c_enum<e_infection_initial_zombie_count_settings, char, k_infection_initial_zombie_count_settings_default, k_infection_initial_zombie_count_settings> m_initial_zombie_count;
@@ -95,9 +95,9 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_infection_varian
 	c_player_traits m_safe_haven_defender_traits;
 	c_player_traits m_last_human_traits;
 
-	unsigned char pad[4];
+	t_padding<4> pad;
 
-	unsigned char unused[0x10];
+	t_padding<0x10> unused;
 });
 
 #pragma pack(pop)

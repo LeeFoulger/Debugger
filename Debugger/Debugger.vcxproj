@@ -189,6 +189,7 @@
     <ClInclude Include="hf2p\source\game\game_engine_vip.h" />
     <ClInclude Include="hf2p\source\game\game_options.h" />
     <ClInclude Include="hf2p\source\saved_games\game_variant.h" />
+    <ClInclude Include="hf2p\source\saved_games\saved_game_files.h" />
     <ClInclude Include="source\internet_file.h" />
     <ClInclude Include="source\buffer.h" />
     <ClInclude Include="external_libraries\nmd_assembly_wrapper.h" />
