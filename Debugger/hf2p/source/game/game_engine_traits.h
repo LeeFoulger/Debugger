@@ -490,7 +490,7 @@ enum e_forced_change_color_setting
 #pragma endregion
 
 // Traits that affect the player's appearance
-DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_player_appearance_traits,
+DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_player_trait_appearance,
 {
 	c_enum<e_active_camo_setting, uchar, _active_camo_setting_unchanged, k_active_camo_settings> m_active_camo_setting;
 	c_enum<e_waypoint_setting, uchar, _waypoint_setting_unchanged, k_waypoint_settings> m_waypoint_setting;
@@ -565,7 +565,7 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1C, c_player_traits,
 	c_player_trait_shield_vitality m_shield_traits;
 	c_player_trait_weapons m_weapon_traits;
 	c_player_trait_movement m_movement_traits;
-	c_player_appearance_traits m_appearance_traits;
+	c_player_trait_appearance m_appearance_traits;
 	c_player_trait_sensors m_sensor_traits;
 });
 
