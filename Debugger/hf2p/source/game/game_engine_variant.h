@@ -17,3 +17,18 @@ enum e_game_engine_variant
 	k_game_engine_variants,
 	k_game_engine_variant_default = _game_engine_base_variant
 };
+
+const char* k_game_engine_variant_names[k_game_engine_variants] =
+{
+	"base",
+	"ctf",
+	"slayer",
+	"oddball",
+	"king",
+	"sandbox",
+	"vip",
+	"juggernaut",
+	"territories",
+	"assault",
+	"infection"
+};

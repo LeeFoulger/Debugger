@@ -235,9 +235,6 @@ enum e_recharging_grenades_setting
 	// DISABLED
 	_recharging_grenades_setting_disabled,
 
-	// ENABLED INCLUDING FIREBOMBS
-	_recharging_grenades_setting_enabled_including_firebombs,
-
 
 	k_recharging_grenades_settings
 };
@@ -252,9 +249,6 @@ enum e_infinite_ammo_setting
 
 	// ENABLED
 	_infinite_ammo_setting_enabled,
-
-	// BOTTOMLESS CLIP
-	_infinite_ammo_setting_bottomless_clip,
 
 
 	k_infinite_ammo_settings
@@ -390,16 +384,16 @@ enum e_active_camo_setting
 	// UNCHANGED
 	_active_camo_setting_unchanged = 0,
 
-	// OFF
+	// OFF (0.0)
 	_active_camo_setting_off,
 
-	// POOR
+	// POOR (0.33)
 	_active_camo_setting_poor,
 
-	// GOOD
+	// GOOD (0.66)
 	_active_camo_setting_good,
 
-	// INVISIBLE
+	// INVISIBLE (1.0)
 	_active_camo_setting_invisible,
 
 
@@ -477,16 +471,16 @@ enum e_forced_change_color_setting
 	// GREY (PINK)
 	_forced_change_color_setting_mp_team_grey,
 
-	// XTRA 1 (WHITE)
+	// XTRA 1 (PRIMARY COLOR)
 	_forced_change_color_setting_extra1,
 
-	// XTRA 2 (STEEL? DARK GREY?)
+	// XTRA 2 (SECONDARY COLOR)
 	_forced_change_color_setting_extra2,
 
-	// XTRA 3
+	// XTRA 3 (TERTIARY COLOR)
 	_forced_change_color_setting_extra3,
 
-	// XTRA 4
+	// XTRA 4 (QUATERNARY COLOR)
 	_forced_change_color_setting_extra4,
 
 

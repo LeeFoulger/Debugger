@@ -229,10 +229,10 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 
 	if (*scenario_path.value && strcmp(scenario_path.value, "default") != 0)
 	{
-		c_game_variant& game_variant = options().game_variant();
+		c_game_variant& game_variant = options().get_game_variant();
 
 		options().game_mode = _game_mode_multiplayer;
-		options().scenario_path(scenario_path);
+		csstrzcpy(options().scenario_path.value, MAX_PATH, scenario_path.value, MAX_PATH);
 
 		game_variant.m_game_engine_index = _game_engine_slayer_variant;
 
@@ -247,7 +247,7 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 		game_variant.m_base_variant.m_map_override_options.m_flags.set(_game_engine_map_override_options_indestructible_vehicles, true);
 		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_weapon_traits.m_initial_grenade_count = _grenade_count_setting_map_default;
 		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_weapon_traits.m_recharging_grenades = _recharging_grenades_setting_enabled;
-		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_weapon_traits.m_infinite_ammo = _infinite_ammo_setting_bottomless_clip;
+		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_weapon_traits.m_infinite_ammo = _infinite_ammo_setting_enabled;
 		game_variant.m_base_variant.m_map_override_options.m_player_traits.m_weapon_traits.m_weapon_pickup = _weapon_pickup_setting_allowed;
 
 		if (game_variant.m_game_engine_index == _game_engine_slayer_variant)

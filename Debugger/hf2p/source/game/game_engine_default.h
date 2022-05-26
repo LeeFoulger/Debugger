@@ -123,9 +123,15 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x7C, c_game_engine_map_override_options,
 	unsigned char pad[1];
 });
 
+struct c_game_engine_base_variant_vtbl;
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1D0, c_game_engine_base_variant,
 {
-	unsigned long __vftable;
+	union
+	{
+		size_t vftable_address;
+		c_game_engine_base_variant_vtbl* vftable;
+	};
+
 	unsigned long __unknown4;
 
 	char m_variant_backend_name[32];
@@ -139,5 +145,20 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1D0, c_game_engine_base_variant,
 	unsigned short m_flags;
 	short m_team_scoring_method;
 });
+
+struct c_game_engine_base_variant_vtbl
+{
+	long(*get_game_engine_name_string_id)();
+	long(*get_game_engine_default_description_string_id)();
+	void(*initialize)(c_game_engine_base_variant*);
+	void(*validate)(c_game_engine_base_variant*);
+	void(*encode)(c_game_engine_base_variant*, class c_bitstream*);
+	void(*decode)(c_game_engine_base_variant*, class c_bitstream*);
+	bool(*can_add_to_recent_list)();
+	long(*get_score_to_win_round)(c_game_engine_base_variant*);
+	long(*get_score_unknown)(c_game_engine_base_variant*); // halo online specific
+	bool(*can_be_cast_to)(c_game_engine_base_variant*, e_game_engine_variant, void const**);
+	void(*custom_team_score_stats)(long, long, long);
+};
 
 #pragma pack(pop)
