@@ -256,6 +256,40 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 			game_variant.m_slayer_variant.m_suicide_points = 10;
 		}
 
+		csstrzcpy(game_variant.m_base_variant.m_variant_backend_name, 32, k_game_engine_variant_names[game_variant.m_game_engine_index.get()], 32);
+		csstrupr(game_variant.m_base_variant.m_variant_backend_name, 32);
+
 		options = options();
 	}
+}
+
+void slayer_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
+{
+}
+void ctf_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
+{
+}
+void oddball_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
+{
+}
+void king_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
+{
+}
+void sandbox_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
+{
+}
+void vip_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
+{
+}
+void juggernaut_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
+{
+}
+void territories_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
+{
+}
+void assault_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
+{
+}
+void infection_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
+{
 }
