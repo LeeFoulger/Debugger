@@ -12,8 +12,14 @@ struct c_bytes
 	unsigned char value[k_data_size];
 };
 
-void csstrncpy(char* dest, size_t size_in_bytes, const char* src, size_t max_count);
-void cswcsncpy(wchar_t* dest, size_t size_in_bytes, const wchar_t* src, size_t max_count);
+void csstrzcpy(char* dest, size_t size_in_bytes, const char* src, size_t max_count);
+void cswcszcpy(wchar_t* dest, size_t size_in_bytes, const wchar_t* src, size_t max_count);
+
+#define csstrupr _strupr_s
+#define cswcsupr _wcsupr_s
+
+#define csstrlwr _strlwr_s
+#define cswcslwr _wcslwr_s
 
 bool string_starts(const char* s1, const char* s2);
 bool string_ends(const char* s1, const char* s2);
