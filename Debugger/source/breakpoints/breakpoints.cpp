@@ -85,16 +85,16 @@ void add_test_breaks(c_debugger& debugger, LPMODULEINFO module_info)
 		bink_format_patch(debugger, module_info, false);
 		language_patch(debugger, module_info);
 
-		debugger.add_breakpoint(0x0062E249 - PE32_BASE, false, "ret", L"c_slayer_engine::initialize_for_new_map: return", slayer_engine_initialize_for_new_map_breakpoint);
-		debugger.add_breakpoint(0x006284ED - PE32_BASE, false, "ret", L"c_ctf_engine::initialize_for_new_map: return", ctf_engine_initialize_for_new_map_breakpoint);
-		debugger.add_breakpoint(0x006311AC - PE32_BASE, false, "ret", L"c_oddball_engine::initialize_for_new_map: return", oddball_engine_initialize_for_new_map_breakpoint);
-		debugger.add_breakpoint(0x0062E91F - PE32_BASE, false, "ret", L"c_king_engine::initialize_for_new_map: return", king_engine_initialize_for_new_map_breakpoint);
-		debugger.add_breakpoint(0x004F62E1 - PE32_BASE, false, "ret", L"c_sandbox_engine::initialize_for_new_map: return", sandbox_engine_initialize_for_new_map_breakpoint);
-		debugger.add_breakpoint(0x0062F82C - PE32_BASE, false, "ret", L"c_vip_engine::initialize_for_new_map: return", vip_engine_initialize_for_new_map_breakpoint);
-		debugger.add_breakpoint(0x0062E056 - PE32_BASE, false, "ret", L"c_juggernaut_engine::initialize_for_new_map: return", juggernaut_engine_initialize_for_new_map_breakpoint);
-		debugger.add_breakpoint(0x0063219F - PE32_BASE, false, "ret", L"c_territories_engine::initialize_for_new_map: return", territories_engine_initialize_for_new_map_breakpoint);
-		debugger.add_breakpoint(0x005B2AD5 - PE32_BASE, false, "ret", L"c_assault_engine::initialize_for_new_map: return", assault_engine_initialize_for_new_map_breakpoint);
-		debugger.add_breakpoint(0x0062BC6F - PE32_BASE, false, "ret", L"c_infection_engine::initialize_for_new_map: return", infection_engine_initialize_for_new_map_breakpoint);
+		debugger.add_breakpoint(0x0062E249 - PE32_BASE, false, "ret", L"c_slayer_engine::initialize_for_new_map: return", on_slayer_engine_initialize_for_new_map_breakpoint);
+		debugger.add_breakpoint(0x006284ED - PE32_BASE, false, "ret", L"c_ctf_engine::initialize_for_new_map: return", on_ctf_engine_initialize_for_new_map_breakpoint);
+		debugger.add_breakpoint(0x006311AC - PE32_BASE, false, "ret", L"c_oddball_engine::initialize_for_new_map: return", on_oddball_engine_initialize_for_new_map_breakpoint);
+		debugger.add_breakpoint(0x0062E91F - PE32_BASE, false, "ret", L"c_king_engine::initialize_for_new_map: return", on_king_engine_initialize_for_new_map_breakpoint);
+		debugger.add_breakpoint(0x004F62E1 - PE32_BASE, false, "ret", L"c_sandbox_engine::initialize_for_new_map: return", on_sandbox_engine_initialize_for_new_map_breakpoint);
+		debugger.add_breakpoint(0x0062F82C - PE32_BASE, false, "ret", L"c_vip_engine::initialize_for_new_map: return", on_vip_engine_initialize_for_new_map_breakpoint);
+		debugger.add_breakpoint(0x0062E056 - PE32_BASE, false, "ret", L"c_juggernaut_engine::initialize_for_new_map: return", on_juggernaut_engine_initialize_for_new_map_breakpoint);
+		debugger.add_breakpoint(0x0063219F - PE32_BASE, false, "ret", L"c_territories_engine::initialize_for_new_map: return", on_territories_engine_initialize_for_new_map_breakpoint);
+		debugger.add_breakpoint(0x005B2AD5 - PE32_BASE, false, "ret", L"c_assault_engine::initialize_for_new_map: return", on_assault_engine_initialize_for_new_map_breakpoint);
+		debugger.add_breakpoint(0x0062BC6F - PE32_BASE, false, "ret", L"c_infection_engine::initialize_for_new_map: return", on_infection_engine_initialize_for_new_map_breakpoint);
 	}
 #endif // _WIN64
 }
