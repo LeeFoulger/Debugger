@@ -337,18 +337,23 @@ public:
 	c_remote_reference(c_debugger& debugger) :
 		m_debugger(debugger),
 		m_address(0),
-		m_value()
+		m_value((t_type*)VirtualAlloc(0, sizeof(t_type), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE))
 	{
 	}
 	c_remote_reference(c_debugger& debugger, size_t address) :
 		m_debugger(debugger),
 		m_address(address),
-		m_value()
+		m_value((t_type*)VirtualAlloc(0, sizeof(t_type), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE))
 	{
 		if (m_address == 0)
 			throw;
 
 		read_remote();
+	}
+	~c_remote_reference()
+	{
+		if (m_value)
+			VirtualFree(m_value, 0, MEM_RELEASE);
 	}
 
 	void set_address(size_t address)
@@ -372,7 +377,7 @@ public:
 		if (m_address == 0)
 			return;
 
-		memcpy(&m_value, &value, sizeof(t_type));
+		memcpy(m_value, &value, sizeof(t_type));
 
 		write_remote();
 	}
@@ -382,7 +387,7 @@ public:
 			return false;
 
 		read_remote();
-		return m_value == value;
+		return *m_value == value;
 	}
 	bool operator!=(t_type value)
 	{
@@ -390,22 +395,22 @@ public:
 	}
 	t_type& operator()()
 	{
-		return m_value;
+		return *m_value;
 	}
 
 private:
 	c_debugger& m_debugger;
 	size_t m_address;
-	t_type m_value;
+	t_type* m_value;
 
 	void read_remote()
 	{
-		m_debugger.read_debuggee_memory(reinterpret_cast<LPCVOID>(m_address), &m_value, sizeof(t_type), NULL);
+		m_debugger.read_debuggee_memory(reinterpret_cast<LPCVOID>(m_address), m_value, sizeof(t_type), NULL);
 	}
 
 	void write_remote()
 	{
-		m_debugger.write_debuggee_memory(reinterpret_cast<LPVOID>(m_address), &m_value, sizeof(t_type), NULL);
+		m_debugger.write_debuggee_memory(reinterpret_cast<LPVOID>(m_address), m_value, sizeof(t_type), NULL);
 	}
 };
 

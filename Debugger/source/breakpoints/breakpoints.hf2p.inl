@@ -200,7 +200,7 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 
 	static c_string<char, MAX_PATH> scenario_path{};
 
-	csstrzcpy(scenario_path.value, MAX_PATH, "guardian", MAX_PATH);
+	csstrzcpy(scenario_path.value, MAX_PATH, "default", MAX_PATH);
 
 	if (strcmp(scenario_path.value, "default") == 0)
 	{
