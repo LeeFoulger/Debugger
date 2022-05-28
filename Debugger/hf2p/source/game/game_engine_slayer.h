@@ -27,9 +27,10 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_slayer_variant, 
 	// maximum: 251
 	short m_score_to_win;
 
+	// halo online specific
 	// default: 20
 	// maximum: 250
-	short m_score_unknown; // halo online specific
+	short m_score_unknown;
 
 	// default: 1
 	// maximum: 20

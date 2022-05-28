@@ -42,9 +42,10 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_oddball_variant,
 	// maximum: 1000
 	short m_carrying_points;
 
+	// halo online specific
 	// default: 1
 	// maximum: 20
-	short m_unknown_points; // halo online specific
+	short m_unknown_points;
 
 	// default: 0
 	// maximum: 20

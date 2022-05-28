@@ -17,6 +17,7 @@ enum e_game_mode
 	_game_mode_survival,
 
 	k_game_mode_count,
+	k_game_mode_default = _game_mode_multiplayer
 };
 
 enum e_game_simulation
@@ -28,7 +29,8 @@ enum e_game_simulation
 	_game_simulation_dist_client,
 	_game_simulation_dist_server,
 
-	k_game_simulation_count
+	k_game_simulation_count,
+	k_game_simulation_default = _game_simulation_local
 };
 
 enum e_game_playback
@@ -37,7 +39,8 @@ enum e_game_playback
 	_game_playback_local,
 	_game_playback_sync_client,
 
-	k_game_playback_count
+	k_game_playback_count,
+	k_game_playback_default = _game_playback_local
 };
 
 enum e_language
@@ -57,7 +60,18 @@ enum e_language
 	_language_russian,
 
 	k_language_count,
-	k_default_language = _language_english
+	k_language_default = _language_english
+};
+
+enum e_campaign_difficulty_level
+{
+	_campaign_difficulty_level_easy = 0,
+	_campaign_difficulty_level_normal,
+	_campaign_difficulty_level_heroic,
+	_campaign_difficulty_level_legendary,
+
+	k_campaign_difficulty_level_count,
+	k_campaign_difficulty_level_default = _campaign_difficulty_level_normal
 };
 
 #pragma endregion
@@ -117,13 +131,13 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0xB90, game_player_options,
 
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1A048, game_options,
 {
-	c_enum<e_game_mode, long, _game_mode_multiplayer, k_game_mode_count> game_mode;
-	c_enum<e_game_simulation, char, _game_simulation_local, k_game_simulation_count> game_simulation;
+	c_enum<e_game_mode, long, k_game_mode_default, k_game_mode_count> game_mode;
+	c_enum<e_game_simulation, char, k_game_simulation_default, k_game_simulation_count> game_simulation;
 	char game_network_type;
 	short game_tick_rate;
 	qword game_instance;
 	long random_seed;
-	c_enum<e_language, long, k_default_language, _language_english> language;
+	c_enum<e_language, long, k_language_default, _language_english> language;
 	long determinism_version;
 	long campaign_id;
 	long map_id;
@@ -135,12 +149,12 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1A048, game_options,
 	bool dump_random_seeds;
 	bool playtest_mode;
 	t_padding<1> pad0;
-	c_enum<e_game_playback, short, _game_playback_local, k_game_playback_count> game_playback;
+	c_enum<e_game_playback, short, k_game_playback_default, k_game_playback_count> game_playback;
 	bool record_saved_film;
 	t_padding<1> pad1;
 	long playback_start_ticks;
 	long playback_length_in_ticks;
-	short campaign_difficulty;
+	c_enum<e_campaign_difficulty_level, short, k_campaign_difficulty_level_default, k_campaign_difficulty_level_count> campaign_difficulty;
 	short insertion_point;
 	short metagame_scoring_option;
 	bool campaign_metagame_enabled;

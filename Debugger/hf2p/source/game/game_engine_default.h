@@ -99,9 +99,10 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x28, c_game_engine_respawn_options,
 	// maximum: 240
 	uchar m_betrayal_penalty; // seconds
 
+	// halo online specific
 	// default: 5
 	// maximum: 240
-	uchar m_unknown_penalty; // seconds, halo online specific
+	uchar m_unknown_penalty; // seconds
 
 	// default: 0
 	// maximum: 15
@@ -160,8 +161,8 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1D0, c_game_engine_base_variant,
 {
 	union
 	{
-		size_t vftable_address;
-		c_game_engine_base_variant_vtbl* vftable;
+		size_t vtable_address;
+		c_game_engine_base_variant_vtbl* vtable;
 	};
 
 	ulong __unknown4;
@@ -192,7 +193,10 @@ struct c_game_engine_base_variant_vtbl
 	void(*decode)(c_game_engine_base_variant*, class c_bitstream*);
 	bool(*can_add_to_recent_list)();
 	long(*get_score_to_win_round)(c_game_engine_base_variant*);
-	long(*get_score_unknown)(c_game_engine_base_variant*); // halo online specific
+
+	// halo online specific
+	long(*get_score_unknown)(c_game_engine_base_variant*);
+
 	bool(*can_be_cast_to)(c_game_engine_base_variant*, e_game_engine_variant, void const**);
 	void(*custom_team_score_stats)(long, long, long);
 };

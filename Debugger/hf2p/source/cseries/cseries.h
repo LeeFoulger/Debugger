@@ -28,6 +28,16 @@ public:
 			m_value &= ~(1 << bit);
 	}
 
+	inline const t_storage get_raw_value()
+	{
+		return m_value;
+	}
+
+	inline void set_raw_value(t_storage value)
+	{
+		m_value = value;
+	}
+
 protected:
 	t_storage m_value;
 };
@@ -44,7 +54,7 @@ public:
 	inline void operator=(t_enum value)
 	{
 		if (value < k_count)
-			m_value = value;
+			set_raw_value((t_storage)value);
 	}
 
 	inline bool operator==(t_enum value)
@@ -57,9 +67,14 @@ public:
 		return !!(m_value != value);
 	}
 
-	inline t_enum get()
+	inline const t_storage get_raw_value()
 	{
-		return (t_enum)m_value;
+		return m_value;
+	}
+
+	inline void set_raw_value(t_storage value)
+	{
+		m_value = value;
 	}
 
 protected:

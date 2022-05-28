@@ -255,7 +255,7 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 			game_variant.m_slayer_variant.m_suicide_points = 10;
 		}
 
-		csstrzcpy(game_variant.m_base_variant.m_name, 32, k_game_engine_variant_names[game_variant.m_game_engine_index.get()], 32);
+		csstrzcpy(game_variant.m_base_variant.m_name, 32, k_game_engine_variant_names[game_variant.m_game_engine_index.get_raw_value()], 32);
 		csstrupr(game_variant.m_base_variant.m_name, 32);
 
 		options = options();
@@ -278,50 +278,50 @@ c_remote_reference<c_game_engine_base_variant_vtbl> variant_vftable(g_debugger);
 void on_slayer_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	slayer_variant.set_address(registers.get_runtime_addr(0x0272F6DC - PE32_BASE));
-	variant_vftable.set_address(slayer_variant().vftable_address);
+	variant_vftable.set_address(slayer_variant().vtable_address);
 }
 void on_ctf_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	ctf_variant.set_address(registers.get_runtime_addr(0x0272F6D0 - PE32_BASE));
-	variant_vftable.set_address(ctf_variant().vftable_address);
+	variant_vftable.set_address(ctf_variant().vtable_address);
 }
 void on_oddball_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	oddball_variant.set_address(registers.get_runtime_addr(0x0272F6E8 - PE32_BASE));
-	variant_vftable.set_address(oddball_variant().vftable_address);
+	variant_vftable.set_address(oddball_variant().vtable_address);
 }
 void on_king_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	king_variant.set_address(registers.get_runtime_addr(0x0272F6E0 - PE32_BASE));
-	variant_vftable.set_address(king_variant().vftable_address);
+	variant_vftable.set_address(king_variant().vtable_address);
 }
 void on_sandbox_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	sandbox_variant.set_address(registers.get_runtime_addr(0x01444B64 - PE32_BASE));
-	variant_vftable.set_address(sandbox_variant().vftable_address);
+	variant_vftable.set_address(sandbox_variant().vtable_address);
 }
 void on_vip_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	vip_variant.set_address(registers.get_runtime_addr(0x0272F6E4 - PE32_BASE));
-	variant_vftable.set_address(vip_variant().vftable_address);
+	variant_vftable.set_address(vip_variant().vtable_address);
 }
 void on_juggernaut_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	juggernaut_variant.set_address(registers.get_runtime_addr(0x0272F6D8 - PE32_BASE));
-	variant_vftable.set_address(juggernaut_variant().vftable_address);
+	variant_vftable.set_address(juggernaut_variant().vtable_address);
 }
 void on_territories_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	territories_variant.set_address(registers.get_runtime_addr(0x0272F6EC - PE32_BASE));
-	variant_vftable.set_address(territories_variant().vftable_address);
+	variant_vftable.set_address(territories_variant().vtable_address);
 }
 void on_assault_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	assault_variant.set_address(registers.get_runtime_addr(0x0272F688 - PE32_BASE));
-	variant_vftable.set_address(assault_variant().vftable_address);
+	variant_vftable.set_address(assault_variant().vtable_address);
 }
 void on_infection_engine_initialize_for_new_map_breakpoint(c_debugger& debugger, c_registers& registers)
 {
 	infection_variant.set_address(registers.get_runtime_addr(0x0272F6D4 - PE32_BASE));
-	variant_vftable.set_address(infection_variant().vftable_address);
+	variant_vftable.set_address(infection_variant().vtable_address);
 }

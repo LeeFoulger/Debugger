@@ -78,21 +78,25 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_assault_variant,
 	// maximum: 50
 	short m_score_to_win;
 
+	// halo online specific
 	// default: 2
 	// maximum: 50
-	short m_score_unknown0; // halo online specific
+	short m_score_unknown0;
 
+	// halo online specific
 	// default: 0
 	// maximum: 50
-	short m_score_unknown1; // halo online specific
+	short m_score_unknown1;
 
+	// halo online specific
 	// default: 0
 	// maximum: 50
-	short m_score_unknown2; // halo online specific
+	short m_score_unknown2;
 
+	// halo online specific
 	// default: 0
 	// maximum: 50
-	short m_score_unknown3; // halo online specific
+	short m_score_unknown3;
 
 	// default: `off`
 	c_enum<e_assault_variant_sudden_death_time, short, k_assault_variant_sudden_death_time_default, k_assault_variant_sudden_death_time> m_sudden_death_time;

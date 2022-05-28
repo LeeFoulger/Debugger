@@ -62,9 +62,10 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_vip_variant, c_g
 	// maximum: 500
 	short m_score_to_win_round;
 
+	// halo online specific
 	// default: 10
 	// maximum: 500
-	short m_score_unknown; // halo online specific
+	short m_score_unknown;
 
 	c_flags<e_vip_flags, ushort, k_vip_flags> m_flags;
 
