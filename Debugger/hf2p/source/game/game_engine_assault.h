@@ -74,34 +74,43 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_assault_variant,
 	// default: `when not carried by enemy`
 	c_enum<e_assault_enemy_bomb_waypoint_settings, short, k_assault_enemy_bomb_waypoint_settings_default, k_assault_enemy_bomb_waypoint_settings> m_enemy_bomb_waypoint;
 
-	// default: 3, max: 50
+	// default: 3
+	// maximum: 50
 	short m_score_to_win;
 
-	// default: 2, max: 50
+	// default: 2
+	// maximum: 50
 	short m_score_unknown0; // halo online specific
 
-	// default: 0, max: 50
+	// default: 0
+	// maximum: 50
 	short m_score_unknown1; // halo online specific
 
-	// default: 0, max: 50
+	// default: 0
+	// maximum: 50
 	short m_score_unknown2; // halo online specific
 
-	// default: 0, max: 50
+	// default: 0
+	// maximum: 50
 	short m_score_unknown3; // halo online specific
 
 	// default: `off`
 	c_enum<e_assault_variant_sudden_death_time, short, k_assault_variant_sudden_death_time_default, k_assault_variant_sudden_death_time> m_sudden_death_time;
 
-	// default: 30, max: 90
+	// default: 30
+	// maximum: 90
 	short m_bomb_reset_time; // seconds
 
-	// default: 35, max: 90
+	// default: 35
+	// maximum: 90
 	short m_bomb_arming_time; // seconds
 
-	// default: 35, max: 90
+	// default: 35
+	// maximum: 90
 	short m_bomb_disarming_time; // seconds
 
-	// default: 35, max: 90
+	// default: 35
+	// maximum: 90
 	short m_bomb_fuse_time; // seconds
 
 	c_player_traits m_carrier_traits;

@@ -68,10 +68,12 @@ enum e_juggernaut_zone_order_settings
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_juggernaut_variant, c_game_engine_base_variant,
 {
-	// default: 15, max: 500
+	// default: 15
+	// maximum: 500
 	short m_score_to_win_round;
 
-	// default: 13, max: 500
+	// default: 13
+	// maximum: 500
 	short m_score_unknown;
 
 	// always set to '0'
@@ -83,25 +85,32 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_juggernaut_varia
 	c_enum<e_juggernaut_zone_movement_settings, char, k_juggernaut_zone_movement_settings_default, k_juggernaut_zone_movement_settings> m_zone_movement;
 	c_enum<e_juggernaut_zone_order_settings, char, k_juggernaut_zone_order_settings_default, k_juggernaut_zone_order_settings> m_zone_order;
 
-	// default: 0, max: 20
+	// default: 0
+	// maximum: 20
 	char m_kill_points;
 
-	// default: 1, max: 20
+	// default: 1
+	// maximum: 20
 	char m_juggeraut_kill_points;
 
-	// default: 1, max: 20
+	// default: 1
+	// maximum: 20
 	char m_kill_as_juggernaut_points;
 
-	// default: 1, max: 20
+	// default: 1
+	// maximum: 20
 	char m_destination_arrival_points;
 
-	// default: 1, max: 20
+	// default: 1
+	// maximum: 20
 	char m_suicide_points;
 
-	// default: 1, max: 20
+	// default: 1
+	// maximum: 20
 	char m_betrayal_points;
 
-	// default: 0, max: 10
+	// default: 0
+	// maximum: 10
 	char m_juggernaut_delay;
 
 	c_player_traits m_juggernaut_traits;

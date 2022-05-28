@@ -1,6 +1,7 @@
 #pragma once
 
 #include <saved_games/game_variant.h>
+#include <saved_games/map_variant.h>
 
 #pragma pack(push, 1)
 
@@ -61,6 +62,19 @@ enum e_language
 
 #pragma endregion
 
+DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x80, s_hub_progression,
+{
+	uchar armaments[0x78];
+	ulong hub_return_to_insertion_point;
+	bool valid;
+	t_padding<3> pad;
+});
+
+DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x128, game_machine_options,
+{
+	uchar __data[0x128];
+});
+
 DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x30, s_player_configuration_from_client,
 {
 	wchar_t desired_name[16];
@@ -120,14 +134,10 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1A048, game_options,
 	bool dump_object_log;
 	bool dump_random_seeds;
 	bool playtest_mode;
-
-	uchar __unnknown12F;
-
+	t_padding<1> pad0;
 	c_enum<e_game_playback, short, _game_playback_local, k_game_playback_count> game_playback;
 	bool record_saved_film;
-
-	uchar __unnknown133;
-
+	t_padding<1> pad1;
 	long playback_start_ticks;
 	long playback_length_in_ticks;
 	short campaign_difficulty;
@@ -138,32 +148,16 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1A048, game_options,
 	bool campaign_allow_persistent_storage;
 	bool campaign_customization_enabled;
 	uchar campaign_armaments[0x78];
-
-	uchar __unnknown1BE[2];
-
+	t_padding<2> pad2;
 	uchar campaign_game_progression[0x80];
 	ulong game_active_primary_skulls;
 	ulong game_active_secondary_skulls;
-	uchar hub_armaments[120];
-
-	uchar __unnknown2C0[0x10];
-	uchar __unnknown2D0[0x5C];
-
-	char game_variant[sizeof(c_game_variant)];
-	char map_variant[0xE090];
-
-	uchar machine_options[0x128];
-	uchar player_options[16][sizeof(game_player_options)];
-
-	c_game_variant& get_game_variant()
-	{
-		return *reinterpret_cast<c_game_variant*>(game_variant);
-	}
-
-	game_player_options& get_player_options(long player_index)
-	{
-		return *reinterpret_cast<game_player_options*>(player_options[player_index]);
-	}
+	s_hub_progression hub_progression;
+	t_padding<0x64> pad;
+	c_game_variant game_variant;
+	c_map_variant map_variant;
+	game_machine_options machine_options;
+	game_player_options player_options[16];
 });
 
 #pragma pack(pop)

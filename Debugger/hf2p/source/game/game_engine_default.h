@@ -62,10 +62,16 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_miscellaneous_options,
 {
 	c_flags<e_game_engine_miscellaneous_option_flags, uchar, k_game_engine_miscellaneous_option_flags> m_flags;
 
-	// minutes
-	uchar m_round_time_limit;
+	// default: 8
+	// maximum: 60
+	uchar m_round_time_limit; // minutes
 
+	// default: 1
+	// maximum: 15
 	uchar m_number_of_rounds;
+
+	// default: 2
+	// maximum: 15
 	uchar m_early_victory_win_count;
 });
 
@@ -73,25 +79,36 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x28, c_game_engine_respawn_options,
 {
 	c_flags<e_game_engine_respawn_options_flags, uchar, k_game_engine_respawn_options_flags> m_flags;
 
+	// default: 0
+	// maximum: 50
 	uchar m_lives_per_round;
+
+	// default: 0
+	// maximum: 100
 	uchar m_team_lives_per_round;
 
-	// seconds
-	uchar m_respawn_time;
+	// default: 5
+	// maximum: 240
+	uchar m_respawn_time; // seconds
 
-	// seconds
-	uchar m_suicide_penalty;
+	// default: 10
+	// maximum: 240
+	uchar m_suicide_penalty; // seconds
 
-	// seconds
-	uchar m_betrayal_penalty;
+	// default: 5
+	// maximum: 240
+	uchar m_betrayal_penalty; // seconds
 
-	// seconds
-	uchar m_unknown_penalty; // halo online specific
+	// default: 5
+	// maximum: 240
+	uchar m_unknown_penalty; // seconds, halo online specific
 
-	// seconds
+	// default: 0
+	// maximum: 15
 	uchar m_respawn_growth;
 
-	// seconds
+	// default: 5
+	// maximum: 60
 	uchar m_respawn_player_traits_duration;
 
 	// woman bound for glory, why you leaving me again?
@@ -104,6 +121,8 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x4, c_game_engine_social_options,
 {
 	c_flags<e_game_engine_social_options_flags, ushort, k_game_engine_social_options_flags> m_flags;
 
+	// default: 0
+	// maximum: 2
 	ushort m_team_changing;
 });
 
@@ -120,14 +139,17 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x7C, c_game_engine_map_override_options,
 	c_player_traits m_blue_powerup_traits;
 	c_player_traits m_yellow_powerup_traits;
 
-	// seconds
-	uchar m_red_powerup_traits_duration;
+	// default: 5
+	// maximum: 120
+	uchar m_red_powerup_traits_duration; // seconds
 
-	// seconds
-	uchar m_blue_powerup_traits_duration;
+	// default: 30
+	// maximum: 120
+	uchar m_blue_powerup_traits_duration; // seconds
 
-	// seconds
-	uchar m_yellow_powerup_traits_duration;
+	// default: 30
+	// maximum: 120
+	uchar m_yellow_powerup_traits_duration; // seconds
 
 	// gonna pack her bags and leave this house of pain
 	t_padding<1> pad;
@@ -144,13 +166,19 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1D0, c_game_engine_base_variant,
 
 	ulong __unknown4;
 
-	char m_variant_backend_name[32];
+	char m_name[32];
+
 	s_saved_game_item_metadata m_metadata;
+
 	c_game_engine_miscellaneous_options m_miscellaneous_options;
 	c_game_engine_respawn_options m_respawn_options;
 	c_game_engine_social_options m_social_options;
 	c_game_engine_map_override_options m_map_override_options;
+
 	c_flags<e_base_variant_flags, ushort, k_base_variant_flags> m_flags;
+
+	// default: 0
+	// maximum: 2
 	short m_team_scoring_method;
 });
 

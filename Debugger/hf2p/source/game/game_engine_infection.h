@@ -68,26 +68,32 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_infection_varian
 	c_enum<e_infection_next_zombie_settings, char, k_infection_next_zombie_settings_default, k_infection_next_zombie_settings> m_next_zombie;
 	c_enum<e_infection_initial_zombie_count_settings, char, k_infection_initial_zombie_count_settings_default, k_infection_initial_zombie_count_settings> m_initial_zombie_count;
 	
-	// 0 is no movement
-	// default: 30, max: 120
-	short m_safe_haven_movement_time;
+	// default: 30
+	// maximum: 120
+	short m_safe_haven_movement_time; // 0 is no movement
 	
-	// default: 1, max: 20
+	// default: 1
+	// maximum: 20
 	char m_zombie_kill_points;
 	
-	// default: 0, max: 20
+	// default: 0
+	// maximum: 20
 	char m_infection_points;
-	
-	// default: 0, max: 20
+
+	// default: 0
+	// maximum: 20
 	char m_safe_haven_arrival_points;
 	
-	// default: -1, max: 20
+	// default: -1
+	// maximum: 20
 	char m_suicide_points;
 	
-	// default: -1, max: 20
+	// default: -1
+	// maximum: 20
 	char m_betrayal_points;
-	
-	// default: 0, max: 20
+
+	// default: 0
+	// maximum: 20
 	char m_last_man_bonus_points;
 
 	c_player_traits m_zombie_traits;

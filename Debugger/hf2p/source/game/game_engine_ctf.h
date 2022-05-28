@@ -86,13 +86,16 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_ctf_variant, c_g
 	c_enum<e_ctf_touch_return_settings, short, k_ctf_touch_return_settings_default, k_ctf_touch_return_settings> m_touch_return_timeout;
 	c_enum<e_ctf_sudden_death_time, short, k_ctf_sudden_death_times_default, k_ctf_sudden_death_times> m_sudden_death_time;
 
-	// default: 5, max: 50
+	// default: 5
+	// maximum: 50
 	short m_score_to_win;
 
-	// default: 3, max: 50
+	// default: 3
+	// maximum: 50
 	short m_score_unknown; // halo online specific
 
-	// default: 30, max: 300
+	// default: 30
+	// maximum: 300
 	short m_flag_reset_time; // seconds
 
 	c_player_traits m_carrier_traits;

@@ -58,36 +58,46 @@ enum e_vip_zone_order_settings
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_vip_variant, c_game_engine_base_variant,
 {
-	// default: 15, max: 500
+	// default: 15
+	// maximum: 500
 	short m_score_to_win_round;
 
-	// default: 10, max: 500
+	// default: 10
+	// maximum: 500
 	short m_score_unknown; // halo online specific
 
 	c_flags<e_vip_flags, ushort, k_vip_flags> m_flags;
 
-	// default: 0, max: 20
+	// default: 0
+	// maximum: 20
 	char m_kill_points;
 
-	// default: 0, max: 20
+	// default: 0
+	// maximum: 20
 	char m_takedown_points;
 
-	// default: 0, max: 20
+	// default: 0
+	// maximum: 20
 	char m_kill_as_vip_points;
 
-	// default: 0, max: 20
+	// default: 0
+	// maximum: 20
 	char m_vip_death_points;
 
-	// default: 0, max: 20
+	// default: 0
+	// maximum: 20
 	char m_destination_arrival_points;
 
-	// default: 0, max: 20
+	// default: 0
+	// maximum: 20
 	char m_suicide_points;
 
-	// default: 0, max: 20
+	// default: 0
+	// maximum: 20
 	char m_betrayal_points;
 
-	// default: 0, max: 20
+	// default: 0
+	// maximum: 20
 	char m_vip_suicide_points;
 
 	c_enum<e_vip_selection_settings, char, k_vip_selection_settings_default, k_vip_selection_settings> m_vip_selection;
@@ -96,7 +106,8 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_vip_variant, c_g
 
 	t_padding<1> pad;
 
-	// default: 0, max: 50
+	// default: 0
+	// maximum: 50
 	short m_influence_radius;
 
 	c_player_traits m_vip_team_traits;

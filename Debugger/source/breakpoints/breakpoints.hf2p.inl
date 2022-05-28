@@ -199,7 +199,6 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 	options.set_address(registers.cast_cx_as<size_t>());
 
 	static c_string<char, MAX_PATH> scenario_path{};
-
 	csstrzcpy(scenario_path.value, MAX_PATH, "default", MAX_PATH);
 
 	if (strcmp(scenario_path.value, "default") == 0)
@@ -229,7 +228,7 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 
 	if (*scenario_path.value && strcmp(scenario_path.value, "default") != 0)
 	{
-		c_game_variant& game_variant = options().get_game_variant();
+		c_game_variant& game_variant = options().game_variant;
 
 		options().game_mode = _game_mode_multiplayer;
 		csstrzcpy(options().scenario_path.value, MAX_PATH, scenario_path.value, MAX_PATH);
@@ -256,8 +255,8 @@ void on_main_game_load_map_breakpoint(c_debugger& debugger, c_registers& registe
 			game_variant.m_slayer_variant.m_suicide_points = 10;
 		}
 
-		csstrzcpy(game_variant.m_base_variant.m_variant_backend_name, 32, k_game_engine_variant_names[game_variant.m_game_engine_index.get()], 32);
-		csstrupr(game_variant.m_base_variant.m_variant_backend_name, 32);
+		csstrzcpy(game_variant.m_base_variant.m_name, 32, k_game_engine_variant_names[game_variant.m_game_engine_index.get()], 32);
+		csstrupr(game_variant.m_base_variant.m_name, 32);
 
 		options = options();
 	}
