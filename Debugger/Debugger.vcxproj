@@ -174,6 +174,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="hf2p\source\tag_files\tag_files.cpp" />
     <ClCompile Include="source\internet_file.cpp" />
     <ClCompile Include="source\buffer.cpp" />
     <ClCompile Include="external_libraries\nmd_assembly_wrapper.cpp" />

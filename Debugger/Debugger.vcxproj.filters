@@ -39,6 +39,9 @@
     <ClCompile Include="source\internet_file.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="hf2p\source\tag_files\tag_files.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\process.h">
