@@ -158,7 +158,7 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0x1A048, game_options,
 	short insertion_point;
 	short metagame_scoring_option;
 	bool campaign_metagame_enabled;
-	bool campaign_survival_mode;
+	bool campaign_survival_enabled;
 	bool campaign_allow_persistent_storage;
 	bool campaign_customization_enabled;
 	uchar campaign_armaments[0x78];
