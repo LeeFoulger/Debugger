@@ -7,11 +7,11 @@
 
 #pragma region enums
 
-enum e_sandbox_flags
+enum e_sandbox_variant_flags
 {
-	_sandbox_flags_open_channel_voice = 0,
+	_sandbox_variant_flags_open_channel_voice = 0,
 
-	k_sandbox_flags
+	k_sandbox_variant_flags
 };
 
 enum e_sandbox_editing_mode
@@ -46,7 +46,7 @@ enum e_sandbox_respawn_time
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_sandbox_variant, c_game_engine_base_variant,
 {
-	c_flags<e_sandbox_flags, uchar, k_sandbox_flags> m_flags;
+	c_flags<e_sandbox_variant_flags, uchar, k_sandbox_variant_flags> m_variant_flags;
 	c_enum<e_sandbox_editing_mode, char, k_sandbox_editing_mode_default, k_sandbox_editing_mode> m_edit_mode;
 	c_enum<e_sandbox_respawn_time, short, k_sandbox_respawn_times_default, k_sandbox_respawn_times> m_respawn_time;
 	c_player_traits m_all_player_traits;

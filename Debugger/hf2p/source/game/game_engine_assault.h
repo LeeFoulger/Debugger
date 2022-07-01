@@ -63,7 +63,7 @@ enum e_assault_variant_sudden_death_time
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_assault_variant, c_game_engine_base_variant,
 {
-	c_flags<e_assault_variant_flags, ushort, k_assault_variant_flags> m_flags;
+	c_flags<e_assault_variant_flags, ushort, k_assault_variant_flags> m_variant_flags;
 
 	// default: `disabled`
 	c_enum<e_assault_respawn_settings, short, k_assault_respawn_settings_default, k_assault_respawn_settings> m_respawn;

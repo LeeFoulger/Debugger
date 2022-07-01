@@ -56,7 +56,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x200, c_game_engine_king_variant, c_
 	// `c_game_engine_base_variant::m_team_scoring` override
 	// c_enum<e_king_team_scoring_settings, short, k_king_team_scoring_settings> m_team_scoring
 
-	c_flags<e_king_variant_flags, ulong, k_king_variant_flags> m_flags;
+	c_flags<e_king_variant_flags, ulong, k_king_variant_flags> m_variant_flags;
 
 	// default: 100
 	// maximum: 1000

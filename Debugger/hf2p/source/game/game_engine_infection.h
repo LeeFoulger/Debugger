@@ -63,7 +63,7 @@ enum e_infection_initial_zombie_count_settings
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_infection_variant, c_game_engine_base_variant,
 {
-	c_flags<e_infection_variant_flags, uchar, k_infection_variant_flags> m_flags;
+	c_flags<e_infection_variant_flags, uchar, k_infection_variant_flags> m_variant_flags;
 	c_enum<e_infection_safe_havens_settings, char, k_infection_safe_havens_settings_default, k_infection_safe_havens_settings> m_safe_havens;
 	c_enum<e_infection_next_zombie_settings, char, k_infection_next_zombie_settings_default, k_infection_next_zombie_settings> m_next_zombie;
 	c_enum<e_infection_initial_zombie_count_settings, char, k_infection_initial_zombie_count_settings_default, k_infection_initial_zombie_count_settings> m_initial_zombie_count;

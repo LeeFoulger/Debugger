@@ -6,12 +6,12 @@
 
 #pragma region enums
 
-enum e_territories_flags
+enum e_territories_variant_flags
 {
-	_territories_flags_one_sided = 0,
-	_territories_flags_lock_after_first_capture,
+	_territories_variant_flags_one_sided = 0,
+	_territories_variant_flags_lock_after_first_capture,
 
-	k_territories_flags
+	k_territories_variant_flags
 };
 
 enum e_territories_respawn_on_capture_settings
@@ -59,7 +59,7 @@ enum e_territories_sudden_death_settings
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_territories_variant, c_game_engine_base_variant,
 {
-	c_flags<e_territories_flags, ushort, k_territories_flags> m_flags;
+	c_flags<e_territories_variant_flags, ushort, k_territories_variant_flags> m_variant_flags;
 
 	c_enum<e_territories_respawn_on_capture_settings, short, k_territories_respawn_on_capture_settings_default, k_territories_respawn_on_capture_settings> m_respawn_on_capture;
 	c_enum<e_territories_capture_time_settings, short, k_territories_capture_time_settings_default, k_territories_capture_time_settings> m_capture_time;

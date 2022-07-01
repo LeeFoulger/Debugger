@@ -79,7 +79,7 @@ enum e_ctf_sudden_death_time
 
 DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_ctf_variant, c_game_engine_base_variant,
 {
-	c_flags<e_ctf_variant_flags, char, k_ctf_variant_flags> m_flags;
+	c_flags<e_ctf_variant_flags, char, k_ctf_variant_flags> m_variant_flags;
 	c_enum<e_ctf_home_flag_waypoint_settings, char, k_ctf_home_flag_waypoint_settings_default, k_ctf_home_flag_waypoint_settings> m_home_flag_waypoint;
 	c_enum<e_ctf_game_type_settings, char, k_ctf_game_type_settings_default, k_ctf_game_type_settings> m_game_type;
 	c_enum<e_ctf_respawn_settings, char, k_ctf_respawn_settings_default, k_ctf_respawn_settings> m_respawn;

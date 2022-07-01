@@ -6,14 +6,14 @@
 
 #pragma region enums
 
-enum e_vip_flags
+enum e_vip_variant_flags
 {
-	_vip_flags_single_vip = 0,
-	_vip_flags_destination_zones_enabled,
-	_vip_flags_end_round_on_vip_death,
+	_vip_variant_flags_single_vip = 0,
+	_vip_variant_flags_destination_zones_enabled,
+	_vip_variant_flags_end_round_on_vip_death,
 
-	k_vip_flags,
-	k_vip_flags_default
+	k_vip_variant_flags,
+	k_vip_variant_flags_default
 };
 
 enum e_vip_selection_settings
@@ -67,7 +67,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_vip_variant, c_g
 	// maximum: 500
 	short m_score_unknown;
 
-	c_flags<e_vip_flags, ushort, k_vip_flags> m_flags;
+	c_flags<e_vip_variant_flags, ushort, k_vip_variant_flags> m_variant_flags;
 
 	// default: 0
 	// maximum: 20

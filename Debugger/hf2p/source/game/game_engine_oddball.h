@@ -31,7 +31,7 @@ DECLARE_INHERITED_STRUCT_WITH_SIZE_ASSERT1(0x260, c_game_engine_oddball_variant,
 	// `c_game_engine_base_variant::m_team_scoring` override
 	// c_enum<e_oddball_variant_team_scoring_settings, short, k_oddball_variant_team_scoring_settings> m_team_scoring
 
-	c_flags<e_oddball_variant_flags, ulong, k_oddball_variant_flags> m_flags;
+	c_flags<e_oddball_variant_flags, ulong, k_oddball_variant_flags> m_variant_flags;
 
 	// default: 200
 	// maximum: 1001
