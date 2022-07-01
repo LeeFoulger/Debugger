@@ -17,7 +17,8 @@ DECLARE_STRUCT_WITH_SIZE_ASSERT1(0xF8, s_saved_game_item_metadata,
 	ulong map_id;
 	ulong game_engine_type;
 	ulong campaign_difficulty;
-	ushort hopper_id;
+	uchar campaign_insertion_point;
+	bool campaign_survival_enabled;
 	t_padding<2> pad;
 	qword game_id;
 });
